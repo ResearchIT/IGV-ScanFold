@@ -1,0 +1,38 @@
+diff --git a/src/main/java/org/broad/igv/ui/IGVMenuBar.java b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
+index 9154f0e40..60a5423c2 100644
+--- a/src/main/java/org/broad/igv/ui/IGVMenuBar.java
++++ b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
+@@ -59,6 +59,7 @@ import org.broad.igv.util.HttpUtils;
+ import org.broad.igv.util.LongRunningTask;
+ import org.broad.igv.util.blat.BlatClient;
+ import org.broad.igv.util.encode.EncodeFileBrowser;
++import org.broad.igv.scanfold.ScanFoldGui;
+ 
+ import javax.swing.*;
+ import javax.swing.event.MenuEvent;
+@@ -172,6 +173,7 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+         menus.add(createViewMenu());
+         menus.add(createTracksMenu());
+         menus.add(createRegionsMenu());
++        menus.add(createScanfoldMenu());
+ 
+         refreshToolsMenu();
+         menus.add(toolsMenu);
+@@ -1185,4 +1187,17 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+     public void disableReloadSession() {
+         this.reloadSessionItem.setEnabled(false);
+     }
++
++    private JMenu createScanfoldMenu() {
++        List<JComponent> menuItems = new ArrayList<JComponent>();
++        MenuAction extrasMenuAction = new MenuAction("ScanFold");
++        MenuAction menuAction = new MenuAction("Run ScanFoldGui...", null, 0) {
++            @Override
++            public void actionPerformed(ActionEvent e) {
++                ScanFoldGui.launch(false, igv.getGenomeManager().getGenomeId());
++            }
++        };
++        menuItems.add(MenuAndToolbarUtils.createMenuItem(menuAction));
++        return MenuAndToolbarUtils.createMenu(menuItems, extrasMenuAction);
++    }
+ }
