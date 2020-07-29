@@ -22,6 +22,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.11
+    - name: Apply patch
+      run: ./apply_patch.sh
     - name: Build with Gradle
       working-directory: igv
       run: ./gradlew createDist
