@@ -13,15 +13,31 @@ import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import javax.swing.border.TitledBorder;
+
+import org.broad.igv.util.RuntimeUtils;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import java.awt.Cursor;
+
 import fr.orsay.lri.varna.VARNAPanel;
 import fr.orsay.lri.varna.exceptions.ExceptionNonEqualLength;
+import javax.swing.JTextArea;
+import java.awt.Rectangle;
 
 public class ScanFoldGui extends JDialog {
 
@@ -38,6 +54,12 @@ public class ScanFoldGui extends JDialog {
 	private JLabel lblShuffletype;
 	private JLabel lblTemperature;
 	private JLabel lblCompetition;
+	private JButton runButton;
+	private JButton cancelButton;
+	private JTextArea outputText;
+	private JScrollPane outputScroll;
+    PrintStream systemOutStream;
+    PrintStream systemErrStream;
 
 	/**
 	 * Launch the application.
@@ -60,9 +82,9 @@ public class ScanFoldGui extends JDialog {
 		setBounds(100, 100, 450, 300);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{450, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 35, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 35, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		contentPanel.setBorder(new TitledBorder(null, "Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagConstraints gbc_contentPanel = new GridBagConstraints();
@@ -216,28 +238,42 @@ public class ScanFoldGui extends JDialog {
 			gbc_chckbxNewCheckBox.gridy = 6;
 			contentPanel.add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
 		}
+
 		{
-			JPanel panel = new JPanel();
-			panel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Log Output", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
-			GridBagConstraints gbc_panel = new GridBagConstraints();
-			gbc_panel.insets = new Insets(0, 0, 5, 0);
-			gbc_panel.fill = GridBagConstraints.BOTH;
-			gbc_panel.gridx = 0;
-			gbc_panel.gridy = 1;
-			getContentPane().add(panel, gbc_panel);
-			GridBagLayout gbl_panel = new GridBagLayout();
-			gbl_panel.columnWidths = new int[]{3, 0};
-			gbl_panel.rowHeights = new int[]{3, 0};
-			gbl_panel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-			gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-			panel.setLayout(gbl_panel);
+			JPanel outputPanel = new JPanel();
+			outputPanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Log Output", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+			GridBagConstraints gbc_outputPanel = new GridBagConstraints();
+			gbc_outputPanel.insets = new Insets(0, 0, 5, 0);
+			gbc_outputPanel.fill = GridBagConstraints.BOTH;
+			gbc_outputPanel.gridx = 0;
+			gbc_outputPanel.gridy = 2;
+			getContentPane().add(outputPanel, gbc_outputPanel);
+			GridBagLayout gbl_outputPanel = new GridBagLayout();
+			gbl_outputPanel.columnWidths = new int[]{3, 0};
+			gbl_outputPanel.rowHeights = new int[]{3, 0};
+			gbl_outputPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+			gbl_outputPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			outputPanel.setLayout(gbl_outputPanel);
 			{
-				JScrollPane scrollPane = new JScrollPane();
-				GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-				gbc_scrollPane.anchor = GridBagConstraints.NORTHWEST;
-				gbc_scrollPane.gridx = 0;
-				gbc_scrollPane.gridy = 0;
-				panel.add(scrollPane, gbc_scrollPane);
+				outputScroll = new JScrollPane();
+				GridBagConstraints gbc_outputScroll = new GridBagConstraints();
+				gbc_outputScroll.anchor = GridBagConstraints.NORTHWEST;
+				gbc_outputScroll.gridx = 0;
+				gbc_outputScroll.gridy = 0;
+				outputPanel.add(outputScroll, gbc_outputScroll);
+			}
+			{
+				outputText = new JTextArea();
+				outputText.setColumns(100);
+				GridBagConstraints gbc_outputText = new GridBagConstraints();
+				gbc_outputText.insets = new Insets(0, 0, 5, 0);
+				gbc_outputText.fill = GridBagConstraints.BOTH;
+				gbc_outputText.gridx = 0;
+				gbc_outputText.gridy = 1;
+				outputText.setEditable(false);
+                outputText.setText("");
+                outputText.setRows(10);
+                outputScroll.setViewportView(outputText);
 			}
 		}
 		{
@@ -247,20 +283,28 @@ public class ScanFoldGui extends JDialog {
 			gbc_buttonPane.anchor = GridBagConstraints.NORTH;
 			gbc_buttonPane.fill = GridBagConstraints.HORIZONTAL;
 			gbc_buttonPane.gridx = 0;
-			gbc_buttonPane.gridy = 2;
+			gbc_buttonPane.gridy = 3;
 			getContentPane().add(buttonPane, gbc_buttonPane);
 			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				runButton = new JButton("Run");
+				runButton.addActionListener(e -> run());
+				buttonPane.add(runButton);
+				getRootPane().setDefaultButton(runButton);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
+				cancelButton = new JButton("Cancel");
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
+		
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent) {
+                close();
+            }
+        });
+        
+        redirectSystemStreams();
 	}
 
 	public ScanFoldGui(boolean isVarna) {
@@ -288,7 +332,7 @@ public class ScanFoldGui extends JDialog {
 	}
 	
     public static void launch(boolean modal, String genomeId) {
-        ScanFoldGui mainWindow = new ScanFoldGui(true);
+        ScanFoldGui mainWindow = new ScanFoldGui();
         mainWindow.pack();
         mainWindow.setModal(modal);
         mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -304,5 +348,63 @@ public class ScanFoldGui extends JDialog {
 
         mainWindow.setVisible(true);
     }
+    
+    private abstract class IgvToolsSwingWorker extends SwingWorker{
 
+        @Override
+        protected void done() {
+            runButton.setEnabled(true);
+            setCursor(Cursor.getDefaultCursor());
+            updateTextArea("Done");
+        }
+    }
+
+    private void updateTextArea(final String text) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                outputText.append(text);
+            }
+        });
+    }
+    
+
+    private void redirectSystemStreams() {
+        OutputStream out = new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                updateTextArea(String.valueOf((char) b));
+            }
+
+            @Override
+            public void write(byte[] b, int off, int len) throws IOException {
+                updateTextArea(new String(b, off, len));
+            }
+
+            @Override
+            public void write(byte[] b) throws IOException {
+                write(b, 0, b.length);
+            }
+        };
+
+        systemOutStream = System.out;
+        systemErrStream = System.err;
+
+        System.setOut(new PrintStream(out, true));
+        System.setErr(new PrintStream(out, true));
+    }
+    
+    private void close() {
+        System.setErr(systemErrStream);
+        System.setOut(systemOutStream);
+        dispose();
+    }
+
+    private void run() {
+    	try {
+    		String[] cmd = new String[]{"/home/njbooher/workspace/repos/scanfoldigv/scripts/run_scanfold.sh"};
+        	String result = RuntimeUtils.executeShellCommand(cmd, null, new File("/home/njbooher/workspace/repos/scanfoldigv"));
+    	} catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
