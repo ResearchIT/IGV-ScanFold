@@ -13,6 +13,8 @@ import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -38,8 +40,6 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Cursor;
 
-import fr.orsay.lri.varna.VARNAPanel;
-import fr.orsay.lri.varna.exceptions.ExceptionNonEqualLength;
 import javax.swing.JTextArea;
 import java.awt.Rectangle;
 
@@ -64,6 +64,7 @@ public class ScanFoldGui extends JDialog {
 	private JScrollPane outputScroll;
     PrintStream systemOutStream;
     PrintStream systemErrStream;
+    private JButton varnaButton;
 
 	/**
 	 * Launch the application.
@@ -290,6 +291,23 @@ public class ScanFoldGui extends JDialog {
 			gbc_buttonPane.gridy = 3;
 			getContentPane().add(buttonPane, gbc_buttonPane);
 			{
+				varnaButton = new JButton("VarnaDemo");
+				varnaButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						try {
+							VarnaPopup dialog = new VarnaPopup();
+							dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							dialog.setVisible(true);
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+				});
+				buttonPane.add(varnaButton);
+			}
+			{
 				runButton = new JButton("Run");
 				runButton.addActionListener(e -> run());
 				buttonPane.add(runButton);
@@ -311,30 +329,6 @@ public class ScanFoldGui extends JDialog {
         redirectSystemStreams();
 	}
 
-	public ScanFoldGui(boolean isVarna) {
-		setTitle("scanfoldgui");
-		setBounds(100, 100, 450, 300);
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{450, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 35, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		getContentPane().setLayout(gridBagLayout);
-		{
-			try {
-				JPanel panel = new fr.orsay.lri.varna.VARNAPanel("CCCCAUAUGGGGACC", "((((....))))...");
-				GridBagConstraints gbc_panel = new GridBagConstraints();
-				gbc_panel.insets = new Insets(0, 0, 5, 0);
-				gbc_panel.fill = GridBagConstraints.BOTH;
-				gbc_panel.gridx = 0;
-				gbc_panel.gridy = 1;
-				getContentPane().add(panel, gbc_panel);
-			} catch (ExceptionNonEqualLength e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
     public static void launch(boolean modal, String genomeId) {
         ScanFoldGui mainWindow = new ScanFoldGui();
         mainWindow.pack();
@@ -420,7 +414,7 @@ public class ScanFoldGui extends JDialog {
 							"-type", shuffleType.getText(),
 							"-t", temperature.getText(),
 					};
-					String result = RuntimeUtils.executeShellCommand(cmd, null,	new File("/home/njbooher/workspace/repos/scanfoldigv"));
+					String result = RuntimeUtils.executeShellCommand(cmd, null, new File("/home/njbooher/workspace/repos/scanfoldigv"));
 					outputText.append(result);
 					String startSentinel = "BATCHFILEFIRSTSENTINEL";
 					String endSentinel = "BATCHFILESECONDSENTINEL";
