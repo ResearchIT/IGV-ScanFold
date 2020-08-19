@@ -22,6 +22,10 @@ import java.io.PrintStream;
 
 import javax.swing.border.TitledBorder;
 
+import org.broad.igv.batch.BatchRunner;
+import org.broad.igv.feature.genome.GenomeManager;
+import org.broad.igv.ui.IGV;
+import org.broad.igv.util.LongRunningTask;
 import org.broad.igv.util.RuntimeUtils;
 
 import javax.swing.JScrollPane;
@@ -400,11 +404,36 @@ public class ScanFoldGui extends JDialog {
     }
 
     private void run() {
-    	try {
-    		String[] cmd = new String[]{"/home/njbooher/workspace/repos/scanfoldigv/scripts/run_scanfold.sh"};
-        	String result = RuntimeUtils.executeShellCommand(cmd, null, new File("/home/njbooher/workspace/repos/scanfoldigv"));
-    	} catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		SwingWorker swingWorker = new IgvToolsSwingWorker() {
+
+			@Override
+			protected Object doInBackground() {
+				try {
+					GenomeManager genomeManager = GenomeManager.getInstance();
+					String[] cmd = new String[] {
+							"/home/njbooher/workspace/repos/scanfoldigv/scripts/run_scanfold.sh",
+							genomeManager.getGenomeId(),
+							"-c", competition.getText(),
+							"-s", stepSize.getText(),
+							"-w", windowSize.getText(),
+							"-r", randomizations.getText(),
+							"-type", shuffleType.getText(),
+							"-t", temperature.getText(),
+					};
+					String result = RuntimeUtils.executeShellCommand(cmd, null,	new File("/home/njbooher/workspace/repos/scanfoldigv"));
+					outputText.append(result);
+					String startSentinel = "BATCHFILEFIRSTSENTINEL";
+					String endSentinel = "BATCHFILESECONDSENTINEL";
+					String batchFile = result.substring(result.indexOf(startSentinel) + startSentinel.length(), result.indexOf(endSentinel));
+					outputText.append(batchFile);
+					LongRunningTask.submit(new BatchRunner(batchFile, IGV.getInstance()));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+				return null;
+			}
+		};
+
+		swingWorker.execute();
     }
 }
