@@ -65,6 +65,7 @@ public class ScanFoldGui extends JDialog {
     PrintStream systemOutStream;
     PrintStream systemErrStream;
     private JButton varnaButton;
+    private JCheckBox globalRefold;
 
 	/**
 	 * Launch the application.
@@ -225,7 +226,7 @@ public class ScanFoldGui extends JDialog {
 			competition = new JTextField();
 			lblCompetition.setLabelFor(competition);
 			competition.setToolTipText("");
-			competition.setText("0");
+			competition.setText("1");
 			GridBagConstraints gbc_competition = new GridBagConstraints();
 			gbc_competition.insets = new Insets(0, 0, 5, 0);
 			gbc_competition.fill = GridBagConstraints.HORIZONTAL;
@@ -234,14 +235,15 @@ public class ScanFoldGui extends JDialog {
 			contentPanel.add(competition, gbc_competition);
 		}
 		{
-			JCheckBox chckbxNewCheckBox = new JCheckBox("Global Refold");
-			chckbxNewCheckBox.setToolTipText("When checked, this option will refold your entire sequence while constraining the most significant base pairs (with Zavg values < -1 and < -2).\n");
-			GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
-			gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 0, 5);
-			gbc_chckbxNewCheckBox.anchor = GridBagConstraints.WEST;
-			gbc_chckbxNewCheckBox.gridx = 0;
-			gbc_chckbxNewCheckBox.gridy = 6;
-			contentPanel.add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
+			globalRefold = new JCheckBox("Global Refold");
+			globalRefold.setSelected(true);
+			globalRefold.setToolTipText("When checked, this option will refold your entire sequence while constraining the most significant base pairs (with Zavg values < -1 and < -2).\n");
+			GridBagConstraints gbc_globalRefold = new GridBagConstraints();
+			gbc_globalRefold.insets = new Insets(0, 0, 0, 5);
+			gbc_globalRefold.anchor = GridBagConstraints.WEST;
+			gbc_globalRefold.gridx = 0;
+			gbc_globalRefold.gridy = 6;
+			contentPanel.add(globalRefold, gbc_globalRefold);
 		}
 
 		{
@@ -406,13 +408,14 @@ public class ScanFoldGui extends JDialog {
 					GenomeManager genomeManager = GenomeManager.getInstance();
 					String[] cmd = new String[] {
 							"/home/njbooher/workspace/repos/scanfoldigv/scripts/run_scanfold.sh",
-							genomeManager.getGenomeId(),
+							"-i", genomeManager.getGenomeId(),
 							"-c", competition.getText(),
 							"-s", stepSize.getText(),
 							"-w", windowSize.getText(),
 							"-r", randomizations.getText(),
-							"-type", shuffleType.getText(),
+							"-y", shuffleType.getText(),
 							"-t", temperature.getText(),
+							globalRefold.isSelected() ? "-g" : ""
 					};
 					String result = RuntimeUtils.executeShellCommand(cmd, null, new File("/home/njbooher/workspace/repos/scanfoldigv"));
 					outputText.append(result);
@@ -430,4 +433,5 @@ public class ScanFoldGui extends JDialog {
 
 		swingWorker.execute();
     }
+
 }
