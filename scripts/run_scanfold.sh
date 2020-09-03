@@ -1,6 +1,6 @@
 . env/bin/activate
 
-while getopts ":c:gi:r:s:t:w:y:" opt; do
+while getopts ":c:gi:r:s:t:w:y:z:" opt; do
   case ${opt} in
     c )
       COMPETITION=$OPTARG
@@ -26,6 +26,9 @@ while getopts ":c:gi:r:s:t:w:y:" opt; do
     y )
       RANDOMIZATIONTYPE=$OPTARG
       ;;
+    z )
+      STARTPOS=$OPTARG
+      ;;
     \? )
       echo "Invalid option: $OPTARG" 1>&2
       ;;
@@ -35,6 +38,8 @@ while getopts ":c:gi:r:s:t:w:y:" opt; do
   esac
 done
 shift $((OPTIND -1))
+
+export DATAPATH=${PWD}/env/data_tables
 
 INPUTFNAME=$(basename ${INPUTFILE})
 
@@ -49,12 +54,13 @@ PVALUEWIGFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.pvalue.wig)
 FASTAFILEPATH=$(mktemp -p ${WORKDIR} inputXXX.fasta)
 FASTAINDEX=$(mktemp -p ${WORKDIR} inputXXX.fasta.fai)
 
-python ScanFold/ScanFold-Scan_spinoff.py \
+python ScanFold/ScanFold-Scan_IGV.py \
     -i ${INPUTFILE} \
     -r ${RANDOMIZATIONS} \
     -s ${STEPSIZE} \
     -t ${TEMPERATURE} \
     -w ${WINDOWSIZE} \
+    --start ${STARTPOS} \
     -type ${RANDOMIZATIONTYPE} \
     --scan_out_path ${SCANOUTPATH} \
     --zscore_wig_file_path ${ZSCOREWIGFILEPATH} \
@@ -82,7 +88,7 @@ STRUCTUREEXTRACTFILE=$(mktemp -p ${WORKDIR} outputXXX.ExtractedStructures.txt)
 FINALPARTNERSWIG=$(mktemp -p ${WORKDIR} outputXXX.final_partners_zscore.wig)
 FASTAINDEX=$(mktemp -p ${WORKDIR} outputXXX.fai)
 
-python ScanFold/ScanFold-Fold_spinoff.py \
+python ScanFold/ScanFold-Fold_IGV.py \
     -i ${SCANOUTPATH} \
     -c ${COMPETITION} \
     --out1 ${OUT1} \

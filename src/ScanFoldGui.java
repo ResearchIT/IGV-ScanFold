@@ -415,6 +415,7 @@ public class ScanFoldGui extends JDialog {
 							"-r", randomizations.getText(),
 							"-y", shuffleType.getText(),
 							"-t", temperature.getText(),
+							"-z", "0",
 							globalRefold.isSelected() ? "-g" : ""
 					};
 					String result = RuntimeUtils.executeShellCommand(cmd, null, new File("/home/njbooher/workspace/repos/scanfoldigv"));
