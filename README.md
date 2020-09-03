@@ -10,6 +10,7 @@
 
 1. `./scripts/build_scanfold_env.sh`
 1. `./scripts/build_viennarna.sh`
+1. `./scripts/build_rnastructure.sh`
 
 ## Run IGV
 
