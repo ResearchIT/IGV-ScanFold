@@ -1,6 +1,6 @@
 . env/bin/activate
 
-while getopts ":c:gi:r:s:t:w:y:z:" opt; do
+while getopts ":c:gi:n:r:s:t:w:y:z:" opt; do
   case ${opt} in
     c )
       COMPETITION=$OPTARG
@@ -10,6 +10,9 @@ while getopts ":c:gi:r:s:t:w:y:z:" opt; do
       ;;
     i )
       INPUTFILE=$OPTARG
+      ;;
+    n )
+      SEQUENCENAME=$OPTARG
       ;;
     r )
       RANDOMIZATIONS=$OPTARG
@@ -61,6 +64,7 @@ python ScanFold/ScanFold-Scan_IGV.py \
     -t ${TEMPERATURE} \
     -w ${WINDOWSIZE} \
     --start ${STARTPOS} \
+    --name "${SEQUENCENAME}" \
     -type ${RANDOMIZATIONTYPE} \
     --scan_out_path ${SCANOUTPATH} \
     --zscore_wig_file_path ${ZSCOREWIGFILEPATH} \
@@ -90,6 +94,7 @@ FASTAINDEX=$(mktemp -p ${WORKDIR} outputXXX.fai)
 
 python ScanFold/ScanFold-Fold_IGV.py \
     -i ${SCANOUTPATH} \
+    --name "${SEQUENCENAME}" \
     -c ${COMPETITION} \
     --out1 ${OUT1} \
     --out2 ${OUT2} \

@@ -18,7 +18,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -29,12 +31,17 @@ import org.broad.igv.Globals;
 import org.broad.igv.batch.BatchRunner;
 import org.broad.igv.batch.CommandExecutor;
 import org.broad.igv.exceptions.DataLoadException;
+import org.broad.igv.feature.Strand;
+import org.broad.igv.feature.genome.Genome;
 import org.broad.igv.feature.genome.GenomeManager;
+import org.broad.igv.track.SequenceTrack;
 import org.broad.igv.ui.IGV;
 import org.broad.igv.ui.WaitCursorManager;
+import org.broad.igv.ui.util.MessageUtils;
 import org.broad.igv.util.LongRunningTask;
 import org.broad.igv.util.ParsingUtils;
 import org.broad.igv.util.RuntimeUtils;
+import org.broad.igv.util.StringUtils;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -51,7 +58,11 @@ import javax.swing.JTextArea;
 import java.awt.Rectangle;
 
 public class ScanFoldGui extends JDialog {
-
+	
+	private String sequence;
+	private String sequenceName;
+	private int sequenceStart;
+	
 	private final JPanel contentPanel = new JPanel();
 	private JTextField windowSize;
 	private JLabel lblWindowSize;
@@ -338,8 +349,11 @@ public class ScanFoldGui extends JDialog {
         redirectSystemStreams();
 	}
 
-    public static void launch(boolean modal, String genomeId) {
+    public static void launch(boolean modal, String chr, int start, String sequence) {
         ScanFoldGui mainWindow = new ScanFoldGui();
+        mainWindow.sequenceName = chr;
+        mainWindow.sequence = sequence;
+        mainWindow.sequenceStart = start;
         mainWindow.pack();
         mainWindow.setModal(modal);
         mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -355,6 +369,52 @@ public class ScanFoldGui extends JDialog {
 
         mainWindow.setVisible(true);
     }
+    
+    public static String extractSequence(Genome genome, String chr, int start, int end, Strand strand) {
+    	
+    	String retSequence = "";
+        try {
+            //IGV.getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            byte[] seqBytes = genome.getSequence(chr, start, end);
+
+            if (seqBytes == null) {
+                MessageUtils.showMessage("Sequence not available");
+            } else {
+                String sequence = new String(seqBytes);
+
+                SequenceTrack sequenceTrack = IGV.getInstance().getSequenceTrack();
+                if (strand == Strand.NEGATIVE || (sequenceTrack != null && sequenceTrack.getStrand() == Strand.NEGATIVE)) {
+                    sequence = SequenceTrack.getReverseComplement(sequence);
+                }
+                retSequence = sequence;
+            }
+
+        } finally {
+        	
+            //IGV.getMainFrame().setCursor(Cursor.getDefaultCursor());
+        }
+        
+        return retSequence;
+        
+    }
+    
+	private String writeSequenceToTempFile() {
+		String tempFilePath = "";
+		try {
+			File tempDir = new File(System.getProperty("java.io.tmpdir"));
+			File tempFile = File.createTempFile("scanfoldinput", ".fa", tempDir);
+			FileWriter fileWriter = new FileWriter(tempFile, true);
+			BufferedWriter bw = new BufferedWriter(fileWriter);
+
+			bw.write(this.sequence);
+			bw.close();
+			tempFilePath = tempFile.getAbsolutePath();
+		} catch (IOException e) {
+			showMessage(e.getMessage());
+		}
+		return tempFilePath;
+	}
+    
     
     private abstract class IgvToolsSwingWorker extends SwingWorker{
 
@@ -373,8 +433,7 @@ public class ScanFoldGui extends JDialog {
             }
         });
     }
-    
-
+   
     private void redirectSystemStreams() {
         OutputStream out = new OutputStream() {
             @Override
@@ -416,10 +475,13 @@ public class ScanFoldGui extends JDialog {
 			@Override
 			protected Object doInBackground() {
 				try {
-					GenomeManager genomeManager = GenomeManager.getInstance();
+					
+					String inputFile = writeSequenceToTempFile();
+					
 					String[] cmd = new String[] {
 							"/home/njbooher/workspace/repos/scanfoldigv/scripts/run_scanfold.sh",
-							"-i", genomeManager.getGenomeId(),
+							"-i", inputFile,
+							"-n", sequenceName,
 							"-c", competition.getText(),
 							"-s", stepSize.getText(),
 							"-w", windowSize.getText(),
@@ -440,16 +502,12 @@ public class ScanFoldGui extends JDialog {
 					BufferedReader reader = null;
 					String inLine;
 			        try {
-			        	
-			            reader = ParsingUtils.openBufferedReader(batchFile);
-
+			        	reader = ParsingUtils.openBufferedReader(batchFile);
 			            while ((inLine = reader.readLine()) != null) {
 			                if (!(inLine.startsWith("#") || inLine.startsWith("//"))) {
 			                    cmdExe.execute(inLine);
 			                }
 			            }
-
-
 			        } catch (IOException ioe) {
 			            throw new DataLoadException(ioe.getMessage(), batchFile);
 			        } finally {
@@ -457,7 +515,7 @@ public class ScanFoldGui extends JDialog {
 			                try {
 			                    reader.close();
 			                } catch (IOException e) {
-			                    e.printStackTrace();
+			                	showMessage(e.getMessage());
 			                }
 			            }
 			        }

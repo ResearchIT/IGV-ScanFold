@@ -1,16 +1,17 @@
 diff --git a/src/main/java/org/broad/igv/ui/IGVMenuBar.java b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-index 9154f0e40..60a5423c2 100644
+index 98d84a952..31e67765c 100644
 --- a/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 +++ b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-@@ -59,6 +59,7 @@ import org.broad.igv.util.HttpUtils;
+@@ -59,6 +59,8 @@ import org.broad.igv.util.HttpUtils;
  import org.broad.igv.util.LongRunningTask;
  import org.broad.igv.util.blat.BlatClient;
  import org.broad.igv.util.encode.EncodeFileBrowser;
++import org.broad.igv.feature.Strand;
 +import org.broad.igv.scanfold.ScanFoldGui;
  
  import javax.swing.*;
  import javax.swing.event.MenuEvent;
-@@ -172,6 +173,7 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+@@ -172,6 +174,7 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
          menus.add(createViewMenu());
          menus.add(createTracksMenu());
          menus.add(createRegionsMenu());
@@ -18,7 +19,7 @@ index 9154f0e40..60a5423c2 100644
  
          refreshToolsMenu();
          menus.add(toolsMenu);
-@@ -1185,4 +1187,17 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+@@ -1185,4 +1188,22 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
      public void disableReloadSession() {
          this.reloadSessionItem.setEnabled(false);
      }
@@ -29,7 +30,12 @@ index 9154f0e40..60a5423c2 100644
 +        MenuAction menuAction = new MenuAction("Run ScanFoldGui...", null, 0) {
 +            @Override
 +            public void actionPerformed(ActionEvent e) {
-+                ScanFoldGui.launch(false, igv.getGenomeManager().getGenomeId());
++            	final ReferenceFrame defaultFrame = FrameManager.getDefaultFrame();
++                String chr = defaultFrame.getChrName();
++                int start = (int) defaultFrame.getOrigin();
++                int end = (int) defaultFrame.getEnd();
++                String sequence = ScanFoldGui.extractSequence(igv.getGenomeManager().getCurrentGenome(), chr, start, end, Strand.NONE);
++                ScanFoldGui.launch(false, chr, start, sequence);
 +            }
 +        };
 +        menuItems.add(MenuAndToolbarUtils.createMenuItem(menuAction));
