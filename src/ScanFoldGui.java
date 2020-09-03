@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,10 +25,15 @@ import java.io.PrintStream;
 
 import javax.swing.border.TitledBorder;
 
+import org.broad.igv.Globals;
 import org.broad.igv.batch.BatchRunner;
+import org.broad.igv.batch.CommandExecutor;
+import org.broad.igv.exceptions.DataLoadException;
 import org.broad.igv.feature.genome.GenomeManager;
 import org.broad.igv.ui.IGV;
+import org.broad.igv.ui.WaitCursorManager;
 import org.broad.igv.util.LongRunningTask;
+import org.broad.igv.util.ParsingUtils;
 import org.broad.igv.util.RuntimeUtils;
 
 import javax.swing.JScrollPane;
@@ -35,6 +41,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
@@ -398,6 +405,10 @@ public class ScanFoldGui extends JDialog {
         System.setOut(systemOutStream);
         dispose();
     }
+    
+    private void showMessage(String tool) {
+        JOptionPane.showMessageDialog(this, tool);
+    }
 
     private void run() {
 		SwingWorker swingWorker = new IgvToolsSwingWorker() {
@@ -424,9 +435,35 @@ public class ScanFoldGui extends JDialog {
 					String endSentinel = "BATCHFILESECONDSENTINEL";
 					String batchFile = result.substring(result.indexOf(startSentinel) + startSentinel.length(), result.indexOf(endSentinel));
 					outputText.append(batchFile);
-					LongRunningTask.submit(new BatchRunner(batchFile, IGV.getInstance()));
+					
+					CommandExecutor cmdExe = new CommandExecutor(IGV.getInstance());
+					BufferedReader reader = null;
+					String inLine;
+			        try {
+			        	
+			            reader = ParsingUtils.openBufferedReader(batchFile);
+
+			            while ((inLine = reader.readLine()) != null) {
+			                if (!(inLine.startsWith("#") || inLine.startsWith("//"))) {
+			                    cmdExe.execute(inLine);
+			                }
+			            }
+
+
+			        } catch (IOException ioe) {
+			            throw new DataLoadException(ioe.getMessage(), batchFile);
+			        } finally {
+			            if (reader != null) {
+			                try {
+			                    reader.close();
+			                } catch (IOException e) {
+			                    e.printStackTrace();
+			                }
+			            }
+			        }
+			        
 				} catch (IOException e) {
-					throw new RuntimeException(e);
+					showMessage(e.getMessage());
 				}
 				return null;
 			}
