@@ -1,6 +1,6 @@
 . env/bin/activate
 
-while getopts ":c:gi:n:r:s:t:w:y:z:" opt; do
+while getopts ":c:gi:j:n:r:s:t:w:y:z:" opt; do
   case ${opt} in
     c )
       COMPETITION=$OPTARG
@@ -10,6 +10,11 @@ while getopts ":c:gi:n:r:s:t:w:y:z:" opt; do
       ;;
     i )
       INPUTFILE=$OPTARG
+      ;;
+    j )
+      # If this is passed, spawn a new IGV process instead of loading it in the existing one
+      JARLOCATION=$OPTARG
+      JARDIR=`dirname $(readlink $JARLOCATION || echo $JARLOCATION)`
       ;;
     n )
       SEQUENCENAME=$OPTARG
@@ -115,11 +120,21 @@ python ScanFold/ScanFold-Fold_IGV.py \
     --callbackurl 'https://mosslabtools.bb.iastate.edu/makethisoptional/' \
     ${GLOBALREFOLD}
 
-
 echo "load ${BPTRACK}" >> ${WORKDIR}/batchfile.txt
 echo "load ${FINALPARTNERSWIG}" >> ${WORKDIR}/batchfile.txt
 echo "load ${MFEWIGFILEPATH}" >> ${WORKDIR}/batchfile.txt
 echo "load ${ZSCOREWIGFILEPATH}" >> ${WORKDIR}/batchfile.txt
 echo "load ${PVALUEWIGFILEPATH}" >> ${WORKDIR}/batchfile.txt
 echo "load ${EDWIGFILEPATH}" >> ${WORKDIR}/batchfile.txt
-echo BATCHFILEFIRSTSENTINEL${WORKDIR}/batchfile.txtBATCHFILESECONDSENTINEL
+
+if [ -n "${JARLOCATION}" ]; then
+  java -showversion --module-path="${JARDIR}" -Xmx4g \
+      -Dapple.laf.useScreenMenuBar=true \
+      -Djava.net.preferIPv4Stack=true \
+      --module=org.igv/org.broad.igv.ui.Main \
+      --genome=${FASTATRACK} \
+      --igvDirectory=${WORKDIR}/igv
+      --batch=${WORKDIR}/batchfile.txt &
+else
+  echo BATCHFILEFIRSTSENTINEL${WORKDIR}/batchfile.txtBATCHFILESECONDSENTINEL
+fi;

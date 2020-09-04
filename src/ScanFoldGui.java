@@ -24,6 +24,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.border.TitledBorder;
 
@@ -62,6 +65,7 @@ public class ScanFoldGui extends JDialog {
 	private String sequence;
 	private String sequenceName;
 	private int sequenceStart;
+	private boolean resultsInNewWindow;
 	
 	private final JPanel contentPanel = new JPanel();
 	private JTextField windowSize;
@@ -349,11 +353,12 @@ public class ScanFoldGui extends JDialog {
         redirectSystemStreams();
 	}
 
-    public static void launch(boolean modal, String chr, int start, String sequence) {
+    public static void launch(boolean modal, String chr, int start, String sequence, boolean resultsInNewWindow) {
         ScanFoldGui mainWindow = new ScanFoldGui();
         mainWindow.sequenceName = chr;
         mainWindow.sequence = sequence;
         mainWindow.sequenceStart = start;
+        mainWindow.resultsInNewWindow = resultsInNewWindow;
         mainWindow.pack();
         mainWindow.setModal(modal);
         mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -478,7 +483,7 @@ public class ScanFoldGui extends JDialog {
 					
 					String inputFile = writeSequenceToTempFile();
 					
-					String[] cmd = new String[] {
+					ArrayList<String> cmd = new ArrayList<>(Arrays.asList(new String[] {
 							"/home/njbooher/workspace/repos/scanfoldigv/scripts/run_scanfold.sh",
 							"-i", inputFile,
 							"-n", sequenceName,
@@ -488,39 +493,54 @@ public class ScanFoldGui extends JDialog {
 							"-r", randomizations.getText(),
 							"-y", shuffleType.getText(),
 							"-t", temperature.getText(),
-							"-z", "0",
-							globalRefold.isSelected() ? "-g" : ""
-					};
-					String result = RuntimeUtils.executeShellCommand(cmd, null, new File("/home/njbooher/workspace/repos/scanfoldigv"));
-					outputText.append(result);
-					String startSentinel = "BATCHFILEFIRSTSENTINEL";
-					String endSentinel = "BATCHFILESECONDSENTINEL";
-					String batchFile = result.substring(result.indexOf(startSentinel) + startSentinel.length(), result.indexOf(endSentinel));
-					outputText.append(batchFile);
+							"-z", String.valueOf(sequenceStart),
+					}));
 					
-					CommandExecutor cmdExe = new CommandExecutor(IGV.getInstance());
-					BufferedReader reader = null;
-					String inLine;
-			        try {
-			        	reader = ParsingUtils.openBufferedReader(batchFile);
-			            while ((inLine = reader.readLine()) != null) {
-			                if (!(inLine.startsWith("#") || inLine.startsWith("//"))) {
-			                    cmdExe.execute(inLine);
-			                }
-			            }
-			        } catch (IOException ioe) {
-			            throw new DataLoadException(ioe.getMessage(), batchFile);
-			        } finally {
-			            if (reader != null) {
-			                try {
-			                    reader.close();
-			                } catch (IOException e) {
-			                	showMessage(e.getMessage());
-			                }
-			            }
-			        }
-			        
+					if (globalRefold.isSelected()) {
+						cmd.add("-g");
+					}
+					
+					if (resultsInNewWindow) {
+						cmd.add("-j");
+						cmd.add(new File(ScanFoldGui.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath());
+					}
+					
+					
+					String result = RuntimeUtils.executeShellCommand(cmd.toArray(new String[cmd.size()]), null, new File("/home/njbooher/workspace/repos/scanfoldigv"));
+					outputText.append(result);
+					
+					if (!resultsInNewWindow) {
+						String startSentinel = "BATCHFILEFIRSTSENTINEL";
+						String endSentinel = "BATCHFILESECONDSENTINEL";
+						String batchFile = result.substring(result.indexOf(startSentinel) + startSentinel.length(), result.indexOf(endSentinel));
+						outputText.append(batchFile);
+
+						CommandExecutor cmdExe = new CommandExecutor(IGV.getInstance());
+						BufferedReader reader = null;
+						String inLine;
+						try {
+							reader = ParsingUtils.openBufferedReader(batchFile);
+							while ((inLine = reader.readLine()) != null) {
+								if (!(inLine.startsWith("#") || inLine.startsWith("//"))) {
+									cmdExe.execute(inLine);
+								}
+							}
+						} catch (IOException ioe) {
+							throw new DataLoadException(ioe.getMessage(), batchFile);
+						} finally {
+							if (reader != null) {
+								try {
+									reader.close();
+								} catch (IOException e) {
+									showMessage(e.getMessage());
+								}
+							}
+						}
+					}
+					
 				} catch (IOException e) {
+					showMessage(e.getMessage());
+				} catch (URISyntaxException e) {
 					showMessage(e.getMessage());
 				}
 				return null;
