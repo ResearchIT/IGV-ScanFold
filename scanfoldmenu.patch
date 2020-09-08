@@ -42,3 +42,33 @@ index 98d84a952..e34d12c27 100644
 +        return MenuAndToolbarUtils.createMenu(menuItems, extrasMenuAction);
 +    }
  }
+diff --git a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
+index f833da1b0..01412d5aa 100644
+--- a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
++++ b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
+@@ -35,6 +35,7 @@ import org.broad.igv.util.blat.BlatClient;
+ import org.broad.igv.feature.RegionOfInterest;
+ import org.broad.igv.feature.genome.Genome;
+ import org.broad.igv.feature.genome.GenomeManager;
++import org.broad.igv.scanfold.ScanFoldGui;
+ import org.broad.igv.ui.IGV;
+ import org.broad.igv.util.LongRunningTask;
+ import org.broad.igv.util.NamedRunnable;
+@@ -199,7 +200,17 @@ public class RegionOfInterestPanel extends JPanel {
+         item.addActionListener(e -> BlatClient.doBlatQuery(roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE));
+         popupMenu.add(item);
+ 
++        item = new JMenuItem("Run ScanFoldGui...");
++        item.addActionListener(new ActionListener() {
+ 
++            public void actionPerformed(ActionEvent e) {
++            	Genome genome = GenomeManager.getInstance().getCurrentGenome();
++            	String sequence = ScanFoldGui.extractSequence(genome, roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE);
++            	ScanFoldGui.launch(false, roi.getChr(), roi.getStart(), sequence, true);
++            }
++        });
++        popupMenu.add(item);
++        
+         popupMenu.add(new JSeparator());
+ 
+         item = new JMenuItem("Delete");

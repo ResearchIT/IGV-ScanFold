@@ -133,7 +133,7 @@ if [ -n "${JARLOCATION}" ]; then
       -Djava.net.preferIPv4Stack=true \
       --module=org.igv/org.broad.igv.ui.Main \
       --genome=${FASTATRACK} \
-      --igvDirectory=${WORKDIR}/igv
+      --igvDirectory=${WORKDIR}/igv \
       --batch=${WORKDIR}/batchfile.txt &
 else
   echo BATCHFILEFIRSTSENTINEL${WORKDIR}/batchfile.txtBATCHFILESECONDSENTINEL
