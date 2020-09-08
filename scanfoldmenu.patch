@@ -1,3 +1,80 @@
+diff --git a/src/main/java/org/broad/igv/track/TrackMenuUtils.java b/src/main/java/org/broad/igv/track/TrackMenuUtils.java
+index bacce967b..aef2bd7b6 100644
+--- a/src/main/java/org/broad/igv/track/TrackMenuUtils.java
++++ b/src/main/java/org/broad/igv/track/TrackMenuUtils.java
+@@ -48,6 +48,7 @@ import org.broad.igv.sam.AlignmentDataManager;
+ import org.broad.igv.sam.AlignmentTrack;
+ import org.broad.igv.sam.CoverageTrack;
+ import org.broad.igv.sam.SAMWriter;
++import org.broad.igv.scanfold.ScanFoldGui;
+ import org.broad.igv.ui.*;
+ import org.broad.igv.ui.action.OverlayTracksMenuAction;
+ import org.broad.igv.ui.color.ColorUtilities;
+@@ -485,6 +486,11 @@ public class TrackMenuUtils {
+                 }
+ 
+                 featurePopupMenu.add(getBlatItem(sequenceFeature));
++                
++                JMenuItem scanfoldItem = getScanfoldItem(f);
++                if (scanfoldItem != null) {
++                	featurePopupMenu.add(scanfoldItem);
++                }
+             }
+ 
+             if (Globals.isDevelopment() && FrameManager.isGeneListMode() && tracks.size() == 1) {
+@@ -1499,5 +1505,52 @@ public class TrackMenuUtils {
+         return item;
+     }
+ 
++	public static JMenuItem getScanfoldItem(final Feature f) {
++		
++		if (f instanceof IGVFeature) {
++			
++			if (((IGVFeature) f).getExons() == null) {
++				return null;
++			}
++			
++			JMenuItem item = new JMenuItem("Run ScanFoldGui...");
++			item.addActionListener(new ActionListener() {
++
++				public void actionPerformed(ActionEvent evt) {
++					
++					IGVFeature igvf = (IGVFeature) f;
++					
++					Genome genome = GenomeManager.getInstance().getCurrentGenome();
++					final Strand strand = igvf.getStrand();
++					List<Exon> exons = igvf.getExons();
++					
++					Collections.sort(exons, new Comparator<Exon>() {
++		                public int compare(Exon arg0, Exon arg1) {
++		                	if (strand == Strand.NEGATIVE) {
++		                		return arg1.getStart() - arg0.getStart();
++		                	} else {
++		                		return arg0.getStart() - arg1.getStart();
++		                	}
++		                }
++		            });
++					
++					StringBuilder scanfoldSequence = new StringBuilder();
++					
++					for (Exon exon : exons) {
++						String sequence = ScanFoldGui.extractSequence(genome, exon.getChr(), exon.getStart(), exon.getEnd(), strand);
++						scanfoldSequence.append(sequence);
++					}
++
++					ScanFoldGui.launch(false, igvf.getName(), 0, scanfoldSequence.toString(), true);
++				}
++			});
++			return item;
++
++		} else {
++			return null;
++		}
++	}
++
++
+ }
+ 
 diff --git a/src/main/java/org/broad/igv/ui/IGVMenuBar.java b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 index 98d84a952..e34d12c27 100644
 --- a/src/main/java/org/broad/igv/ui/IGVMenuBar.java
