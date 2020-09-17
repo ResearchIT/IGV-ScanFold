@@ -77,9 +77,7 @@ python ScanFold/ScanFold-Scan_IGV.py \
     --ed_wig_file_path ${EDWIGFILEPATH} \
     --pvalue_wig_file_path ${PVALUEWIGFILEPATH} \
     --fasta_file_path ${FASTAFILEPATH} \
-    --fasta_index ${FASTAINDEX} \
-    --nodeid 1 \
-    --callbackurl 'https://mosslabtools.bb.iastate.edu/makethisoptional/'
+    --fasta_index ${FASTAINDEX}
 
 OUT1=$(mktemp -p ${WORKDIR} outputXXX.nofilter.ct)
 OUT2=$(mktemp -p ${WORKDIR} outputXXX.-1filter.ct)
@@ -116,8 +114,6 @@ python ScanFold/ScanFold-Fold_IGV.py \
     --final_partners_wig ${FINALPARTNERSWIG} \
     --structure_extract_file ${STRUCTUREEXTRACTFILE} \
     --fasta_index ${FASTAINDEX} \
-    --nodeid 1 \
-    --callbackurl 'https://mosslabtools.bb.iastate.edu/makethisoptional/' \
     ${GLOBALREFOLD}
 
 echo "load ${BPTRACK}" >> ${WORKDIR}/batchfile.txt
