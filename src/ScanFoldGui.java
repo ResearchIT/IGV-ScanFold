@@ -22,8 +22,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -432,9 +436,16 @@ public class ScanFoldGui extends JDialog {
     }
 
     private void updateTextArea(final String text) {
+    	updateTextArea(text, false);
+    }
+    
+    private void updateTextArea(final String text, boolean addNewline) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 outputText.append(text);
+                if (addNewline) {
+                	outputText.append("\n");
+                }
             }
         });
     }
@@ -473,6 +484,42 @@ public class ScanFoldGui extends JDialog {
     private void showMessage(String tool) {
         JOptionPane.showMessageDialog(this, tool);
     }
+    
+    private String executeShellCommand(String cmd[], String[] envp, File dir, boolean waitFor) throws IOException {
+        Process pr = RuntimeUtils.startExternalProcess(cmd, envp, dir);
+
+        if(waitFor){
+            try {
+                pr.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        InputStream inputStream = null;
+        String line = "";
+
+        try {
+            inputStream = pr.getInputStream();
+            BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream));
+            StringWriter writer = new StringWriter();
+            PrintWriter pw = new PrintWriter(writer);
+            while ((line = buf.readLine()) != null) {
+            	updateTextArea(line, true);
+                pw.println(line);
+            }
+            pw.close();
+            return writer.toString();
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            OutputStream os = pr.getOutputStream();
+            if(os != null){
+                os.close();
+            }
+        }
+    }
 
     private void run() {
 		SwingWorker swingWorker = new IgvToolsSwingWorker() {
@@ -506,14 +553,12 @@ public class ScanFoldGui extends JDialog {
 					}
 					
 					
-					String result = RuntimeUtils.executeShellCommand(cmd.toArray(new String[cmd.size()]), null, new File("/home/njbooher/workspace/repos/scanfoldigv"));
-					outputText.append(result);
+					String result = executeShellCommand(cmd.toArray(new String[cmd.size()]), null, new File("/home/njbooher/workspace/repos/scanfoldigv"), false);
 					
 					if (!resultsInNewWindow) {
 						String startSentinel = "BATCHFILEFIRSTSENTINEL";
 						String endSentinel = "BATCHFILESECONDSENTINEL";
 						String batchFile = result.substring(result.indexOf(startSentinel) + startSentinel.length(), result.indexOf(endSentinel));
-						outputText.append(batchFile);
 
 						CommandExecutor cmdExe = new CommandExecutor(IGV.getInstance());
 						BufferedReader reader = null;
