@@ -85,7 +85,7 @@ public class ScanFoldGui extends JDialog {
 	private JLabel lblTemperature;
 	private JLabel lblCompetition;
 	private JButton runButton;
-	private JButton cancelButton;
+	private JButton closeButton;
 	private JTextArea outputText;
 	private JScrollPane outputScroll;
     PrintStream systemOutStream;
@@ -342,9 +342,9 @@ public class ScanFoldGui extends JDialog {
 				getRootPane().setDefaultButton(runButton);
 			}
 			{
-				cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
+				closeButton = new JButton("Close");
+				closeButton.addActionListener(e -> close());
+				buttonPane.add(closeButton);
 			}
 		}
 		
