@@ -521,6 +521,30 @@ public class ScanFoldGui extends JDialog {
         }
     }
 
+    private void runBatchFile(String batchFile) {
+		CommandExecutor cmdExe = new CommandExecutor(IGV.getInstance());
+		BufferedReader reader = null;
+		String inLine;
+		try {
+			reader = ParsingUtils.openBufferedReader(batchFile);
+			while ((inLine = reader.readLine()) != null) {
+				if (!(inLine.startsWith("#") || inLine.startsWith("//"))) {
+					cmdExe.execute(inLine);
+				}
+			}
+		} catch (IOException ioe) {
+			throw new DataLoadException(ioe.getMessage(), batchFile);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					showMessage(e.getMessage());
+				}
+			}
+		}
+    }
+    
     private void run() {
 		SwingWorker swingWorker = new IgvToolsSwingWorker() {
 
@@ -559,28 +583,7 @@ public class ScanFoldGui extends JDialog {
 						String startSentinel = "BATCHFILEFIRSTSENTINEL";
 						String endSentinel = "BATCHFILESECONDSENTINEL";
 						String batchFile = result.substring(result.indexOf(startSentinel) + startSentinel.length(), result.indexOf(endSentinel));
-
-						CommandExecutor cmdExe = new CommandExecutor(IGV.getInstance());
-						BufferedReader reader = null;
-						String inLine;
-						try {
-							reader = ParsingUtils.openBufferedReader(batchFile);
-							while ((inLine = reader.readLine()) != null) {
-								if (!(inLine.startsWith("#") || inLine.startsWith("//"))) {
-									cmdExe.execute(inLine);
-								}
-							}
-						} catch (IOException ioe) {
-							throw new DataLoadException(ioe.getMessage(), batchFile);
-						} finally {
-							if (reader != null) {
-								try {
-									reader.close();
-								} catch (IOException e) {
-									showMessage(e.getMessage());
-								}
-							}
-						}
+						runBatchFile(batchFile);
 					}
 					
 				} catch (IOException e) {
