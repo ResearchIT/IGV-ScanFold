@@ -1,5 +1,9 @@
 # scanfoldigvpatch
 
+## Requirements
+* python3
+* jdk 11 (newer may work, haven't tested)
+
 ## Build IGV (CI currently only does this)
 
 1. clone this repository recursively
