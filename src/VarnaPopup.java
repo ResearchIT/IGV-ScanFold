@@ -11,8 +11,8 @@ import fr.orsay.lri.varna.VARNAPanel;
 import fr.orsay.lri.varna.exceptions.ExceptionNonEqualLength;
 
 public class VarnaPopup extends JDialog {
-	public VarnaPopup() {
-		setTitle("scanfoldgui");
+	public VarnaPopup(String windowTitle, String sequence, String structure) {
+		setTitle(windowTitle);
 		setBounds(100, 100, 450, 300);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{450, 0};
@@ -22,7 +22,7 @@ public class VarnaPopup extends JDialog {
 		getContentPane().setLayout(gridBagLayout);
 		{
 			try {
-				JPanel panel = new fr.orsay.lri.varna.VARNAPanel("GACTCTGCGCAGAGCACTTTGGGTCCGGAGGGCGAGACTCCGGCGGAAGCATTCCCGGGCGGGTGACCCAGCACGGTC CCTCTTGGAATTGGATTCGCCATTTTATTTTTCTTGCTGCT", "..((((((.((((....)))).))..))))(((((((....((((((..((...(((((.(((.((((......)))).))))))))...))..))))))..........)))))))...");
+				JPanel panel = new fr.orsay.lri.varna.VARNAPanel(sequence, structure);
 				GridBagConstraints gbc_panel = new GridBagConstraints();
 				gbc_panel.insets = new Insets(0, 0, 5, 0);
 				gbc_panel.fill = GridBagConstraints.BOTH;

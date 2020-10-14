@@ -90,7 +90,6 @@ public class ScanFoldGui extends JDialog {
 	private JScrollPane outputScroll;
     PrintStream systemOutStream;
     PrintStream systemErrStream;
-    private JButton varnaButton;
     private JCheckBox globalRefold;
 
 	/**
@@ -318,23 +317,6 @@ public class ScanFoldGui extends JDialog {
 			gbc_buttonPane.gridx = 0;
 			gbc_buttonPane.gridy = 3;
 			getContentPane().add(buttonPane, gbc_buttonPane);
-			{
-				varnaButton = new JButton("VarnaDemo");
-				varnaButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						try {
-							VarnaPopup dialog = new VarnaPopup();
-							dialog.setModalityType(ModalityType.APPLICATION_MODAL);
-							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-							dialog.setVisible(true);
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
-					}
-				});
-				buttonPane.add(varnaButton);
-			}
 			{
 				runButton = new JButton("Run");
 				runButton.addActionListener(e -> run());

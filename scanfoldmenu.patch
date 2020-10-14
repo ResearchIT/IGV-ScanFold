@@ -1,3 +1,24 @@
+diff --git a/src/main/java/org/broad/igv/track/TrackLoader.java b/src/main/java/org/broad/igv/track/TrackLoader.java
+index f3c20f2cd..958e74e70 100644
+--- a/src/main/java/org/broad/igv/track/TrackLoader.java
++++ b/src/main/java/org/broad/igv/track/TrackLoader.java
+@@ -76,6 +76,7 @@ import org.broad.igv.renderer.MutationRenderer;
+ import org.broad.igv.renderer.PointsRenderer;
+ import org.broad.igv.sam.*;
+ import org.broad.igv.sam.reader.IndexNotFoundException;
++import org.broad.igv.scanfold.VarnaLoader;
+ import org.broad.igv.tdf.TDFDataSource;
+ import org.broad.igv.tdf.TDFReader;
+ import org.broad.igv.ui.IGV;
+@@ -210,6 +211,8 @@ public class TrackLoader {
+                 loadMutFile(locator, newTracks, genome); // Must be tried before ".maf" test below
+             } else if (typeString.endsWith(".maf")) {
+                 loadMultipleAlignmentTrack(locator, newTracks, genome);
++            } else if (typeString.endsWith(".scanfoldvarna")) {
++                VarnaLoader.loadDotBracket(locator.getPath());
+             } else if (AttributeManager.isSampleInfoFile(locator)) {
+                 // This might be a sample information file.
+                 AttributeManager.getInstance().loadSampleInfo(locator);
 diff --git a/src/main/java/org/broad/igv/track/TrackMenuUtils.java b/src/main/java/org/broad/igv/track/TrackMenuUtils.java
 index bacce967b..aef2bd7b6 100644
 --- a/src/main/java/org/broad/igv/track/TrackMenuUtils.java

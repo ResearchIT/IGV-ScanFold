@@ -86,7 +86,8 @@ LOGFILE=$(mktemp -p ${WORKDIR} outputXXX.log.txt)
 FINALPARTNERS=$(mktemp -p ${WORKDIR} outputXXX.final_partners.txt)
 BPTRACK=$(mktemp -p ${WORKDIR} outputXXX.IGV.bp)
 FASTATRACK=$(mktemp -p ${WORKDIR} outputXXX.input.fa)
-DBNFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.-2filter.dbn)
+#DBNFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.-2filter.dbn)
+DBNFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.-2filter.scanfoldvarna)
 DBNFILEPATH1=$(mktemp -p ${WORKDIR} outputXXX.dbnfile1.dbn)
 DBNFILEPATH2=$(mktemp -p ${WORKDIR} outputXXX.dbnfile2.dbn)
 DBNFILEPATH3=$(mktemp -p ${WORKDIR} outputXXX.dbnfile3.dbn)
@@ -122,6 +123,7 @@ echo "load ${MFEWIGFILEPATH}" >> ${WORKDIR}/batchfile.txt
 echo "load ${ZSCOREWIGFILEPATH}" >> ${WORKDIR}/batchfile.txt
 echo "load ${PVALUEWIGFILEPATH}" >> ${WORKDIR}/batchfile.txt
 echo "load ${EDWIGFILEPATH}" >> ${WORKDIR}/batchfile.txt
+echo "load ${DBNFILEPATH}" >> ${WORKDIR}/batchfile.txt
 
 if [ -n "${JARLOCATION}" ]; then
   java -showversion --module-path="${JARDIR}" -Xmx4g \
