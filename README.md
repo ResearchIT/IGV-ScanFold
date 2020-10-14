@@ -20,7 +20,7 @@ sudo dnf install git zip patch java-11-openjdk.x86_64 gcc g++ python3-devel zlib
 1. `./scripts/apply_patch.sh`
 1. `./scripts/build_igv.sh`
 
-### Build ScanFold and ViennaRNA
+### Build ScanFold and dependencies
 
 1. `./scripts/build_scanfold_env.sh`
 1. `./scripts/build_viennarna.sh`  
