@@ -31,6 +31,7 @@ import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.swing.border.TitledBorder;
 
@@ -536,8 +537,10 @@ public class ScanFoldGui extends JDialog {
 					
 					String inputFile = writeSequenceToTempFile();
 					
+					Map<String, String> env = System.getenv();
+					
 					ArrayList<String> cmd = new ArrayList<>(Arrays.asList(new String[] {
-							"/home/njbooher/workspace/repos/scanfoldigv/scripts/run_scanfold.sh",
+							env.get("SCANFOLDRUNSCRIPT"),
 							"-i", inputFile,
 							"-n", sequenceName,
 							"-c", competition.getText(),
@@ -559,7 +562,7 @@ public class ScanFoldGui extends JDialog {
 					}
 					
 					
-					String result = executeShellCommand(cmd.toArray(new String[cmd.size()]), null, new File("/home/njbooher/workspace/repos/scanfoldigv"), false);
+					String result = executeShellCommand(cmd.toArray(new String[cmd.size()]), null, new File(env.get("SCANFOLDRUNDIR")), false);
 					
 					if (!resultsInNewWindow) {
 						String startSentinel = "BATCHFILEFIRSTSENTINEL";
