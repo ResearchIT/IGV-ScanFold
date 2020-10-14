@@ -22,7 +22,7 @@ public class VarnaPopup extends JDialog {
 		getContentPane().setLayout(gridBagLayout);
 		{
 			try {
-				JPanel panel = new fr.orsay.lri.varna.VARNAPanel("CCCCAUAUGGGGACC", "((((....))))...");
+				JPanel panel = new fr.orsay.lri.varna.VARNAPanel("GACTCTGCGCAGAGCACTTTGGGTCCGGAGGGCGAGACTCCGGCGGAAGCATTCCCGGGCGGGTGACCCAGCACGGTC CCTCTTGGAATTGGATTCGCCATTTTATTTTTCTTGCTGCT", "..((((((.((((....)))).))..))))(((((((....((((((..((...(((((.(((.((((......)))).))))))))...))..))))))..........)))))))...");
 				GridBagConstraints gbc_panel = new GridBagConstraints();
 				gbc_panel.insets = new Insets(0, 0, 5, 0);
 				gbc_panel.fill = GridBagConstraints.BOTH;
