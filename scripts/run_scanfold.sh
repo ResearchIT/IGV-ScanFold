@@ -51,8 +51,11 @@ export DATAPATH=${PWD}/env/data_tables
 
 INPUTFNAME=$(basename ${INPUTFILE})
 
+SCRIPTDIR=${PWD}/ScanFold/
 WORKDIR=$(mktemp -d)
 cp ${INPUTFILE} ${WORKDIR}/
+
+pushd ${WORKDIR}
 
 SCANOUTPATH=$(mktemp -p ${WORKDIR} outputXXX.scan-out.tsv)
 ZSCOREWIGFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.zscore.wig)
@@ -62,7 +65,7 @@ PVALUEWIGFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.pvalue.wig)
 FASTAFILEPATH=$(mktemp -p ${WORKDIR} inputXXX.fasta)
 FASTAINDEX=$(mktemp -p ${WORKDIR} inputXXX.fasta.fai)
 
-python ScanFold/ScanFold-Scan_IGV.py \
+python ${SCRIPTDIR}/ScanFold-Scan_IGV.py \
     -i ${INPUTFILE} \
     -r ${RANDOMIZATIONS} \
     -s ${STEPSIZE} \
@@ -96,7 +99,7 @@ STRUCTUREEXTRACTFILE=$(mktemp -p ${WORKDIR} outputXXX.ExtractedStructures.txt)
 FINALPARTNERSWIG=$(mktemp -p ${WORKDIR} outputXXX.final_partners_zscore.wig)
 FASTAINDEX=$(mktemp -p ${WORKDIR} outputXXX.fai)
 
-python ScanFold/ScanFold-Fold_IGV.py \
+python ${SCRIPTDIR}/ScanFold-Fold_IGV.py \
     -i ${SCANOUTPATH} \
     --name "${SEQUENCENAME}" \
     -c ${COMPETITION} \
@@ -116,6 +119,8 @@ python ScanFold/ScanFold-Fold_IGV.py \
     --structure_extract_file ${STRUCTUREEXTRACTFILE} \
     --fasta_index ${FASTAINDEX} \
     ${GLOBALREFOLD}
+
+popd
 
 echo "load ${BPTRACK}" >> ${WORKDIR}/batchfile.txt
 echo "load ${FINALPARTNERSWIG}" >> ${WORKDIR}/batchfile.txt
