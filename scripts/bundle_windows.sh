@@ -67,9 +67,9 @@ CONFIGURE_OPTIONS=" --without-swig \
                     --disable-lto"
 ./configure --host=x86_64-w64-mingw32 ${CONFIGURE_OPTIONS}
 make
-mkdir -p ${BUNDLE_PREFIX}/
+mkdir -p ${BUNDLE_PREFIX}/ViennaRNA
 cp /usr/lib/gcc/x86_64-w64-mingw32/*-win32/libssp-0.dll ${BUNDLE_PREFIX}/ViennaRNA/
-mv src/bin/RNAfold.exe ${BUNDLE_PREFIX}/ViennaRNA
+mv src/bin/RNAfold.exe ${BUNDLE_PREFIX}/ViennaRNA/
 popd
 popd
 
