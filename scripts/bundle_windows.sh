@@ -55,6 +55,7 @@ pushd lib
 curl -L -O https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.4.16/ViennaRNA-2.4.16.tar.gz
 tar -xzvf ViennaRNA-2.4.16.tar.gz
 pushd ViennaRNA-2.4.16
+mkdir target
 export ac_cv_func_realloc_0_nonnull=yes
 export ac_cv_func_malloc_0_nonnull=yes
 CONFIGURE_OPTIONS=" --without-swig \
@@ -65,11 +66,12 @@ CONFIGURE_OPTIONS=" --without-swig \
                     --disable-pthreads \
                     --disable-tty-colors \
                     --disable-lto"
-./configure --host=x86_64-w64-mingw32 ${CONFIGURE_OPTIONS}
+./configure --host=x86_64-w64-mingw32 --prefix=${PWD}/target ${CONFIGURE_OPTIONS}
 make
+make install
 mkdir -p ${BUNDLE_PREFIX}/ViennaRNA
 cp /usr/lib/gcc/x86_64-w64-mingw32/*-win32/libssp-0.dll ${BUNDLE_PREFIX}/ViennaRNA/
-mv src/bin/RNAfold.exe ${BUNDLE_PREFIX}/ViennaRNA/
+mv target/bin/RNAfold.exe ${BUNDLE_PREFIX}/ViennaRNA/
 popd
 popd
 
