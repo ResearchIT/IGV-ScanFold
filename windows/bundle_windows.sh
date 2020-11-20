@@ -93,5 +93,5 @@ popd
 # main
 pushd ${BUNDLE_PREFIX}
 cp ${TOPLEVEL}/windows/runme.bat .
-zip ${TOPLEVEL}/scanfoldigv-windows.zip *
+zip -r ${TOPLEVEL}/scanfoldigv-windows.zip *
 popd
