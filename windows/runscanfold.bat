@@ -73,7 +73,7 @@ SET PVALUEWIGFILEPATH=%WORKDIR%\outputXXX.pvalue.wig
 SET FASTAFILEPATH=%WORKDIR%\inputXXX.fasta
 SET FASTAINDEX=%WORKDIR%\inputXXX.fasta.fai
 
-%BASEPATH%\scanfold\python-3.8.6-embed-amd64\python %BASEPATH%\scanfold\ScanFold-Scan_IGV.py ^
+%BASEPATH%\scanfold\python-3.8.6-embed-amd64\python -u %BASEPATH%\scanfold\ScanFold-Scan_IGV.py ^
     -i %INPUTFILE% ^
     -r %RANDOMIZATIONS% ^
     -s %STEPSIZE% ^
@@ -106,7 +106,7 @@ SET STRUCTUREEXTRACTFILE=%WORKDIR%\outputXXX.ExtractedStructures.txt
 SET FINALPARTNERSWIG=%WORKDIR%\outputXXX.final_partners_zscore.wig
 SET FASTAINDEX=%WORKDIR%\outputXXX.fai
 
-%BASEPATH%\scanfold\python-3.8.6-embed-amd64\python %BASEPATH%\scanfold\ScanFold-Fold_IGV.py ^
+%BASEPATH%\scanfold\python-3.8.6-embed-amd64\python -u %BASEPATH%\scanfold\ScanFold-Fold_IGV.py ^
     -i %SCANOUTPATH% ^
     --name "%SEQUENCENAME%" ^
     -c %COMPETITION% ^
