@@ -27,9 +27,3 @@ jobs:
     - name: Build with Gradle
       working-directory: igv
       run: ./gradlew createDist
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2
-      if: success()
-      with:
-        name: IGV
-        path: igv/build/IGV-dist
