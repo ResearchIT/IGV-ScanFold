@@ -75,6 +75,7 @@ cp /usr/lib/gcc/x86_64-w64-mingw32/*-win32/libgcc_s_seh-1.dll ${BUNDLE_PREFIX}/V
 cp /usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll ${BUNDLE_PREFIX}/ViennaRNA/
 cp /usr/lib/gcc/x86_64-w64-mingw32/*-win32/libgomp-1.dll ${BUNDLE_PREFIX}/ViennaRNA/
 mv target/bin/RNAfold.exe ${BUNDLE_PREFIX}/ViennaRNA/
+cp license.txt ${BUNDLE_PREFIX}/ViennaRNA/
 popd
 popd
 
