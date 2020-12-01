@@ -39,9 +39,9 @@ unzip -d site-packages biopython-1.78-cp38-cp38-win_amd64.whl
 rm biopython-1.78-cp38-cp38-win_amd64.whl
 
 # numpy
-curl -L -O https://files.pythonhosted.org/packages/40/db/5060f18b0116f00ee73f8365efc9c95bd5496946290b0e7c97b6ee89dffe/numpy-1.19.4-cp38-cp38-win_amd64.whl
-unzip -d site-packages numpy-1.19.4-cp38-cp38-win_amd64.whl
-rm numpy-1.19.4-cp38-cp38-win_amd64.whl
+curl -L -O https://files.pythonhosted.org/packages/a4/23/13d2991c156cfd22bfd4a9ae6dcb1a9372004a0e16508b680d17f3280eb4/numpy-1.19.3-cp38-cp38-win_amd64.whl
+unzip -d site-packages numpy-1.19.3-cp38-cp38-win_amd64.whl
+rm numpy-1.19.3-cp38-cp38-win_amd64.whl
 popd
 
 # scanfold
