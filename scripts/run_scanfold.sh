@@ -1,6 +1,6 @@
 . env/bin/activate
 
-while getopts ":c:gi:j:n:r:s:t:w:y:z:" opt; do
+while getopts ":c:gi:j:n:r:s:t:w:y:z:d:" opt; do
   case ${opt} in
     c )
       COMPETITION=$OPTARG
@@ -37,6 +37,9 @@ while getopts ":c:gi:j:n:r:s:t:w:y:z:" opt; do
     z )
       STARTPOS=$OPTARG
       ;;
+    d )
+      STRAND=$OPTARG
+      ;;
     \? )
       echo "Invalid option: $OPTARG" 1>&2
       ;;
@@ -71,6 +74,7 @@ python ${SCRIPTDIR}/ScanFold-Scan_IGV.py \
     -s ${STEPSIZE} \
     -t ${TEMPERATURE} \
     -w ${WINDOWSIZE} \
+    -d ${STRAND} \
     --start ${STARTPOS} \
     --name "${SEQUENCENAME}" \
     -type ${RANDOMIZATIONTYPE} \
@@ -101,6 +105,7 @@ FASTAINDEX=$(mktemp ${WORKDIR}/outputXXX.fai)
 
 python ${SCRIPTDIR}/ScanFold-Fold_IGV.py \
     -i ${SCANOUTPATH} \
+    -d ${STRAND} \
     --name "${SEQUENCENAME}" \
     -c ${COMPETITION} \
     --out1 ${OUT1} \

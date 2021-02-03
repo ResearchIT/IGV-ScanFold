@@ -64,6 +64,7 @@ import java.awt.Cursor;
 
 import javax.swing.JTextArea;
 import java.awt.Rectangle;
+import javax.swing.DefaultComboBoxModel;
 
 public class ScanFoldGui extends JDialog {
 	
@@ -92,6 +93,8 @@ public class ScanFoldGui extends JDialog {
     PrintStream systemOutStream;
     PrintStream systemErrStream;
     private JCheckBox globalRefold;
+    private JLabel lblStrand;
+    private JComboBox strand;
 
 	/**
 	 * Launch the application.
@@ -127,9 +130,9 @@ public class ScanFoldGui extends JDialog {
 		getContentPane().add(contentPanel, gbc_contentPanel);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
 		gbl_contentPanel.columnWidths = new int[]{119, 0, 0};
-		gbl_contentPanel.rowHeights = new int[]{38, 35, 47, 41, 34, 0, 23, 0};
-		gbl_contentPanel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPanel.rowHeights = new int[]{38, 35, 47, 41, 34, 0, 23, 0, 0};
+		gbl_contentPanel.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
 		{
 			lblWindowSize = new JLabel("Window Size");
@@ -261,16 +264,38 @@ public class ScanFoldGui extends JDialog {
 			contentPanel.add(competition, gbc_competition);
 		}
 		{
+			lblStrand = new JLabel("Strand");
+			GridBagConstraints gbc_lblStrand = new GridBagConstraints();
+			gbc_lblStrand.anchor = GridBagConstraints.EAST;
+			gbc_lblStrand.insets = new Insets(0, 0, 5, 5);
+			gbc_lblStrand.gridx = 0;
+			gbc_lblStrand.gridy = 6;
+			contentPanel.add(lblStrand, gbc_lblStrand);
+		}
+		{
+			strand = new JComboBox();
+			strand.setModel(new DefaultComboBoxModel(new String[] {"forward", "reverse"}));
+			strand.setSelectedIndex(0);
+			strand.setToolTipText("");
+			GridBagConstraints gbc_strand = new GridBagConstraints();
+			gbc_strand.insets = new Insets(0, 0, 0, 5);
+			gbc_strand.fill = GridBagConstraints.HORIZONTAL;
+			gbc_strand.gridx = 1;
+			gbc_strand.gridy = 6;
+			contentPanel.add(strand, gbc_strand);
+		}
+		{
 			globalRefold = new JCheckBox("Global Refold");
 			globalRefold.setSelected(true);
 			globalRefold.setToolTipText("When checked, this option will refold your entire sequence while constraining the most significant base pairs (with Zavg values < -1 and < -2).\n");
 			GridBagConstraints gbc_globalRefold = new GridBagConstraints();
-			gbc_globalRefold.insets = new Insets(0, 0, 0, 5);
+			gbc_globalRefold.insets = new Insets(0, 0, 5, 5);
 			gbc_globalRefold.anchor = GridBagConstraints.WEST;
 			gbc_globalRefold.gridx = 0;
-			gbc_globalRefold.gridy = 6;
+			gbc_globalRefold.gridy = 7;
 			contentPanel.add(globalRefold, gbc_globalRefold);
 		}
+
 
 		{
 			JPanel outputPanel = new JPanel();
@@ -549,6 +574,7 @@ public class ScanFoldGui extends JDialog {
 							"-r", randomizations.getText(),
 							"-y", shuffleType.getText(),
 							"-t", temperature.getText(),
+							"-d", (String) strand.getSelectedItem(),
 							"-z", String.valueOf(sequenceStart),
 					}));
 					

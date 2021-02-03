@@ -1,6 +1,6 @@
 setlocal enableDelayedExpansion
 
-set "options=-c:"" -g: -i:"" -j:"" -n:"" -r:"" -s:"" -t:"" -w:"" -j:"" -y:"" -z:"""
+set "options=-c:"" -g: -i:"" -j:"" -n:"" -r:"" -s:"" -t:"" -w:"" -j:"" -y:"" -z:"" -d:"""
 
 :: https://stackoverflow.com/questions/1971824/windows-bat-file-optional-argument-parsing
 for %%O in (%options%) do for /f "tokens=1,* delims=:" %%A in ("%%O") do set "%%A=%%~B"
@@ -31,6 +31,7 @@ SET TEMPERATURE=!-t!
 SET WINDOWSIZE=!-w!
 SET RANDOMIZATIONTYPE=!-y!
 SET STARTPOS=!-z!
+SET STRAND=!-d!
 
 if not "!-g!"=="" (
 	SET GLOBALREFOLD=--global_refold
@@ -79,6 +80,7 @@ SET FASTAINDEX=%WORKDIR%\inputXXX.fasta.fai
     -s %STEPSIZE% ^
     -t %TEMPERATURE% ^
     -w %WINDOWSIZE% ^
+    -d %STRAND% ^
     --start %STARTPOS% ^
     --name "%SEQUENCENAME%" ^
     -type %RANDOMIZATIONTYPE% ^
@@ -110,6 +112,7 @@ SET FASTAINDEX=%WORKDIR%\outputXXX.fai
     -i %SCANOUTPATH% ^
     --name "%SEQUENCENAME%" ^
     -c %COMPETITION% ^
+    -d %STRAND% ^
     --out1 %OUT1% ^
     --out2 %OUT2% ^
     --out3 %OUT3% ^
