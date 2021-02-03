@@ -57,13 +57,13 @@ cp ${INPUTFILE} ${WORKDIR}/
 
 pushd ${WORKDIR}
 
-SCANOUTPATH=$(mktemp -p ${WORKDIR} outputXXX.scan-out.tsv)
-ZSCOREWIGFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.zscore.wig)
-MFEWIGFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.mfe.wig)
-EDWIGFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.ed.wig)
-PVALUEWIGFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.pvalue.wig)
-FASTAFILEPATH=$(mktemp -p ${WORKDIR} inputXXX.fasta)
-FASTAINDEX=$(mktemp -p ${WORKDIR} inputXXX.fasta.fai)
+SCANOUTPATH=$(mktemp ${WORKDIR}/outputXXX.scan-out.tsv)
+ZSCOREWIGFILEPATH=$(mktemp ${WORKDIR}/outputXXX.zscore.wig)
+MFEWIGFILEPATH=$(mktemp ${WORKDIR}/outputXXX.mfe.wig)
+EDWIGFILEPATH=$(mktemp ${WORKDIR}/outputXXX.ed.wig)
+PVALUEWIGFILEPATH=$(mktemp ${WORKDIR}/outputXXX.pvalue.wig)
+FASTAFILEPATH=$(mktemp ${WORKDIR}/inputXXX.fasta)
+FASTAINDEX=$(mktemp ${WORKDIR}/inputXXX.fasta.fai)
 
 python ${SCRIPTDIR}/ScanFold-Scan_IGV.py \
     -i ${INPUTFILE} \
@@ -82,22 +82,22 @@ python ${SCRIPTDIR}/ScanFold-Scan_IGV.py \
     --fasta_file_path ${FASTAFILEPATH} \
     --fasta_index ${FASTAINDEX}
 
-OUT1=$(mktemp -p ${WORKDIR} outputXXX.nofilter.ct)
-OUT2=$(mktemp -p ${WORKDIR} outputXXX.-1filter.ct)
-OUT3=$(mktemp -p ${WORKDIR} outputXXX.-2filter.ct)
-LOGFILE=$(mktemp -p ${WORKDIR} outputXXX.log.txt)
-FINALPARTNERS=$(mktemp -p ${WORKDIR} outputXXX.final_partners.txt)
-BPTRACK=$(mktemp -p ${WORKDIR} outputXXX.IGV.bp)
-FASTATRACK=$(mktemp -p ${WORKDIR} outputXXX.input.fa)
-#DBNFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.-2filter.dbn)
-DBNFILEPATH=$(mktemp -p ${WORKDIR} outputXXX.-2filter.scanfoldvarna)
-DBNFILEPATH1=$(mktemp -p ${WORKDIR} outputXXX.dbnfile1.dbn)
-DBNFILEPATH2=$(mktemp -p ${WORKDIR} outputXXX.dbnfile2.dbn)
-DBNFILEPATH3=$(mktemp -p ${WORKDIR} outputXXX.dbnfile3.dbn)
-DBNFILEPATH4=$(mktemp -p ${WORKDIR} outputXXX.DBNstructures.txt)
-STRUCTUREEXTRACTFILE=$(mktemp -p ${WORKDIR} outputXXX.ExtractedStructures.txt)
-FINALPARTNERSWIG=$(mktemp -p ${WORKDIR} outputXXX.final_partners_zscore.wig)
-FASTAINDEX=$(mktemp -p ${WORKDIR} outputXXX.fai)
+OUT1=$(mktemp ${WORKDIR}/outputXXX.nofilter.ct)
+OUT2=$(mktemp ${WORKDIR}/outputXXX.-1filter.ct)
+OUT3=$(mktemp ${WORKDIR}/outputXXX.-2filter.ct)
+LOGFILE=$(mktemp ${WORKDIR}/outputXXX.log.txt)
+FINALPARTNERS=$(mktemp ${WORKDIR}/outputXXX.final_partners.txt)
+BPTRACK=$(mktemp ${WORKDIR}/outputXXX.IGV.bp)
+FASTATRACK=$(mktemp ${WORKDIR}/outputXXX.input.fa)
+#DBNFILEPATH=$(mktemp ${WORKDIR}/outputXXX.-2filter.dbn)
+DBNFILEPATH=$(mktemp ${WORKDIR}/outputXXX.-2filter.scanfoldvarna)
+DBNFILEPATH1=$(mktemp ${WORKDIR}/outputXXX.dbnfile1.dbn)
+DBNFILEPATH2=$(mktemp ${WORKDIR}/outputXXX.dbnfile2.dbn)
+DBNFILEPATH3=$(mktemp ${WORKDIR}/outputXXX.dbnfile3.dbn)
+DBNFILEPATH4=$(mktemp ${WORKDIR}/outputXXX.DBNstructures.txt)
+STRUCTUREEXTRACTFILE=$(mktemp ${WORKDIR}/outputXXX.ExtractedStructures.txt)
+FINALPARTNERSWIG=$(mktemp ${WORKDIR}/outputXXX.final_partners_zscore.wig)
+FASTAINDEX=$(mktemp ${WORKDIR}/outputXXX.fai)
 
 python ${SCRIPTDIR}/ScanFold-Fold_IGV.py \
     -i ${SCANOUTPATH} \
