@@ -17,7 +17,7 @@ unzip build/distributions/IGV_MacApp_user_WithJava.zip
 mv IGV_User.app ${BUNDLE_PREFIX}/IGV.app
 popd
 
-which python3
+ls -la $(which python3)
 
 # main
 pushd ${BUNDLE_PREFIX}
