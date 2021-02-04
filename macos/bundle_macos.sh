@@ -12,6 +12,6 @@ popd
 
 pushd igv
 ./gradlew clean
-./gradlew createMacWithJavaDistZip -PjdkBundleWindows=${TOPLEVEL}/lib/jdk-11.0.10+9-jre/Contents/Home
+./gradlew createMacWithJavaDistZip -PjdkBundleMac=${TOPLEVEL}/lib/jdk-11.0.10+9-jre/Contents/Home
 mv build/IGV-MacApp-dist/IGV_user ${BUNDLE_PREFIX}/IGV
 popd
