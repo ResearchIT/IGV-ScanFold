@@ -17,9 +17,8 @@ unzip build/distributions/IGV_MacApp_user_WithJava.zip
 mv IGV_User.app ${BUNDLE_PREFIX}/IGV.app
 popd
 
-ls -la $(which python3)
-
 # main
 pushd ${BUNDLE_PREFIX}
+cp -Rp /usr/local/Cellar/python@3.9/* python3.9
 zip -r ${TOPLEVEL}/scanfoldigv-macos.zip *
 popd
