@@ -15,3 +15,8 @@ pushd igv
 ./gradlew createMacWithJavaDistZip -PjdkBundleMac=${TOPLEVEL}/lib/jdk-11.0.10+9-jre/Contents/Home
 mv build ${BUNDLE_PREFIX}/IGV
 popd
+
+# main
+pushd ${BUNDLE_PREFIX}
+zip -r ${TOPLEVEL}/scanfoldigv-macos.zip *
+popd
