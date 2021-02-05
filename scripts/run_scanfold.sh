@@ -1,6 +1,6 @@
 . env/bin/activate
 
-while getopts ":c:gi:j:n:r:s:t:w:y:z:d:" opt; do
+while getopts ":c:gi:j:n:r:s:t:w:y:z:d:o:" opt; do
   case ${opt} in
     c )
       COMPETITION=$OPTARG
