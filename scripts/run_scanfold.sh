@@ -40,6 +40,9 @@ while getopts ":c:gi:j:n:r:s:t:w:y:z:d:" opt; do
     d )
       STRAND=$OPTARG
       ;;
+    o )
+      WORKDIR=$OPTARG
+      ;;
     \? )
       echo "Invalid option: $OPTARG" 1>&2
       ;;
@@ -55,7 +58,6 @@ export DATAPATH=${PWD}/env/data_tables
 INPUTFNAME=$(basename ${INPUTFILE})
 
 SCRIPTDIR=${PWD}/ScanFold/
-WORKDIR=$(mktemp -d)
 cp ${INPUTFILE} ${WORKDIR}/
 
 pushd ${WORKDIR}

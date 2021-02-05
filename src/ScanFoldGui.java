@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -45,6 +46,7 @@ import org.broad.igv.feature.genome.GenomeManager;
 import org.broad.igv.track.SequenceTrack;
 import org.broad.igv.ui.IGV;
 import org.broad.igv.ui.WaitCursorManager;
+import org.broad.igv.ui.util.FileDialogUtils;
 import org.broad.igv.ui.util.MessageUtils;
 import org.broad.igv.util.LongRunningTask;
 import org.broad.igv.util.ParsingUtils;
@@ -95,6 +97,9 @@ public class ScanFoldGui extends JDialog {
     private JCheckBox globalRefold;
     private JLabel lblStrand;
     private JComboBox strand;
+    private JLabel lblOutputDirectory;
+    private JTextField outputDirectory;
+    private JButton outputDirectoryBrowse;
 
 	/**
 	 * Launch the application.
@@ -129,10 +134,10 @@ public class ScanFoldGui extends JDialog {
 		gbc_contentPanel.gridy = 0;
 		getContentPane().add(contentPanel, gbc_contentPanel);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
-		gbl_contentPanel.columnWidths = new int[]{119, 0, 0};
-		gbl_contentPanel.rowHeights = new int[]{38, 35, 47, 41, 34, 0, 23, 0, 0};
-		gbl_contentPanel.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPanel.columnWidths = new int[]{119, 0, 0, 0};
+		gbl_contentPanel.rowHeights = new int[]{38, 35, 47, 41, 34, 0, 23, 0, 0, 0};
+		gbl_contentPanel.columnWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
 		{
 			lblWindowSize = new JLabel("Window Size");
@@ -149,7 +154,7 @@ public class ScanFoldGui extends JDialog {
 			lblWindowSize.setLabelFor(windowSize);
 			windowSize.setText("120");
 			GridBagConstraints gbc_windowSize = new GridBagConstraints();
-			gbc_windowSize.insets = new Insets(0, 0, 5, 0);
+			gbc_windowSize.insets = new Insets(0, 0, 5, 5);
 			gbc_windowSize.fill = GridBagConstraints.HORIZONTAL;
 			gbc_windowSize.gridx = 1;
 			gbc_windowSize.gridy = 0;
@@ -172,7 +177,7 @@ public class ScanFoldGui extends JDialog {
 			stepSize.setText("10");
 			stepSize.setColumns(10);
 			GridBagConstraints gbc_stepSize = new GridBagConstraints();
-			gbc_stepSize.insets = new Insets(0, 0, 5, 0);
+			gbc_stepSize.insets = new Insets(0, 0, 5, 5);
 			gbc_stepSize.fill = GridBagConstraints.HORIZONTAL;
 			gbc_stepSize.gridx = 1;
 			gbc_stepSize.gridy = 1;
@@ -194,7 +199,7 @@ public class ScanFoldGui extends JDialog {
 			randomizations.setText("30");
 			randomizations.setColumns(10);
 			GridBagConstraints gbc_randomizations = new GridBagConstraints();
-			gbc_randomizations.insets = new Insets(0, 0, 5, 0);
+			gbc_randomizations.insets = new Insets(0, 0, 5, 5);
 			gbc_randomizations.fill = GridBagConstraints.HORIZONTAL;
 			gbc_randomizations.gridx = 1;
 			gbc_randomizations.gridy = 2;
@@ -215,7 +220,7 @@ public class ScanFoldGui extends JDialog {
 			shuffleType.setText("mono");
 			shuffleType.setToolTipText("");
 			GridBagConstraints gbc_shuffleType = new GridBagConstraints();
-			gbc_shuffleType.insets = new Insets(0, 0, 5, 0);
+			gbc_shuffleType.insets = new Insets(0, 0, 5, 5);
 			gbc_shuffleType.fill = GridBagConstraints.HORIZONTAL;
 			gbc_shuffleType.gridx = 1;
 			gbc_shuffleType.gridy = 3;
@@ -236,7 +241,7 @@ public class ScanFoldGui extends JDialog {
 			temperature.setToolTipText("");
 			temperature.setText("37");
 			GridBagConstraints gbc_temperature = new GridBagConstraints();
-			gbc_temperature.insets = new Insets(0, 0, 5, 0);
+			gbc_temperature.insets = new Insets(0, 0, 5, 5);
 			gbc_temperature.fill = GridBagConstraints.HORIZONTAL;
 			gbc_temperature.gridx = 1;
 			gbc_temperature.gridy = 4;
@@ -257,7 +262,7 @@ public class ScanFoldGui extends JDialog {
 			competition.setToolTipText("");
 			competition.setText("1");
 			GridBagConstraints gbc_competition = new GridBagConstraints();
-			gbc_competition.insets = new Insets(0, 0, 5, 0);
+			gbc_competition.insets = new Insets(0, 0, 5, 5);
 			gbc_competition.fill = GridBagConstraints.HORIZONTAL;
 			gbc_competition.gridx = 1;
 			gbc_competition.gridy = 5;
@@ -278,21 +283,59 @@ public class ScanFoldGui extends JDialog {
 			strand.setSelectedIndex(0);
 			strand.setToolTipText("");
 			GridBagConstraints gbc_strand = new GridBagConstraints();
-			gbc_strand.insets = new Insets(0, 0, 0, 5);
+			gbc_strand.insets = new Insets(0, 0, 5, 5);
 			gbc_strand.fill = GridBagConstraints.HORIZONTAL;
 			gbc_strand.gridx = 1;
 			gbc_strand.gridy = 6;
 			contentPanel.add(strand, gbc_strand);
 		}
 		{
+			lblOutputDirectory = new JLabel("Output Folder");
+			GridBagConstraints gbc_lblOutputDirectory = new GridBagConstraints();
+			gbc_lblOutputDirectory.anchor = GridBagConstraints.EAST;
+			gbc_lblOutputDirectory.insets = new Insets(0, 0, 5, 5);
+			gbc_lblOutputDirectory.gridx = 0;
+			gbc_lblOutputDirectory.gridy = 7;
+			contentPanel.add(lblOutputDirectory, gbc_lblOutputDirectory);
+		}
+		{
+			outputDirectory = new JTextField();
+			outputDirectory.setText(getTempOuputDirectory());
+			lblOutputDirectory.setLabelFor(outputDirectory);
+			GridBagConstraints gbc_outputDirectory = new GridBagConstraints();
+			gbc_outputDirectory.insets = new Insets(0, 0, 5, 5);
+			gbc_outputDirectory.fill = GridBagConstraints.HORIZONTAL;
+			gbc_outputDirectory.gridx = 1;
+			gbc_outputDirectory.gridy = 7;
+			contentPanel.add(outputDirectory, gbc_outputDirectory);
+		}
+		{
+			outputDirectoryBrowse = new JButton("Browse");
+			GridBagConstraints gbc_outputDirectoryBrowse = new GridBagConstraints();
+			gbc_outputDirectoryBrowse.insets = new Insets(0, 0, 5, 0);
+			gbc_outputDirectoryBrowse.gridx = 2;
+			gbc_outputDirectoryBrowse.gridy = 7;
+			outputDirectoryBrowse.addActionListener(e -> {
+	            try {
+	                File chosenFile = FileDialogUtils.chooseDirectory("Choose Output Directory:", new File(outputDirectory.getText()));
+	                if (!chosenFile.isDirectory()) {
+	                	chosenFile = chosenFile.getParentFile();
+	                }
+	                outputDirectory.setText(chosenFile.getAbsolutePath());
+	            } catch (NullPointerException npe) {
+	            }
+	        });
+			contentPanel.add(outputDirectoryBrowse, gbc_outputDirectoryBrowse);
+		}
+		{
 			globalRefold = new JCheckBox("Global Refold");
 			globalRefold.setSelected(true);
 			globalRefold.setToolTipText("When checked, this option will refold your entire sequence while constraining the most significant base pairs (with Zavg values < -1 and < -2).\n");
 			GridBagConstraints gbc_globalRefold = new GridBagConstraints();
-			gbc_globalRefold.insets = new Insets(0, 0, 5, 5);
+			gbc_globalRefold.insets = new Insets(0, 0, 0, 5);
 			gbc_globalRefold.anchor = GridBagConstraints.WEST;
 			gbc_globalRefold.gridx = 0;
-			gbc_globalRefold.gridy = 7;
+			gbc_globalRefold.gridy = 8;
 			contentPanel.add(globalRefold, gbc_globalRefold);
 		}
 
@@ -415,10 +458,20 @@ public class ScanFoldGui extends JDialog {
         
     }
     
-	private String writeSequenceToTempFile() {
+    public static String getTempOuputDirectory() {
+    	String outputDirectory;
+    	try {
+    		outputDirectory = Files.createTempDirectory("scanfold-results").toFile().getAbsolutePath();
+    	}catch (IOException e) {
+    		outputDirectory = (new File(System.getProperty("java.io.tmpdir"))).getAbsolutePath();
+		}
+    	return outputDirectory;
+    }
+    
+	private String writeSequenceToTempFile(String outputDirectory) {
 		String tempFilePath = "";
 		try {
-			File tempDir = new File(System.getProperty("java.io.tmpdir"));
+			File tempDir = new File(outputDirectory);
 			File tempFile = File.createTempFile("scanfoldinput", ".fa", tempDir);
 			FileWriter fileWriter = new FileWriter(tempFile, true);
 			BufferedWriter bw = new BufferedWriter(fileWriter);
@@ -560,13 +613,14 @@ public class ScanFoldGui extends JDialog {
 			protected Object doInBackground() {
 				try {
 					
-					String inputFile = writeSequenceToTempFile();
+					String inputFile = writeSequenceToTempFile(outputDirectory.getText());
 					
 					Map<String, String> env = System.getenv();
 					
 					ArrayList<String> cmd = new ArrayList<>(Arrays.asList(new String[] {
 							env.get("SCANFOLDRUNSCRIPT"),
 							"-i", inputFile,
+							"-o", outputDirectory.getText(),
 							"-n", sequenceName,
 							"-c", competition.getText(),
 							"-s", stepSize.getText(),

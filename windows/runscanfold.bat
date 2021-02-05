@@ -1,6 +1,6 @@
 setlocal enableDelayedExpansion
 
-set "options=-c:"" -g: -i:"" -j:"" -n:"" -r:"" -s:"" -t:"" -w:"" -j:"" -y:"" -z:"" -d:"""
+set "options=-c:"" -g: -i:"" -j:"" -n:"" -r:"" -s:"" -t:"" -w:"" -j:"" -y:"" -z:"" -d:"" -o:"""
 
 :: https://stackoverflow.com/questions/1971824/windows-bat-file-optional-argument-parsing
 for %%O in (%options%) do for /f "tokens=1,* delims=:" %%A in ("%%O") do set "%%A=%%~B"
@@ -32,6 +32,7 @@ SET WINDOWSIZE=!-w!
 SET RANDOMIZATIONTYPE=!-y!
 SET STARTPOS=!-z!
 SET STRAND=!-d!
+SET WORKDIR=!-o!
 
 if not "!-g!"=="" (
 	SET GLOBALREFOLD=--global_refold
@@ -43,14 +44,6 @@ if not "!-j!"=="" (
 	SET JARLOCATION=!-j!
 	for %%F in (%JARLOCATION%) do SET JARDIR=%%~dpF
 )
-
-:: https://stackoverflow.com/questions/32107998/how-to-create-a-unique-temporary-file-path-in-command-prompt-without-external-to/32109191
-:: get unique file name 
-:uniqLoop
-set "WORKDIR=%tmp%\scanfold~%RANDOM%"
-if exist "%WORKDIR%\" goto :uniqLoop
-
-mkdir %WORKDIR%
 
 copy %INPUTFILE% %WORKDIR%\input.fasta
 SET INPUTFILE=%WORKDIR%\input.fasta
