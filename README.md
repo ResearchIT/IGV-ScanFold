@@ -1,4 +1,4 @@
-# scanfoldigvpatch
+# scanfoldigv
 
 Patched version of IGV that integrates ScanFold functionality.
 
