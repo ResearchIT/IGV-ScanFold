@@ -43,5 +43,5 @@ sudo dnf install git zip patch java-11-openjdk.x86_64 gcc g++ python3-devel zlib
 
 1. `./scripts/build_scanfold_env.sh`
 1. `./scripts/build_viennarna.sh`  
-    this will fail at src/Kinfold, but that's fine
+    this may fail at src/Kinfold, but that's fine
 1. `./scripts/build_rnastructure.sh`
