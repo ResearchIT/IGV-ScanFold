@@ -442,9 +442,12 @@ public class ScanFoldGui extends JDialog {
             } else {
                 String sequence = new String(seqBytes);
 
-                SequenceTrack sequenceTrack = IGV.getInstance().getSequenceTrack();
-                if (strand == Strand.NEGATIVE || (sequenceTrack != null && sequenceTrack.getStrand() == Strand.NEGATIVE)) {
-                    sequence = SequenceTrack.getReverseComplement(sequence);
+//                SequenceTrack sequenceTrack = IGV.getInstance().getSequenceTrack();
+//                if (strand == Strand.NEGATIVE || (sequenceTrack != null && sequenceTrack.getStrand() == Strand.NEGATIVE)) {
+//                    sequence = SequenceTrack.getReverseComplement(sequence);
+//                }
+                if (strand == Strand.NEGATIVE) {
+                  sequence = SequenceTrack.getReverseComplement(sequence);
                 }
                 retSequence = sequence;
             }
@@ -468,7 +471,11 @@ public class ScanFoldGui extends JDialog {
     	return outputDirectory;
     }
     
-	private String writeSequenceToTempFile(String outputDirectory) {
+	private String writeSequenceToTempFile(String outputDirectory, String strand) {
+		String sequence = this.sequence;
+		if (strand.equals("reverse")) {
+			sequence = SequenceTrack.getReverseComplement(sequence);
+		}
 		String tempFilePath = "";
 		try {
 			File tempDir = new File(outputDirectory);
@@ -476,7 +483,7 @@ public class ScanFoldGui extends JDialog {
 			FileWriter fileWriter = new FileWriter(tempFile, true);
 			BufferedWriter bw = new BufferedWriter(fileWriter);
 
-			bw.write(this.sequence);
+			bw.write(sequence);
 			bw.close();
 			tempFilePath = tempFile.getAbsolutePath();
 		} catch (IOException e) {
@@ -613,7 +620,7 @@ public class ScanFoldGui extends JDialog {
 			protected Object doInBackground() {
 				try {
 					
-					String inputFile = writeSequenceToTempFile(outputDirectory.getText());
+					String inputFile = writeSequenceToTempFile(outputDirectory.getText(), (String) strand.getSelectedItem());
 					
 					Map<String, String> env = System.getenv();
 					
