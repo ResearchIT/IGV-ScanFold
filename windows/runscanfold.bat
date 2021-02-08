@@ -45,8 +45,9 @@ if not "!-j!"=="" (
 	for %%F in (%JARLOCATION%) do SET JARDIR=%%~dpF
 )
 
-copy %INPUTFILE% %WORKDIR%\input.fasta
-SET INPUTFILE=%WORKDIR%\input.fasta
+::input file is expected to already be in the workdir now
+::copy %INPUTFILE% %WORKDIR%\input.fasta
+::SET INPUTFILE=%WORKDIR%\input.fasta
 
 ::Get the current batch file's short path
 for %%x in (%0) do set BatchPath=%%~dpsx

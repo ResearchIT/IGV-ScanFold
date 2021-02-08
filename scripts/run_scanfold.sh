@@ -58,7 +58,8 @@ export DATAPATH=${PWD}/env/data_tables
 INPUTFNAME=$(basename ${INPUTFILE})
 
 SCRIPTDIR=${PWD}/ScanFold/
-cp ${INPUTFILE} ${WORKDIR}/
+#input file is expected to already be in the workdir now
+#cp ${INPUTFILE} ${WORKDIR}/
 
 pushd ${WORKDIR}
 
