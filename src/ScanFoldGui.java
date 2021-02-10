@@ -625,6 +625,7 @@ public class ScanFoldGui extends JDialog {
 					Map<String, String> env = System.getenv();
 					
 					ArrayList<String> cmd = new ArrayList<>(Arrays.asList(new String[] {
+							env.get("SCANFOLDPYTHONINTERPRETER"),
 							env.get("SCANFOLDRUNSCRIPT"),
 							"-i", inputFile,
 							"-o", outputDirectory.getText(),
