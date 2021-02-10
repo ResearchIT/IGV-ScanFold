@@ -48,7 +48,6 @@ popd
 pushd ${BUNDLE_PREFIX}/scanfold
 cp ${TOPLEVEL}/ScanFold/{ScanFold-Scan_IGV.py,ScanFold-Fold_IGV.py,ScanFoldSharedIGV.py} .
 cp ${TOPLEVEL}/scripts/run_scanfold.py .
-cp ${TOPLEVEL}/windows/runscanfold.bat .
 popd
 
 # viennarna

@@ -4,13 +4,36 @@ import tempfile
 import sys
 import os
 
-def run_me(workdir, command):
+def run_me(script, workdir, args):
+
     proc_env = os.environ.copy()
-    proc_env['DATAPATH'] = os.path.join(os.getcwd(), 'env', 'data_tables')
-    proc_env['VIRTUAL_ENV'] = os.path.join(os.getcwd(), 'env')
-    proc_env['PATH'] = ':'.join([os.path.join(os.getcwd(), 'env', 'bin'), proc_env['PATH']])
-    python_interpreter = ['python', '-u']
-    process = subprocess.Popen(python_interpreter + command, stdout=subprocess.PIPE, env=proc_env, cwd=workdir, bufsize=0)
+    cwd = os.getcwd()
+
+    if os.name == 'nt':
+        script = os.path.join(cwd, 'scanfold', script)
+        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
+        new_path = [
+            os.path.join(cwd, 'ViennaRNA'),
+            os.path.join(cwd, 'RNAstructure'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ';'.join(new_path)
+        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
+    else:
+        script = os.path.join(cwd, 'ScanFold', script)
+        proc_env['DATAPATH'] = os.path.join(cwd, 'env', 'data_tables')
+        proc_env['VIRTUAL_ENV'] = os.path.join(cwd, 'env')
+        new_path = [
+            os.path.join(cwd, 'env', 'bin'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ':'.join(new_path)
+        python_interpreter = 'python'
+
+    command = [python_interpreter, '-u', script]
+    command.extend(args)
+
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, env=proc_env, cwd=workdir, bufsize=0)
     for c in iter(lambda: process.stdout.read(1), b''): 
         sys.stdout.buffer.write(c)
         sys.stdout.buffer.flush()
@@ -22,9 +45,6 @@ def mktemp(directory, extension, name="output"):
 
 def main(args):
 
-    #INPUTFNAME = os.path.basename(args.INPUTFILE)
-    SCRIPTDIR = os.path.join(os.getcwd(), 'ScanFold')
-
     SCANOUTPATH = mktemp(args.WORKDIR, '.scan-out.tsv')
     ZSCOREWIGFILEPATH = mktemp(args.WORKDIR, '.zscore.wig')
     MFEWIGFILEPATH = mktemp(args.WORKDIR, '.mfe.wig')
@@ -34,7 +54,6 @@ def main(args):
     FASTAINDEX = mktemp(args.WORKDIR, '.fasta.fai', name='input')
 
     scan_params = [
-        os.path.join(SCRIPTDIR, 'ScanFold-Scan_IGV.py'),
         '-i', args.INPUTFILE,
         '-r', args.RANDOMIZATIONS,
         '-s', args.STEPSIZE,
@@ -53,7 +72,7 @@ def main(args):
         '--fasta_index', FASTAINDEX
     ]
 
-    run_me(args.WORKDIR, scan_params)
+    run_me('ScanFold-Scan_IGV.py', args.WORKDIR, scan_params)
 
     OUT1 = mktemp(args.WORKDIR, '.nofilter.ct')
     OUT2 = mktemp(args.WORKDIR, '.-1filter.ct')
@@ -73,7 +92,6 @@ def main(args):
     FASTAINDEX = mktemp(args.WORKDIR, '.fai')
 
     fold_params = [
-        os.path.join(SCRIPTDIR, 'ScanFold-Fold_IGV.py'),
         '-i', SCANOUTPATH,
         '-d', args.STRAND,
         '--name', args.SEQUENCENAME,
@@ -98,7 +116,7 @@ def main(args):
     if args.GLOBALREFOLD:
         fold_params.append('--global_refold')
 
-    run_me(args.WORKDIR, fold_params)
+    run_me('ScanFold-Fold_IGV.py', args.WORKDIR, fold_params)
 
     files_to_load = [
         BPTRACK,
