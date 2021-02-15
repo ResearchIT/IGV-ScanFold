@@ -33,9 +33,9 @@ def run_me(script, workdir, args):
         proc_env['PATH'] = ':'.join(new_path)
         python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
         if script == "ScanFold-Scan_IGV":
-            command = os.path.join(cwd, 'scanfold', 'ScanFold-Scan_IGV.dist', 'ScanFold-Scan_IGV')
+            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Scan_IGV.dist', 'ScanFold-Scan_IGV')]
         else:
-            command = os.path.join(cwd, 'scanfold', 'ScanFold-Fold_IGV.dist', 'ScanFold-Fold_IGV')
+            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Fold_IGV.dist', 'ScanFold-Fold_IGV')]
     else:
         script = os.path.join(cwd, 'ScanFold', script + ".py")
         proc_env['DATAPATH'] = os.path.join(cwd, 'env', 'data_tables')
@@ -52,8 +52,8 @@ def run_me(script, workdir, args):
 
     process = subprocess.Popen(command, stdout=subprocess.PIPE, env=proc_env, cwd=workdir, bufsize=0)
     for c in iter(lambda: process.stdout.read(1), b''): 
-        sys.stdout.buffer.write(c)
-        sys.stdout.buffer.flush()
+        sys.stdout.write(c)
+        sys.stdout.flush()
 
 def mktemp(directory, extension, name="output"):
     file_handle, file_path = tempfile.mkstemp(prefix=name, suffix=extension, dir=directory)

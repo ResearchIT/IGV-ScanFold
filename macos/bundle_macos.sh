@@ -50,6 +50,7 @@ CONFIGURE_OPTIONS=" --without-swig \
                     --without-forester \
                     --with-cluster \
                     --with-kinwalker \
+                    --disable-mpfr \
                     --disable-pthreads \
                     --disable-tty-colors \
                     --disable-lto"
