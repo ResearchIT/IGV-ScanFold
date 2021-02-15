@@ -20,7 +20,7 @@ popd
 
 # compile scanfold
 pushd ScanFold
-sed -i 's/#!\/usr\/local\/bin\/python.*//' ScanFold-Scan_IGV.py ScanFold-Fold_IGV.py
+sed -i -e 's/#!\/usr\/local\/bin\/python.*//' ScanFold-Scan_IGV.py ScanFold-Fold_IGV.py
 python3 -mvenv env
 . env/bin/activate
 pip install Nuitka biopython numpy
