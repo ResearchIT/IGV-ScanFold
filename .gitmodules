@@ -3,4 +3,4 @@
 	url = https://github.com/igvteam/igv.git
 [submodule "ScanFold"]
 	path = ScanFold
-	url = https://github.com/moss-lab/ScanFold.git
+	url = https://github.com/njbooher/ScanFold.git
