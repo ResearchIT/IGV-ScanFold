@@ -52,8 +52,14 @@ def run_me(script, workdir, args):
 
     process = subprocess.Popen(command, stdout=subprocess.PIPE, env=proc_env, cwd=workdir, bufsize=0)
     for c in iter(lambda: process.stdout.read(1), b''): 
-        sys.stdout.write(c)
-        sys.stdout.flush()
+        if hasattr(sys.stdout, 'buffer'):
+            # python 3
+            sys.stdout.buffer.write(c)
+            sys.stdout.buffer.flush()
+        else:
+            # python 2 (macos)
+            sys.stdout.write(c)
+            sys.stdout.flush()
 
 def mktemp(directory, extension, name="output"):
     file_handle, file_path = tempfile.mkstemp(prefix=name, suffix=extension, dir=directory)
