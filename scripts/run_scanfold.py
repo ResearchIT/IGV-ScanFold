@@ -3,14 +3,17 @@ import subprocess
 import tempfile
 import sys
 import os
+import platform
 
 def run_me(script, workdir, args):
 
     proc_env = os.environ.copy()
     cwd = os.getcwd()
 
-    if os.name == 'nt':
-        script = os.path.join(cwd, 'scanfold', script)
+    platform.system
+
+    if platform.system() == 'Windows':
+        script = os.path.join(cwd, 'scanfold', script + ".py")
         proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
         new_path = [
             os.path.join(cwd, 'ViennaRNA'),
@@ -19,8 +22,22 @@ def run_me(script, workdir, args):
         ]
         proc_env['PATH'] = ';'.join(new_path)
         python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
+        command = [python_interpreter, '-u', script]
+    elif platform.system() == 'Darwin' and 'SCANFOLDISBUNDLED' in os.environ:
+        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
+        new_path = [
+            os.path.join(cwd, 'ViennaRNA'),
+            os.path.join(cwd, 'RNAstructure'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ':'.join(new_path)
+        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
+        if script == "ScanFold-Scan_IGV":
+            command = os.path.join(cwd, 'scanfold', 'ScanFold-Scan_IGV.dist', 'ScanFold-Scan_IGV')
+        else:
+            command = os.path.join(cwd, 'scanfold', 'ScanFold-Fold_IGV.dist', 'ScanFold-Fold_IGV')
     else:
-        script = os.path.join(cwd, 'ScanFold', script)
+        script = os.path.join(cwd, 'ScanFold', script + ".py")
         proc_env['DATAPATH'] = os.path.join(cwd, 'env', 'data_tables')
         proc_env['VIRTUAL_ENV'] = os.path.join(cwd, 'env')
         new_path = [
@@ -29,8 +46,8 @@ def run_me(script, workdir, args):
         ]
         proc_env['PATH'] = ':'.join(new_path)
         python_interpreter = 'python'
-
-    command = [python_interpreter, '-u', script]
+        command = [python_interpreter, '-u', script]
+    
     command.extend(args)
 
     process = subprocess.Popen(command, stdout=subprocess.PIPE, env=proc_env, cwd=workdir, bufsize=0)
@@ -72,7 +89,7 @@ def main(args):
         '--fasta_index', FASTAINDEX
     ]
 
-    run_me('ScanFold-Scan_IGV.py', args.WORKDIR, scan_params)
+    run_me('ScanFold-Scan_IGV', args.WORKDIR, scan_params)
 
     OUT1 = mktemp(args.WORKDIR, '.nofilter.ct')
     OUT2 = mktemp(args.WORKDIR, '.-1filter.ct')
@@ -116,7 +133,7 @@ def main(args):
     if args.GLOBALREFOLD:
         fold_params.append('--global_refold')
 
-    run_me('ScanFold-Fold_IGV.py', args.WORKDIR, fold_params)
+    run_me('ScanFold-Fold_IGV', args.WORKDIR, fold_params)
 
     files_to_load = [
         BPTRACK,

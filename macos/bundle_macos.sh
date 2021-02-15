@@ -18,25 +18,24 @@ mv IGV_User.app ${BUNDLE_PREFIX}/IGV.app
 popd
 
 
-# # compile scanfold
-# pushd ScanFold
-# sed -i -e 's/#!\/usr\/local\/bin\/python.*//' ScanFold-Scan_IGV.py ScanFold-Fold_IGV.py
-# python3 -mvenv env
-# . env/bin/activate
-# pip install Nuitka biopython numpy
-# python -m nuitka --standalone --plugin-enable=numpy ScanFold-Scan_IGV.py
-# python -m nuitka --standalone --plugin-enable=numpy ScanFold-Fold_IGV.py
-# deactivate
-# popd
+# compile scanfold
+pushd ScanFold
+sed -i -e 's/#!\/usr\/local\/bin\/python.*//' ScanFold-Scan_IGV.py ScanFold-Fold_IGV.py
+python3 -mvenv env
+. env/bin/activate
+pip install Nuitka biopython numpy
+python -m nuitka --standalone --plugin-enable=numpy ScanFold-Scan_IGV.py
+python -m nuitka --standalone --plugin-enable=numpy ScanFold-Fold_IGV.py
+deactivate
+popd
 
-# # bundle scanfold
-# mkdir -p ${BUNDLE_PREFIX}/scanfold/
+# bundle scanfold
+mkdir -p ${BUNDLE_PREFIX}/scanfold/
 
-# pushd ${BUNDLE_PREFIX}/scanfold
-# cp -R ${TOPLEVEL}/ScanFold/{ScanFold-Scan_IGV.dist,ScanFold-Fold_IGV.dist} .
-# cp ${TOPLEVEL}/scripts/run_scanfold.py .
-# popd
-
+pushd ${BUNDLE_PREFIX}/scanfold
+cp -R ${TOPLEVEL}/ScanFold/{ScanFold-Scan_IGV.dist,ScanFold-Fold_IGV.dist} .
+cp ${TOPLEVEL}/scripts/run_scanfold.py .
+popd
 
 # viennarna
 pushd lib
