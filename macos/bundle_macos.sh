@@ -66,7 +66,7 @@ popd
 # rnastructure
 pushd lib
 curl -L -O  http://rna.urmc.rochester.edu/Releases/current/RNAstructureTextInterfacesMac.tgz
-unzip RNAstructureTextInterfacesMac.tgz
+tar -xzvf RNAstructureTextInterfacesMac.tgz
 mv RNAstructureTextInterfacesMac.tgz
 mkdir ${BUNDLE_PREFIX}/RNAstructure
 mv RNAstructure/exe/ct2dot ${BUNDLE_PREFIX}/RNAstructure/
