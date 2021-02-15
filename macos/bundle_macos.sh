@@ -41,7 +41,7 @@ popd
 # viennarna
 pushd lib
 curl -L -O https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.4.16/ViennaRNA-2.4.16.tar.gz
-tar -xzvf ViennaRNA-2.4.16.tar.gz
+tar -xzf ViennaRNA-2.4.16.tar.gz
 pushd ViennaRNA-2.4.16
 mkdir target
 #export ac_cv_func_realloc_0_nonnull=yes
@@ -66,7 +66,7 @@ popd
 # rnastructure
 pushd lib
 curl -L -O  http://rna.urmc.rochester.edu/Releases/current/RNAstructureTextInterfacesMac.tgz
-tar -xzvf RNAstructureTextInterfacesMac.tgz
+tar -xzf RNAstructureTextInterfacesMac.tgz
 mv RNAstructureTextInterfacesMac.tgz
 mkdir ${BUNDLE_PREFIX}/RNAstructure
 mv RNAstructure/exe/ct2dot ${BUNDLE_PREFIX}/RNAstructure/
