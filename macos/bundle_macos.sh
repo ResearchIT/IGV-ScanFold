@@ -76,6 +76,6 @@ popd
 
 # main
 pushd ${BUNDLE_PREFIX}
-cp ${TOPLEVEL}/macos/run_me.sh .
+cp ${TOPLEVEL}/macos/run_me.command .
 zip -r ${TOPLEVEL}/scanfoldigv-macos.zip *
 popd
