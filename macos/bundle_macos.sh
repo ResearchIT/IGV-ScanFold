@@ -13,11 +13,69 @@ popd
 pushd igv
 ./gradlew clean
 ./gradlew createMacAppWithJavaDistZip -PjdkBundleMac=${TOPLEVEL}/lib/jdk-11.0.10+9-jre/Contents/Home
-#unzip -d ${BUNDLE_PREFIX} distributions/IGV_MacApp_user_WithJava.zip
-mv build ${BUNDLE_PREFIX}/IGV
+unzip build/distributions/IGV_MacApp_user_WithJava.zip
+mv IGV_User.app ${BUNDLE_PREFIX}/IGV.app
+popd
+
+
+# compile scanfold
+pushd ScanFold
+sed -i -e 's/#!\/usr\/local\/bin\/python.*//' ScanFold-Scan_IGV.py ScanFold-Fold_IGV.py
+python3 -mvenv env
+. env/bin/activate
+pip install Nuitka biopython numpy
+python -m nuitka --standalone --plugin-enable=numpy ScanFold-Scan_IGV.py
+python -m nuitka --standalone --plugin-enable=numpy ScanFold-Fold_IGV.py
+deactivate
+popd
+
+# bundle scanfold
+mkdir -p ${BUNDLE_PREFIX}/scanfold/
+
+pushd ${BUNDLE_PREFIX}/scanfold
+cp -R ${TOPLEVEL}/ScanFold/{ScanFold-Scan_IGV.dist,ScanFold-Fold_IGV.dist} .
+cp ${TOPLEVEL}/scripts/run_scanfold.py .
+popd
+
+# viennarna
+pushd lib
+curl -L -O https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.4.16/ViennaRNA-2.4.16.tar.gz
+tar -xzf ViennaRNA-2.4.16.tar.gz
+pushd ViennaRNA-2.4.16
+mkdir target
+#export ac_cv_func_realloc_0_nonnull=yes
+#export ac_cv_func_malloc_0_nonnull=yes
+CONFIGURE_OPTIONS=" --without-swig \
+                    --without-doc \
+                    --without-forester \
+                    --with-cluster \
+                    --with-kinwalker \
+                    --disable-mpfr \
+                    --disable-pthreads \
+                    --disable-tty-colors \
+                    --disable-lto"
+./configure --prefix=${PWD}/target ${CONFIGURE_OPTIONS}
+make
+make install
+mkdir -p ${BUNDLE_PREFIX}/ViennaRNA
+mv target/bin/RNAfold ${BUNDLE_PREFIX}/ViennaRNA/
+cp license.txt ${BUNDLE_PREFIX}/ViennaRNA/
+popd
+popd
+
+# rnastructure
+pushd lib
+curl -L -O  http://rna.urmc.rochester.edu/Releases/current/RNAstructureTextInterfacesMac.tgz
+tar -xzf RNAstructureTextInterfacesMac.tgz
+mv RNAstructureTextInterfacesMac.tgz
+mkdir ${BUNDLE_PREFIX}/RNAstructure
+mv RNAstructure/exe/ct2dot ${BUNDLE_PREFIX}/RNAstructure/
+mv RNAstructure/gpl.txt ${BUNDLE_PREFIX}/RNAstructure/
+mv RNAstructure/data_tables ${BUNDLE_PREFIX}/RNAstructure/
 popd
 
 # main
 pushd ${BUNDLE_PREFIX}
+cp ${TOPLEVEL}/macos/run_me.command .
 zip -r ${TOPLEVEL}/scanfoldigv-macos.zip *
 popd
