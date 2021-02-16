@@ -10,8 +10,6 @@ def run_me(script, workdir, args):
     proc_env = os.environ.copy()
     cwd = os.getcwd()
 
-    platform.system
-
     if platform.system() == 'Windows':
         script = os.path.join(cwd, 'scanfold', script + ".py")
         proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
