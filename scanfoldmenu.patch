@@ -48,7 +48,7 @@ index 4032a4354..2302e1acd 100644
 +    private JMenu createScanfoldMenu() {
 +        List<JComponent> menuItems = new ArrayList<JComponent>();
 +        MenuAction extrasMenuAction = new MenuAction("ScanFold");
-+        MenuAction menuAction = new MenuAction("Run ScanFoldGui...", null, 0) {
++        MenuAction menuAction = new MenuAction("Run ScanFold...", null, 0) {
 +            @Override
 +            public void actionPerformed(ActionEvent e) {
 +            	final ReferenceFrame defaultFrame = FrameManager.getDefaultFrame();
@@ -79,7 +79,7 @@ index f833da1b0..13234f088 100644
          item.addActionListener(e -> BlatClient.doBlatQuery(roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE));
          popupMenu.add(item);
  
-+        item = new JMenuItem("Run ScanFoldGui...");
++        item = new JMenuItem("Run ScanFold...");
 +        item.addActionListener(new ActionListener() {
  
 +            public void actionPerformed(ActionEvent e) {
