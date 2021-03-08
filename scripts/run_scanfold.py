@@ -5,6 +5,9 @@ import sys
 import os
 import platform
 
+def file_is_empty(file_path):
+    return os.path.exists(file_path) and os.stat(file_path).st_size == 0
+
 def run_me(script, workdir, args):
 
     proc_env = os.environ.copy()
@@ -139,7 +142,7 @@ def main(args):
 
     run_me('ScanFold-Fold_IGV', args.WORKDIR, fold_params)
 
-    files_to_load = [
+    files_to_maybe_load = [
         BPTRACK,
         FINALPARTNERSWIG,
         MFEWIGFILEPATH,
@@ -148,6 +151,8 @@ def main(args):
         EDWIGFILEPATH,
         DBNFILEPATH,
     ]
+    
+    files_to_load = [maybe_file for maybe_file in files_to_maybe_load if not file_is_empty(maybe_file)]
 
     batch_file_path = os.path.join(args.WORKDIR, 'batchfile.txt')
 
