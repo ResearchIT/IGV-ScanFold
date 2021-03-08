@@ -64,15 +64,15 @@ popd
 popd
 
 # rnastructure
-pushd lib
-curl -L -O  http://rna.urmc.rochester.edu/Releases/current/RNAstructureTextInterfacesMac.tgz
-tar -xzf RNAstructureTextInterfacesMac.tgz
-mv RNAstructureTextInterfacesMac.tgz
-mkdir ${BUNDLE_PREFIX}/RNAstructure
-mv RNAstructure/exe/ct2dot ${BUNDLE_PREFIX}/RNAstructure/
-mv RNAstructure/gpl.txt ${BUNDLE_PREFIX}/RNAstructure/
-mv RNAstructure/data_tables ${BUNDLE_PREFIX}/RNAstructure/
-popd
+# pushd lib
+# curl -L -O  http://rna.urmc.rochester.edu/Releases/current/RNAstructureTextInterfacesMac.tgz
+# tar -xzf RNAstructureTextInterfacesMac.tgz
+# mv RNAstructureTextInterfacesMac.tgz
+# mkdir ${BUNDLE_PREFIX}/RNAstructure
+# mv RNAstructure/exe/ct2dot ${BUNDLE_PREFIX}/RNAstructure/
+# mv RNAstructure/gpl.txt ${BUNDLE_PREFIX}/RNAstructure/
+# mv RNAstructure/data_tables ${BUNDLE_PREFIX}/RNAstructure/
+# popd
 
 # main
 pushd ${BUNDLE_PREFIX}
