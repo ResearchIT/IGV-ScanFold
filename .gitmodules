@@ -1,6 +1,3 @@
 [submodule "igv"]
 	path = igv
 	url = https://github.com/igvteam/igv.git
-[submodule "ScanFold"]
-	path = ScanFold
-	url = https://github.com/moss-lab/ScanFold.git
