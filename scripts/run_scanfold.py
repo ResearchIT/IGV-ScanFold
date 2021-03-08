@@ -1,8 +1,10 @@
+import sys
+import os
+sys.stderr = open(os.devnull,'w')
+
 import argparse
 import subprocess
 import tempfile
-import sys
-import os
 import platform
 
 def file_is_empty(file_path):
@@ -51,7 +53,7 @@ def run_me(script, workdir, args):
     
     command.extend(args)
 
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, env=proc_env, cwd=workdir, bufsize=0)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr = open(os.devnull,'w'), env=proc_env, cwd=workdir, bufsize=0)
     for c in iter(lambda: process.stdout.read(1), b''): 
         if hasattr(sys.stdout, 'buffer'):
             # python 3
