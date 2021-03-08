@@ -53,7 +53,7 @@ def run_me(script, workdir, args):
     
     command.extend(args)
 
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr = open(os.devnull,'w'), env=proc_env, cwd=workdir, bufsize=0)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=open(os.devnull,'w'), env=proc_env, cwd=workdir, bufsize=0)
     for c in iter(lambda: process.stdout.read(1), b''): 
         if hasattr(sys.stdout, 'buffer'):
             # python 3
