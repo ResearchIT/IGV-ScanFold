@@ -80,15 +80,15 @@ popd
 popd
 
 # rnastructure
-pushd lib
-curl -L -O  http://rna.urmc.rochester.edu/Releases/current/RNAstructureWindowsTextInterfaces64bit.zip
-unzip RNAstructureWindowsTextInterfaces64bit.zip
-mv RNAstructureWindowsTextInterfaces64bit.zip
-mkdir ${BUNDLE_PREFIX}/RNAstructure
-mv RNAstructure/exe/ct2dot.exe ${BUNDLE_PREFIX}/RNAstructure/
-mv RNAstructure/gpl.txt ${BUNDLE_PREFIX}/RNAstructure/
-mv RNAstructure/data_tables ${BUNDLE_PREFIX}/RNAstructure/
-popd
+# pushd lib
+# curl -L -O  http://rna.urmc.rochester.edu/Releases/current/RNAstructureWindowsTextInterfaces64bit.zip
+# unzip RNAstructureWindowsTextInterfaces64bit.zip
+# mv RNAstructureWindowsTextInterfaces64bit.zip
+# mkdir ${BUNDLE_PREFIX}/RNAstructure
+# mv RNAstructure/exe/ct2dot.exe ${BUNDLE_PREFIX}/RNAstructure/
+# mv RNAstructure/gpl.txt ${BUNDLE_PREFIX}/RNAstructure/
+# mv RNAstructure/data_tables ${BUNDLE_PREFIX}/RNAstructure/
+# popd
 
 # main
 pushd ${BUNDLE_PREFIX}
