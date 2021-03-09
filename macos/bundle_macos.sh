@@ -83,7 +83,7 @@ cat ScanFoldIGV.app/Contents/MacOS/IGV >> ${TOPLEVEL}/macos/run_me.command
 mv ${TOPLEVEL}/macos/run_me.command ScanFoldIGV.app/Contents/MacOS/IGV
 
 # bundle everything in the app
-mv ScanFold ScanFoldIGV.app/Contents/
+mv scanfold ScanFoldIGV.app/Contents/
 mv ViennaRNA ScanFoldIGV.app/Contents/
 
 zip -r ${TOPLEVEL}/scanfoldigv-macos.zip *
