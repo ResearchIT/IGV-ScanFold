@@ -14,7 +14,7 @@ pushd igv
 ./gradlew clean
 ./gradlew createMacAppWithJavaDistZip -PjdkBundleMac=${TOPLEVEL}/lib/jdk-11.0.10+9-jre/Contents/Home
 unzip build/distributions/IGV_MacApp_user_WithJava.zip
-mv IGV_User.app ${BUNDLE_PREFIX}/ScanFoldIGV.app
+mv IGV_User.app ${BUNDLE_PREFIX}/IGV-ScanFold.app
 popd
 
 
@@ -79,12 +79,12 @@ pushd ${BUNDLE_PREFIX}
 
 # prepend our environment parameters to IGV's run script
 echo '' >> ${TOPLEVEL}/macos/run_me.command
-cat ScanFoldIGV.app/Contents/MacOS/IGV >> ${TOPLEVEL}/macos/run_me.command
-mv ${TOPLEVEL}/macos/run_me.command ScanFoldIGV.app/Contents/MacOS/IGV
+cat IGV-ScanFold.app/Contents/MacOS/IGV >> ${TOPLEVEL}/macos/run_me.command
+mv ${TOPLEVEL}/macos/run_me.command IGV-ScanFold.app/Contents/MacOS/IGV
 
 # bundle everything in the app
-mv scanfold ScanFoldIGV.app/Contents/
-mv ViennaRNA ScanFoldIGV.app/Contents/
+mv scanfold IGV-ScanFold.app/Contents/
+mv ViennaRNA IGV-ScanFold.app/Contents/
 
-zip -r ${TOPLEVEL}/scanfoldigv-macos.zip *
+zip -r ${TOPLEVEL}/IGV-ScanFold-macos.zip *
 popd

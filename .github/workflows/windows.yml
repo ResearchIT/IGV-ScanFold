@@ -34,8 +34,8 @@ jobs:
       uses: actions/upload-artifact@v2
       if: ${{ success() && github.event_name == 'workflow_dispatch' }}
       with:
-        name: scanfoldigv-windows
-        path: ./scanfoldigv-windows.zip
+        name: IGV-ScanFold-windows
+        path: ./IGV-ScanFold-windows.zip
 
     - name: Upload Release Asset (automatically on release)
       id: upload-release-asset 
@@ -44,7 +44,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./scanfoldigv-windows.zip
-        asset_name: scanfoldigv-windows-${{github.event.release.tag_name}}.zip
+        asset_path: ./IGV-ScanFold-windows.zip
+        asset_name: IGV-ScanFold-windows-${{github.event.release.tag_name}}.zip
         asset_content_type: application/zip
       if: ${{ github.event_name == 'release' }}

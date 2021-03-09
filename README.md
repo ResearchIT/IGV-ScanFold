@@ -1,11 +1,11 @@
-# scanfoldigv
+# IGV-ScanFold
 
 Patched version of IGV that integrates ScanFold functionality.
 
 ## Run
 
 ### Windows and Mac
-A pre-built version is available on [releases](https://github.com/ResearchIT/scanfoldigv/releases).
+A pre-built version is available on [releases](https://github.com/ResearchIT/IGV-ScanFold/releases).
 
 ### Linux
 
@@ -35,7 +35,7 @@ sudo dnf install git zip patch java-11-openjdk.x86_64 gcc g++ python3-devel zlib
 ### Build IGV (CI currently only does this)
 
 1. clone this repository recursively  
-    `git clone --recursive https://github.com/ResearchIT/scanfoldigv.git`
+    `git clone --recursive https://github.com/ResearchIT/IGV-ScanFold.git`
 1. `./scripts/apply_patch.sh`
 1. `./scripts/build_igv.sh`
 
