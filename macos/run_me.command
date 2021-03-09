@@ -1,4 +1,6 @@
-export SCANFOLDRUNDIR=$(cd `dirname $(readlink $0 || echo $0)` && pwd)
+#!/bin/sh
+
+export SCANFOLDRUNDIR=$(cd `dirname $(readlink $0 || echo $0)` && cd .. && pwd)
 export SCANFOLDPYTHONINTERPRETER=$(which python)
 export SCANFOLDRUNSCRIPT=${SCANFOLDRUNDIR}/scanfold/run_scanfold.py
 export SCANFOLDISBUNDLED=TRUE
@@ -7,4 +9,6 @@ export SCANFOLDISBUNDLED=TRUE
 export SCANFOLDMPMETHOD=fork
 cd "${SCANFOLDRUNDIR}"
 xattr -r -d com.apple.quarantine . >/dev/null 2>&1
-open IGV.app
+
+## we don't actually launch IGV here anymore
+## this file gets prepended to the IGV app's run script during bundling
