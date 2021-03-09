@@ -134,14 +134,6 @@ if __name__ == "__main__":
     ###Required arguments for webserver:
     parser.add_argument('--scan_out_path', type=str,
                         help='ScanFold-Scan output path')
-    parser.add_argument('--zscore_wig_file_path', type=str,
-                        help='zscore_wig_file_path')
-    parser.add_argument('--mfe_wig_file_path', type=str,
-                        help='mfe_wig_file_path')
-    parser.add_argument('--ed_wig_file_path', type=str,
-                        help='ed_wig_file_path')
-    parser.add_argument('--pvalue_wig_file_path', type=str,
-                        help='pvalue_wig_file_path')
     parser.add_argument('--fasta_file_path', type=str,
                         help='fasta_file path')
     parser.add_argument('--fasta_index', type=str,
@@ -169,11 +161,6 @@ if __name__ == "__main__":
     print_random = str(args.print_random)
 
     scan_out_path = args.scan_out_path
-
-    mfe_wig_file_path = args.mfe_wig_file_path
-    zscore_wig_file_path = args.zscore_wig_file_path
-    pvalue_wig_file_path = args.pvalue_wig_file_path
-    ed_wig_file_path = args.ed_wig_file_path
 
     name = args.name
     fasta_file_path = args.fasta_file_path
@@ -457,10 +444,10 @@ if __name__ == "__main__":
     mean_zscore = round(np.mean(numerical_z), 2)
     mean_MFE = round(np.mean(MFE_total), 2)
     mean_ED = round(np.mean(ED_total), 2)
-    write_wig(MFE_list, step_size, name, mfe_wig_file_path, strand)
-    write_wig(zscore_list, step_size, name, zscore_wig_file_path, strand)
-    write_wig(pscore_list, step_size, name, pvalue_wig_file_path, strand)
-    write_wig(ED_list, step_size, name, ed_wig_file_path, strand)
+    # write_wig(MFE_list, step_size, name, mfe_wig_file_path, strand)
+    # write_wig(zscore_list, step_size, name, zscore_wig_file_path, strand)
+    # write_wig(pscore_list, step_size, name, pvalue_wig_file_path, strand)
+    # write_wig(ED_list, step_size, name, ed_wig_file_path, strand)
 
     write_fasta(seq, fasta_file_path, name)
     write_fai(seq, fasta_index, name)

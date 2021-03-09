@@ -50,11 +50,11 @@ def run_me(script, workdir, args):
         proc_env['PATH'] = ':'.join(new_path)
         python_interpreter = 'python'
         command = [python_interpreter, '-u', script]
-    
+
     command.extend(args)
 
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=open(os.devnull,'w'), env=proc_env, cwd=workdir, bufsize=0)
-    for c in iter(lambda: process.stdout.read(1), b''): 
+    for c in iter(lambda: process.stdout.read(1), b''):
         if hasattr(sys.stdout, 'buffer'):
             # python 3
             sys.stdout.buffer.write(c)
@@ -72,10 +72,6 @@ def mktemp(directory, extension, name="output"):
 def main(args):
 
     SCANOUTPATH = mktemp(args.WORKDIR, '.scan-out.tsv')
-    ZSCOREWIGFILEPATH = mktemp(args.WORKDIR, '.zscore.wig')
-    MFEWIGFILEPATH = mktemp(args.WORKDIR, '.mfe.wig')
-    EDWIGFILEPATH = mktemp(args.WORKDIR, '.ed.wig')
-    PVALUEWIGFILEPATH = mktemp(args.WORKDIR, '.pvalue.wig')
     FASTAFILEPATH = mktemp(args.WORKDIR, '.fasta', name='input')
     FASTAINDEX = mktemp(args.WORKDIR, '.fasta.fai', name='input')
 
@@ -90,10 +86,6 @@ def main(args):
         '--name', args.SEQUENCENAME,
         '-type', args.RANDOMIZATIONTYPE,
         '--scan_out_path', SCANOUTPATH,
-        '--zscore_wig_file_path', ZSCOREWIGFILEPATH,
-        '--mfe_wig_file_path', MFEWIGFILEPATH,
-        '--ed_wig_file_path', EDWIGFILEPATH,
-        '--pvalue_wig_file_path', PVALUEWIGFILEPATH,
         '--fasta_file_path', FASTAFILEPATH,
         '--fasta_index', FASTAINDEX
     ]
@@ -113,8 +105,12 @@ def main(args):
     DBNFILEPATH2 = mktemp(args.WORKDIR, '.dbnfile2.dbn')
     DBNFILEPATH3 = mktemp(args.WORKDIR, '.dbnfile3.dbn')
     DBNFILEPATH4 = mktemp(args.WORKDIR, '.DBNstructures.txt')
+    ZSCOREWIGFILEPATH = mktemp(args.WORKDIR, '.zscore.wig')
+    MFEWIGFILEPATH = mktemp(args.WORKDIR, '.mfe.wig')
+    EDWIGFILEPATH = mktemp(args.WORKDIR, '.ed.wig')
+    #PVALUEWIGFILEPATH = mktemp(args.WORKDIR, '.pvalue.wig')
     STRUCTUREEXTRACTFILE = mktemp(args.WORKDIR, '.ExtractedStructures.txt')
-    FINALPARTNERSWIG = mktemp(args.WORKDIR, '.final_partners_zscore.wig')
+    #FINALPARTNERSWIG = mktemp(args.WORKDIR, '.final_partners_zscore.wig')
     FASTAINDEX = mktemp(args.WORKDIR, '.fai')
 
     fold_params = [
@@ -134,7 +130,10 @@ def main(args):
         '--dbn_file_path2', DBNFILEPATH2,
         '--dbn_file_path3', DBNFILEPATH3,
         '--dbn_file_path4', DBNFILEPATH4,
-        '--final_partners_wig', FINALPARTNERSWIG,
+        '--zscore_wig_file_path', ZSCOREWIGFILEPATH,
+        '--mfe_wig_file_path', MFEWIGFILEPATH,
+        '--ed_wig_file_path', EDWIGFILEPATH,
+        #'--pvalue_wig_file_path', PVALUEWIGFILEPATH,
         '--structure_extract_file', STRUCTUREEXTRACTFILE,
         '--fasta_index', FASTAINDEX
     ]
@@ -146,14 +145,12 @@ def main(args):
 
     files_to_maybe_load = [
         BPTRACK,
-        FINALPARTNERSWIG,
-        MFEWIGFILEPATH,
         ZSCOREWIGFILEPATH,
-        PVALUEWIGFILEPATH,
+        MFEWIGFILEPATH,
         EDWIGFILEPATH,
         DBNFILEPATH,
     ]
-    
+
     files_to_load = [maybe_file for maybe_file in files_to_maybe_load if not file_is_empty(maybe_file)]
 
     batch_file_path = os.path.join(args.WORKDIR, 'batchfile.txt')
@@ -169,7 +166,7 @@ def main(args):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    
+
     parser.add_argument('-c', '--COMPETITION', type=str)
     parser.add_argument('-g', '--GLOBALREFOLD', action='store_true')
     parser.add_argument('-i', '--INPUTFILE', type=str)
@@ -184,5 +181,5 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--WORKDIR', type=str)
 
     args = parser.parse_args()
-    
+
     main(args)

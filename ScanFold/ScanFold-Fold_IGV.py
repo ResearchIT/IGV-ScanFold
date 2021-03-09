@@ -416,19 +416,28 @@ def write_fasta(nucleotide_dictionary, outputfilename, name):
     w.write(">"+name+"\n")
     w.write(str(fasta_sequence))
 
-def write_wig_dict(nucleotide_dictionary, outputfilename, name, strand):
-
+def write_wig_dict(nucleotide_dictionary, outputfilename, name, strand, metric):
     w = open(outputfilename, 'w')
     #write wig file header
     w.write("%s %s %s %s %s\n" % ("fixedStep", "chrom="+name, "start="+str(start_coordinate), "step=1", "span=1"))
-
     #write values of zscores
     if strand == "reverse":
         for k, v, in sorted(nucleotide_dictionary.items(), reverse=True):
-            w.write("%f\n" % (v.zscore))
+            if metric == "zscore":
+                w.write("%f\n" % (v.zscore))
+            if metric == "mfe":
+                w.write("%f\n" % (v.mfe))
+            if metric == "ed":
+                w.write("%f\n" % (v.ed))
     else:
-        for k, v in nucleotide_dictionary.items():
-            w.write("%f\n" % (v.zscore))
+        for k, v, in nucleotide_dictionary.items():
+            #print(v.zscore, v.mfe, v.ed)
+            if metric == "zscore":
+                w.write("%f\n" % (v.zscore))
+            if metric == "mfe":
+                w.write("%f\n" % (v.mfe))
+            if metric == "ed":
+                w.write("%f\n" % (v.ed))
 
 def write_bp(base_pair_dictionary, filename, start_coordinate, bpstrand, length):
     with open(filename, 'w') as w:
@@ -605,6 +614,15 @@ if __name__ == "__main__":
     parser.add_argument('--structure_extract_file', type=str,
                         help='structure_extract_file path')
 
+    parser.add_argument('--zscore_wig_file_path', type=str,
+                        help='zscore_wig_file_path')
+    parser.add_argument('--mfe_wig_file_path', type=str,
+                        help='mfe_wig_file_path')
+    parser.add_argument('--ed_wig_file_path', type=str,
+                        help='ed_wig_file_path')
+    parser.add_argument('--pvalue_wig_file_path', type=str,
+                        help='pvalue_wig_file_path')
+
 
 
     parser.add_argument('--global_refold', action='store_true',
@@ -615,8 +633,8 @@ if __name__ == "__main__":
                         help='fasta index file path')
     parser.add_argument('--name', type=str, default = "UserInput",
                         help='name of data being analyzied')
-    parser.add_argument('--final_partners_wig', type=str,
-                        help='final partners wig file path')
+    # parser.add_argument('--final_partners_wig', type=str,
+    #                     help='final partners wig file path')
     parser.add_argument('-t', '--temp', type=int, default=37,
                         help='Folding temperature')
 
@@ -643,11 +661,17 @@ if __name__ == "__main__":
     dbn_file_path3 = args.dbn_file_path3
     dbn_file_path4 = args.dbn_file_path4
 
+    mfe_wig_file_path = args.mfe_wig_file_path
+    zscore_wig_file_path = args.zscore_wig_file_path
+    pvalue_wig_file_path = args.pvalue_wig_file_path
+    ed_wig_file_path = args.ed_wig_file_path
+
+
     global_refold = args.global_refold
 
     structure_extract_file = args.structure_extract_file
 
-    final_partners_wig = args.final_partners_wig
+    #final_partners_wig = args.final_partners_wig
 
     fasta_index_path = args.fasta_index
 
@@ -1277,8 +1301,18 @@ if __name__ == "__main__":
 
 
     if competition == 1:
+        # mfe_wig_file_path = args.mfe_wig_file_path
+        # zscore_wig_file_path = args.zscore_wig_file_path
+        # pvalue_wig_file_path = args.pvalue_wig_file_path
+        # ed_wig_file_path = args.ed_wig_file_path
+
         write_bp(final_partners, out6, start_coordinate, strand, length)
-        write_wig_dict(final_partners, final_partners_wig, name, strand)
+        write_wig_dict(final_partners, zscore_wig_file_path, name, strand, "zscore")
+        write_wig_dict(final_partners, mfe_wig_file_path, name, strand, "mfe")
+        write_wig_dict(final_partners, ed_wig_file_path, name, strand, "ed")
+        #write_wig_dict(final_partners, pvalue_wig_file_path, name, strand, p)
+
+
     if competition == 0:
         write_bp(best_bps, out6, start_coordinate, strand, length)
     write_fasta(nuc_dict, out7, name)
