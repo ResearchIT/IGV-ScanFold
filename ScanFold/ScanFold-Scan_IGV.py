@@ -106,6 +106,8 @@ def transcribe(seq):
         return(rna_seq)
 
 if __name__ == "__main__":
+
+
     #### Parsing arguments ####
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input', type=str, required=True,
@@ -173,6 +175,8 @@ if __name__ == "__main__":
     ### IGV Args
 
     input_start_coordinate = args.start+1
+
+    start_time = time.time()
 
     ##################### Main Script #########################################
 
@@ -248,6 +252,7 @@ if __name__ == "__main__":
 
     #print(length, step_size, window_size)
     print("Approximately "+str(int(number_windows))+" windows will be generated.")
+    print(f'Estimated runtime = {round((number_windows*4.5)/60, 2)} minutes')
     print("Sequence being scanned...")
     if len(seq) > 40000 :
         #print(str(len(seq)))
@@ -454,6 +459,11 @@ if __name__ == "__main__":
 
     if split == "on":
         print("Completed ScanFold-Scan, intial results shown below.\n ScanFold-Fold is running now")
+
+    elapsed_time = round((time.time() - start_time), 2)
+    print(f'Elapsed time: {round(elapsed_time/60, 2)} minutes')
+    print(f'\nScanFold-Fold running now -  Remaining time: {round(((int(length)*0.05)/60), 2)} minutes')
+
 
     print("Mean MFE = "+str(mean_MFE))
     print("Mean Z-score = "+str(mean_zscore))

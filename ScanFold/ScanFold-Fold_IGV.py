@@ -925,8 +925,8 @@ if __name__ == "__main__":
     best_total_window_mean_bps = {}
 
     #Iterate through initial i-nuc dictionary to determine best base pairs (round 1)
-    elapsed_time = round((time.time() - start_time), 2)
-    print("Elapsed time: "+str(elapsed_time)+"s")
+    # elapsed_time = round((time.time() - start_time), 2)
+    # print("Elapsed time: "+str(elapsed_time)+"s")
     print("Determining best base pairs...")
     for k, v in sorted(bp_dict.items()):
         #Initiate local dictionaries to store metrics per nucleotide
@@ -1080,8 +1080,8 @@ if __name__ == "__main__":
 
     ######## Detect competing partners, and select final i-j pairs #################
     final_partners = {}
-    elapsed_time = round((time.time() - start_time), 2)
-    print("Elapsed time: "+str(elapsed_time)+"s")
+    # elapsed_time = round((time.time() - start_time), 2)
+    # print("Elapsed time: "+str(elapsed_time)+"s")
 
     #print header for fianl partener log file (log_win)
     log_win.write("\ni\tbp(i)\tbp(j)\tavgMFE\tavgZ\tavgED"
@@ -1261,8 +1261,8 @@ if __name__ == "__main__":
                 #print("No competing pair found for ", k)
                 continue
     if competition == 0:
-        elapsed_time = str(round((time.time() - start_time), 2))+"s"
-        print("Elapsed time: "+elapsed_time)
+        # elapsed_time = str(round((time.time() - start_time), 2))+"s"
+        # print("Elapsed time: "+elapsed_time)
         print("Writing DP files, can not write CT files...")
         if filter != None:
             write_dp(best_bps, output+str(filter)+".dp", filter)
@@ -1275,9 +1275,9 @@ if __name__ == "__main__":
 
     #Write CT files
     if competition == 1:
-        print("Trying to write CT files with -c option")
-        elapsed_time = str(round((time.time() - start_time), 2))+"s"
-        print(elapsed_time)
+        #print("Trying to write CT files with -c option")
+        # elapsed_time = str(round((time.time() - start_time), 2))+"s"
+        # print(elapsed_time)
         print("Writing CT files")
 
         # if filter != None or filter != -2:
@@ -1333,8 +1333,8 @@ if __name__ == "__main__":
     if global_refold == True:
         #fold the full fasta input as a fold compound (full_fc) using model params (md)
         print("Refolding full sequence using ScanFold results as constraints...")
-        elapsed_time = round((time.time() - start_time), 2)
-        print("Elapsed time: "+str(elapsed_time)+"s")
+        # elapsed_time = round((time.time() - start_time), 2)
+        # print("Elapsed time: "+str(elapsed_time)+"s")
 
         #refold from -1 constraints
         #refolded_filter1_structure, _, refolded_filter1_MFE, _ = rna_refold(full_fasta_sequence, int(temperature), dbn_file_path2)
