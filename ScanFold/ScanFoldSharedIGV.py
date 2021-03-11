@@ -269,7 +269,7 @@ def makedbn(ctfile, name, dbnfullname):
             icoord = int(rows[0])
             jcoord = int(rows[-2])
             if len(rows[1]) > 1:
-                print("skipping header")
+                #print("skipping header")
                 continue
 
             elif int(rows[-2]) == 0:
@@ -293,7 +293,7 @@ def makedbn(ctfile, name, dbnfullname):
                                 if lcoord == 0:
                                     pass
                                 elif lcoord < icoord:
-                                    print('Non-nested pair found: '+str(lcoord)+' to '+str(kcoord))
+                                    #print('Non-nested pair found: '+str(lcoord)+' to '+str(kcoord))
                                     dot += '<'
                                     break
                                 else:

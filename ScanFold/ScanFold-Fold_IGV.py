@@ -703,8 +703,7 @@ if __name__ == "__main__":
         #Generate nucleotide dictionary to assign each nucleotide in sequence a key
         nuc_dict = NucleotideDictionary(lines)
         step_size, window_size = get_step_win(lines)
-        print("Sequence length: "+str(len(nuc_dict))+"nt")
-        # if len(nuc_dict) > 1000:
+        print("Sequence length: "+str(len(nuc_dict))+"nt. Check if same as above.")        # if len(nuc_dict) > 1000:
         #     raise SystemExit('Input sequence is longer than 1000 nt; in order to scan longer sequences consider using the stand alone programs (avaiable here: https://github.com/moss-lab/ScanFold)')
 
         #Determine start and end coordinate values
@@ -718,7 +717,7 @@ if __name__ == "__main__":
 
 
         #Iterate through input file, read each rows metrics, sequence, etc.
-        print("Reading sequence and structures...")
+        #print("Reading sequence and structures...")
 
         for row in lines:
 
@@ -927,7 +926,7 @@ if __name__ == "__main__":
     #Iterate through initial i-nuc dictionary to determine best base pairs (round 1)
     # elapsed_time = round((time.time() - start_time), 2)
     # print("Elapsed time: "+str(elapsed_time)+"s")
-    print("Determining best base pairs...")
+    #print("Determining best base pairs...")
     for k, v in sorted(bp_dict.items()):
         #Initiate local dictionaries to store metrics per nucleotide
         zscore_dict = {}
@@ -1091,7 +1090,7 @@ if __name__ == "__main__":
     #Iterate through round 1 i-j pairs
     if competition == 1:
         #print(start_coordinate, end_coordinate)
-        print("Detecting competing pairs...")
+        #print("Detecting competing pairs...")
         j_coord_list = []
         # for k, v in sorted(best_bps.items()):
         #     print(jcoordinate)
@@ -1263,7 +1262,7 @@ if __name__ == "__main__":
     if competition == 0:
         # elapsed_time = str(round((time.time() - start_time), 2))+"s"
         # print("Elapsed time: "+elapsed_time)
-        print("Writing DP files, can not write CT files...")
+        #print("Writing DP files, can not write CT files...")
         if filter != None:
             write_dp(best_bps, output+str(filter)+".dp", filter)
         write_dp(best_bps, out1, float(10))
@@ -1271,14 +1270,14 @@ if __name__ == "__main__":
         write_dp(best_bps, out3, float(-2))
         write_dp(best_bps, output+"mean_"+str(round(meanz, 2))+".dp", meanz)
         write_dp(best_bps, output+"below_mean_"+str(round(one_sig_below, 2))+".dp", one_sig_below)
-        print("ScanFold-Fold complete, find results in...")
+        #print("ScanFold-Fold complete, find results in...")
 
     #Write CT files
     if competition == 1:
         #print("Trying to write CT files with -c option")
         # elapsed_time = str(round((time.time() - start_time), 2))+"s"
         # print(elapsed_time)
-        print("Writing CT files")
+        #print("Writing CT files")
 
         # if filter != None or filter != -2:
         #     write_ct(final_partners, output+str(filter)+".ct", filter, strand)
@@ -1332,7 +1331,8 @@ if __name__ == "__main__":
     #If specified, refold and generate global fold of input sequence
     if global_refold == True:
         #fold the full fasta input as a fold compound (full_fc) using model params (md)
-        print("Refolding full sequence using ScanFold results as constraints...")
+        print("\nRefolding full sequence using ScanFold results as constraints...")
+        print(f'Remaining time: {round((math.exp(length*0.0007))/60, 2)} minutes')
         # elapsed_time = round((time.time() - start_time), 2)
         # print("Elapsed time: "+str(elapsed_time)+"s")
 
@@ -1562,5 +1562,5 @@ if __name__ == "__main__":
             se.write('\n')
 
     dbn_log_file.close()
-    print("ScanFold-Fold analysis complete! Refresh page to ensure proper loading of IGV")
+    print("IGV-ScanFold analysis complete! please report any issues at https://github.com/ResearchIT/IGV-ScanFold/issues\n")
     #print(url)

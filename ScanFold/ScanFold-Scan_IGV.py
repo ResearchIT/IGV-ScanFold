@@ -242,7 +242,7 @@ if __name__ == "__main__":
     length = len(seq)
     record_name = name
 
-    print("Sequence Length: "+str(len(seq))+"nt")
+    print("\n\nScanFold-Scan running now. \nSequence Length: "+str(len(seq))+"nt")
     number_windows = ((length+1)-window_size)/step_size
     #print(number_windows)
     if number_windows < float(1.0):
@@ -460,9 +460,6 @@ if __name__ == "__main__":
     if split == "on":
         print("Completed ScanFold-Scan, intial results shown below.\n ScanFold-Fold is running now")
 
-    elapsed_time = round((time.time() - start_time), 2)
-    print(f'Elapsed time: {round(elapsed_time/60, 2)} minutes')
-    print(f'\nScanFold-Fold running now -  Remaining time: {round(((int(length)*0.05)/60), 2)} minutes')
 
 
     print("Mean MFE = "+str(mean_MFE))
@@ -470,3 +467,6 @@ if __name__ == "__main__":
     print("Mean P-value = "+str(mean_pscore))
     print("Mean Ensemble Diversity = "+str(mean_ED))
     print("ScanFold-Scan complete, find output files below")
+    elapsed_time = round((time.time() - start_time), 2)
+    print(f'Elapsed time: {round(elapsed_time/60, 2)} minutes')
+    print(f'\nScanFold-Fold running now -  Remaining time: {round(((int(length)*0.05)/60), 2)} minutes')
