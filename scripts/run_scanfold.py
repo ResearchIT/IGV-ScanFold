@@ -109,7 +109,7 @@ def main(args):
     MFEWIGFILEPATH = mktemp(args.WORKDIR, '.mfe.wig')
     EDWIGFILEPATH = mktemp(args.WORKDIR, '.ed.wig')
     #PVALUEWIGFILEPATH = mktemp(args.WORKDIR, '.pvalue.wig')
-    STRUCTUREEXTRACTFILE = mktemp(args.WORKDIR, '.ExtractedStructures.txt')
+    STRUCTUREEXTRACTFILE = mktemp(args.WORKDIR, '.ExtractedStructures.gff3')
     #FINALPARTNERSWIG = mktemp(args.WORKDIR, '.final_partners_zscore.wig')
     FASTAINDEX = mktemp(args.WORKDIR, '.fai')
 
@@ -148,6 +148,7 @@ def main(args):
         ZSCOREWIGFILEPATH,
         MFEWIGFILEPATH,
         EDWIGFILEPATH,
+        STRUCTUREEXTRACTFILE,
         DBNFILEPATH,
     ]
 

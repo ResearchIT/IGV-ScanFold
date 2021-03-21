@@ -1512,54 +1512,52 @@ if __name__ == "__main__":
 
     with open(structure_extract_file, "w") as se:
         se.write("ScanFold predicted structures which contain at least one base pair with Zavg < -2 have been extracted from "+str(name)+" results (sequence length "+str(length)+"nt) and have been refolded using RNAfold to determine their individual MFE, structure, z-score (using 100X randomizations), and ensemble diversity score.\n")
-        for i in extracted_structure_list[:]:
-            frag = i.sequence
-            frag = frag.upper()
-            frag = transcribe(frag)
-            # fc = RNA.fold_compound(str(frag)) #creates "Fold Compound" object
-            # fc.pf() # performs partition function calculations
-            # frag_q = (RNA.pf_fold(str(frag))) # calculate partition function "fold" of fragment
-            # (MFE_structure, MFE) = fc.mfe() # calculate and define variables for mfe and structure
-            # MFE = round(MFE, 2)
-            # MFE_total.append(MFE)
-            # (centroid, distance) = fc.centroid() # calculate and define variables for centroid
-            # ED = round(fc.mean_bp_distance(), 2) # this caclulates ED based on last calculated partition funciton
-            # ED_total.append(ED)            #print(structure)
+        if int(len(extracted_structure_list)) > 0:
+            print(f'Found {int(len(extracted_structure_list))} structures with Zavg < -2 base pairs.\n')
+            motif_num = 1
+            for es in extracted_structure_list[:]:
+                frag = str(es.sequence)
+                frag = frag.upper()
+                frag = transcribe(frag)
+                structure = es.structure
+                # fc = RNA.fold_compound(str(frag)) #creates "Fold Compound" object
+                # fc.pf() # performs partition function calculations
+                # frag_q = (RNA.pf_fold(str(frag))) # calculate partition function "fold" of fragment
+                # (MFE_structure, MFE) = fc.mfe() # calculate and define variables for mfe and structure
+                # MFE = round(MFE, 2)
+                # MFE_total.append(MFE)
+                # (centroid, distance) = fc.centroid() # calculate and define variables for centroid
+                # ED = round(fc.mean_bp_distance(), 2) # this caclulates ED based on last calculated partition funciton
+                # ED_total.append(ED)            #print(structure)
 
-            MFE_structure, centroid, MFE, ED = rna_fold(str(frag), temperature)
-            MFE = round(MFE, 2)
-            MFE_total.append(MFE)
-            ED = round(ED, 2) # this caclulates ED based on last calculated partition funciton
-            ED_total.append(ED)            #print(structure)
-
-
-            #fmfe = fc.pbacktrack()
-            #print(str(fmfe))
-            seqlist = [] # creates the list we will be filling with sequence fragments
-            seqlist.append(frag) # adds the native fragment to list
-            scrambled_sequences = scramble(frag, 100, type)
-            seqlist.extend(scrambled_sequences)
-            energy_list = energies(seqlist, temperature)
-            try:
-                zscore = round(zscore_function(energy_list, 100), 2)
-            except:
-                zscore = zscore_function(energy_list, 100)
-            zscore_total.append(zscore)
-
-            pscore = round(pscore_function(energy_list, 100), 2)
-            #print(pscore)
-            pscore_total.append(pscore)
+                MFE_structure, centroid, MFE, ED = rna_fold(str(frag), temperature)
+                MFE = round(MFE, 2)
+                MFE_total.append(MFE)
+                ED = round(ED, 2) # this caclulates ED based on last calculated partition funciton
+                ED_total.append(ED)            #print(structure)
 
 
-            se.write("Structure number "+str(int(i.structure_count)+1)+"\n")
-            se.write("Coordinates ="+str(int((i.i)+1))+' to '+str(int((i.j)+1))+"\n")
-            se.write(str(i.sequence)+"\n")
-            se.write(str(i.structure)+"\n")
-            se.write(MFE_structure+"\n")
-            se.write('z-score= '+str(zscore)+"\n")
-            se.write('ED='+str(ED)+"\n")
-            se.write('MFE='+str(MFE)+"\n")
-            se.write('\n')
+                #fmfe = fc.pbacktrack()
+                #print(str(fmfe))
+                seqlist = [] # creates the list we will be filling with sequence fragments
+                seqlist.append(frag) # adds the native fragment to list
+                scrambled_sequences = scramble(frag, 100, type)
+                seqlist.extend(scrambled_sequences)
+                energy_list = energies(seqlist, temperature)
+                try:
+                    zscore = round(zscore_function(energy_list, 100), 2)
+                except:
+                    zscore = zscore_function(energy_list, 100)
+                zscore_total.append(zscore)
+
+                #pscore = round(pscore_function(energy_list, 100), 2)
+                #print(pscore)
+                #pscore_total.append(pscore)
+                gff_attributes = f'motif_{motif_num};sequence={frag};structure={structure};refoldedMFE={str(MFE_structure)};MFE(kcal/mol)={str(MFE)};z-score={str(zscore)};ED={str(ED)}'
+                print(f'{gff_attributes}\n')
+                se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(int((es.i)+int(start_coordinate))), str(int((es.j)+int(start_coordinate))), str("."), str("."), str("."), gff_attributes))
+
+                motif_num += 1
 
     dbn_log_file.close()
     print("IGV-ScanFold analysis complete! please report any issues at https://github.com/ResearchIT/IGV-ScanFold/issues\n")
