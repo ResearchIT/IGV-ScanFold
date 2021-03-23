@@ -5,8 +5,10 @@ curl -O http://rna.urmc.rochester.edu/Releases/current/RNAstructureSource.tgz
 tar xzvf RNAstructureSource.tgz
 pushd RNAstructure
 make ct2dot
+make Fold
 #ln -s ${PWD}/exe/ct2dot ${RNASTRUCTURE_PREFIX}/bin/ct2dot
 mv ${PWD}/exe/ct2dot ${RNASTRUCTURE_PREFIX}/bin
+mv ${PWD}/exe/Fold ${RNASTRUCTURE_PREFIX}/bin
 mv ${PWD}/data_tables ${RNASTRUCTURE_PREFIX}/data_tables
 popd
 popd
