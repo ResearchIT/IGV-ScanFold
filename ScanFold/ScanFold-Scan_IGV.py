@@ -146,12 +146,16 @@ if __name__ == "__main__":
     parser.add_argument('--start', type=int,
                         help='Input start coordinate')
 
-
+    parser.add_argument('--algo', type=str, default='rnafold',
+                    choices=['rnafold','rnastructure'],
+                    help='Select RNA folding algorithm')
     ### input parms ###
 
 
 
     args = parser.parse_args()
+
+    algo = args.algo
 
     myfasta = args.input
     step_size = int(args.s)
@@ -319,7 +323,7 @@ if __name__ == "__main__":
                 #print(frag)
                 frag = frag.upper()
                 frag = transcribe(frag)
-                structure, centroid, MFE, ED = rna_fold(frag, temperature)
+                structure, centroid, MFE, ED = rna_fold(frag, temperature, algo)
 
                 MFE_total.append(float(MFE))
                 ED_total.append(float(ED))
@@ -327,7 +331,7 @@ if __name__ == "__main__":
                 seqlist.append(frag) # adds the native fragment to list
                 scrambled_sequences = scramble(frag, randomizations, type)
                 seqlist.extend(scrambled_sequences)
-                energy_list = energies(seqlist, temperature)
+                energy_list = energies(seqlist, temperature, algo)
                 if print_random == "on":
                     print(energy_list)
                 try:
@@ -393,7 +397,7 @@ if __name__ == "__main__":
             centroid = "........................................................................................................................"
         else:
             #print(frag)
-            structure, centroid, MFE, ED = rna_fold(frag, temperature)
+            structure, centroid, MFE, ED = rna_fold(frag, temperature, algo)
 
             MFE_total.append(float(MFE))
             ED_total.append(float(ED))
@@ -401,7 +405,7 @@ if __name__ == "__main__":
             seqlist.append(frag) # adds the native fragment to list
             scrambled_sequences = scramble(frag, randomizations, type)
             seqlist.extend(scrambled_sequences)
-            energy_list = energies(seqlist, temperature)
+            energy_list = energies(seqlist, temperature, algo)
             if print_random == "on":
                 print(energy_list)
             try:
