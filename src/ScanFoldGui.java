@@ -97,6 +97,8 @@ public class ScanFoldGui extends JDialog {
     private JCheckBox globalRefold;
     private JLabel lblStrand;
     private JComboBox strand;
+    private JLabel lblAlgorithm;
+    private JComboBox algorithm;
     private JLabel lblOutputDirectory;
     private JTextField outputDirectory;
     private JButton outputDirectoryBrowse;
@@ -290,12 +292,33 @@ public class ScanFoldGui extends JDialog {
 			contentPanel.add(strand, gbc_strand);
 		}
 		{
+			lblAlgorithm = new JLabel("Algorithm");
+			GridBagConstraints gbc_lblAlgorithm = new GridBagConstraints();
+			gbc_lblAlgorithm.anchor = GridBagConstraints.EAST;
+			gbc_lblAlgorithm.insets = new Insets(0, 0, 5, 5);
+			gbc_lblAlgorithm.gridx = 0;
+			gbc_lblAlgorithm.gridy = 7;
+			contentPanel.add(lblAlgorithm, gbc_lblAlgorithm);
+		}
+		{
+			algorithm = new JComboBox();
+			algorithm.setModel(new DefaultComboBoxModel(new String[] {"rnafold", "rnastructure"}));
+			algorithm.setSelectedIndex(0);
+			algorithm.setToolTipText("");
+			GridBagConstraints gbc_algorithm = new GridBagConstraints();
+			gbc_algorithm.insets = new Insets(0, 0, 5, 5);
+			gbc_algorithm.fill = GridBagConstraints.HORIZONTAL;
+			gbc_algorithm.gridx = 1;
+			gbc_algorithm.gridy = 7;
+			contentPanel.add(algorithm, gbc_algorithm);
+		}
+		{
 			lblOutputDirectory = new JLabel("Output Folder");
 			GridBagConstraints gbc_lblOutputDirectory = new GridBagConstraints();
 			gbc_lblOutputDirectory.anchor = GridBagConstraints.EAST;
 			gbc_lblOutputDirectory.insets = new Insets(0, 0, 5, 5);
 			gbc_lblOutputDirectory.gridx = 0;
-			gbc_lblOutputDirectory.gridy = 7;
+			gbc_lblOutputDirectory.gridy = 8;
 			contentPanel.add(lblOutputDirectory, gbc_lblOutputDirectory);
 		}
 		{
@@ -306,7 +329,7 @@ public class ScanFoldGui extends JDialog {
 			gbc_outputDirectory.insets = new Insets(0, 0, 5, 5);
 			gbc_outputDirectory.fill = GridBagConstraints.HORIZONTAL;
 			gbc_outputDirectory.gridx = 1;
-			gbc_outputDirectory.gridy = 7;
+			gbc_outputDirectory.gridy = 8;
 			contentPanel.add(outputDirectory, gbc_outputDirectory);
 		}
 		{
@@ -314,7 +337,7 @@ public class ScanFoldGui extends JDialog {
 			GridBagConstraints gbc_outputDirectoryBrowse = new GridBagConstraints();
 			gbc_outputDirectoryBrowse.insets = new Insets(0, 0, 5, 0);
 			gbc_outputDirectoryBrowse.gridx = 2;
-			gbc_outputDirectoryBrowse.gridy = 7;
+			gbc_outputDirectoryBrowse.gridy = 8;
 			outputDirectoryBrowse.addActionListener(e -> {
 	            try {
 	                File chosenFile = FileDialogUtils.chooseDirectory("Choose Output Directory:", new File(outputDirectory.getText()));
@@ -335,7 +358,7 @@ public class ScanFoldGui extends JDialog {
 			gbc_globalRefold.insets = new Insets(0, 0, 0, 5);
 			gbc_globalRefold.anchor = GridBagConstraints.WEST;
 			gbc_globalRefold.gridx = 0;
-			gbc_globalRefold.gridy = 8;
+			gbc_globalRefold.gridy = 9;
 			contentPanel.add(globalRefold, gbc_globalRefold);
 		}
 
@@ -637,6 +660,7 @@ public class ScanFoldGui extends JDialog {
 							"-y", shuffleType.getText(),
 							"-t", temperature.getText(),
 							"-d", (String) strand.getSelectedItem(),
+							"-a", (String) algorithm.getSelectedItem(),
 							"-z", String.valueOf(sequenceStart),
 					}));
 					

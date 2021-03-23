@@ -87,7 +87,8 @@ def main(args):
         '-type', args.RANDOMIZATIONTYPE,
         '--scan_out_path', SCANOUTPATH,
         '--fasta_file_path', FASTAFILEPATH,
-        '--fasta_index', FASTAINDEX
+        '--fasta_index', FASTAINDEX,
+        '--algo', args.ALGORITHM
     ]
 
     run_me('ScanFold-Scan_IGV', args.WORKDIR, scan_params)
@@ -135,7 +136,8 @@ def main(args):
         '--ed_wig_file_path', EDWIGFILEPATH,
         #'--pvalue_wig_file_path', PVALUEWIGFILEPATH,
         '--structure_extract_file', STRUCTUREEXTRACTFILE,
-        '--fasta_index', FASTAINDEX
+        '--fasta_index', FASTAINDEX,
+        '--algo', args.ALGORITHM
     ]
 
     if args.GLOBALREFOLD:
@@ -168,6 +170,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('-a', '--ALGORITHM', type=str)
     parser.add_argument('-c', '--COMPETITION', type=str)
     parser.add_argument('-g', '--GLOBALREFOLD', action='store_true')
     parser.add_argument('-i', '--INPUTFILE', type=str)
