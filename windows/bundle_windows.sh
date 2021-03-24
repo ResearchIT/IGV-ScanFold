@@ -79,7 +79,7 @@ cp license.txt ${BUNDLE_PREFIX}/ViennaRNA/
 popd
 popd
 
-rnastructure
+# rnastructure
 pushd lib
 curl -L -O  http://rna.urmc.rochester.edu/Releases/current/RNAstructureWindowsTextInterfaces64bit.zip
 unzip RNAstructureWindowsTextInterfaces64bit.zip
