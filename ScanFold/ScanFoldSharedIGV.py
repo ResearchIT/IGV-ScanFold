@@ -190,7 +190,7 @@ def zscore_function(energy_list, randomizations):
     return zscore;
 
 
-def rna_fold(frag, temperature):
+def rna_fold_rnafold(frag, temperature):
     args = ["RNAfold", "-p", "-T", str(temperature)]
     fc = subprocess.run(args, input=str(frag), check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out = str(fc.stdout)
@@ -206,7 +206,31 @@ def rna_fold(frag, temperature):
 
     return (structure, centroid, MFE, ED)
 
-def rna_refold(frag, temperature, constraint_file):
+def rna_fold_rnastructure(frag, temperature):
+    temp_kelvin = temperature+273.15
+    args = ["Fold", "-k", "-mfe", "-T", str(temp_kelvin), "-", "-"]
+    fc = subprocess.run(args, input=str(frag), check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = str(fc.stdout)
+    test = out.splitlines()
+    structure = test[2].split()[0]
+    centroid = "junk"
+    MFE = test[0].split(" ", 3)[2]
+    try:
+        MFE = float(MFE)
+    except:
+        print("Error parsing MFE values", test)
+    ED = 0.0
+    return (structure, centroid, MFE, ED)
+
+def rna_fold(frag, temperature, algo):
+    if algo == "rnastructure":
+        return rna_fold_rnastructure(frag, temperature)
+    elif algo == "rnafold":
+        return rna_fold_rnafold(frag, temperature)
+    else:
+        raise ValueError("Bad algorithm:", algo)
+
+def rna_refold_rnafold(frag, temperature, constraint_file):
     args = ["RNAfold", "-p", "-T", str(temperature), '-C', constraint_file]
     fc = subprocess.run(args, input=frag, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out = str(fc.stdout)
@@ -222,16 +246,40 @@ def rna_refold(frag, temperature, constraint_file):
 
     return (structure, centroid, MFE, ED)
 
+def rna_refold_rnastructure(frag, temperature, constraint_file):
+    temp_kelvin = temperature+273.15
+    args = ["Fold", "-k", "-mfe", "-T", str(temp_kelvin), "-C", constraint_file, "-", "-"]
+    fc = subprocess.run(args, input=frag, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = str(fc.stdout)
+    test = out.splitlines()
+    structure = test[2].split()[0]
+    centroid = "junk"
+    MFE = test[0].split(" ", 3)[2]
+    try:
+        MFE = float(MFE)
+    except:
+        print("Error parsing MFE values", test)
+    ED = 0.0
+    return (structure, centroid, MFE, ED)
+
+def rna_refold(frag, temperature, constraint_file, algo):
+    if algo == "rnastructure":
+        return rna_refold_rnastructure(frag, temperature)
+    elif algo == "rnafold":
+        return rna_refold_rnafold(frag, temperature)
+    else:
+        raise ValueError("Bad algorithm:", algo)
+
 def rna_folder(arg):
-    (frag, temperature) = arg
-    _, _, MFE, _ = rna_fold(frag, temperature)
+    (frag, temperature, algo) = arg
+    _, _, MFE, _ = rna_fold(frag, temperature, algo)
     return MFE
 
 ###### Function to calculate MFEs using RNAfold #################
-def energies(seq_list, temperature):
+def energies(seq_list, temperature, algo):
     energy_list = []
 
-    energy_list = multiprocessing(rna_folder, [(sequence, temperature) for sequence in seq_list], 4)
+    energy_list = multiprocessing(rna_folder, [(sequence, temperature, algo) for sequence in seq_list], 4)
     # for sequence in seq_list:
     #     #fc = RNA.fold_compound(str(sequence))
     #     (structure, MFE) = RNA.fold(str(sequence)) # calculate and define variables for mfe and structure

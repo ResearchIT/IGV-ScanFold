@@ -638,7 +638,13 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--temp', type=int, default=37,
                         help='Folding temperature')
 
+    parser.add_argument('--algo', type=str, default='rnafold',
+                    choices=['rnafold','rnastructure'],
+                    help='Select RNA folding algorithm')
+
     args = parser.parse_args()
+    
+    algo = args.algo
 
     temperature = args.temp
 
@@ -1340,7 +1346,7 @@ if __name__ == "__main__":
         #refolded_filter1_structure, _, refolded_filter1_MFE, _ = rna_refold(full_fasta_sequence, int(temperature), dbn_file_path2)
 
         #refold from -2 constraints
-        refolded_filter2_structure, _, refolded_filter2_MFE, _ = rna_refold(full_fasta_sequence, int(temperature), dbn_file_path3)
+        refolded_filter2_structure, _, refolded_filter2_MFE, _ = rna_refold(full_fasta_sequence, int(temperature), dbn_file_path3, algo)
 
         #extract the structure
         #full_structure, _, full_MFE, _ = rna_fold(full_fasta_sequence, int(temperature))
@@ -1530,7 +1536,7 @@ if __name__ == "__main__":
                 # ED = round(fc.mean_bp_distance(), 2) # this caclulates ED based on last calculated partition funciton
                 # ED_total.append(ED)            #print(structure)
 
-                MFE_structure, centroid, MFE, ED = rna_fold(str(frag), temperature)
+                MFE_structure, centroid, MFE, ED = rna_fold(str(frag), temperature, algo)
                 MFE = round(MFE, 2)
                 MFE_total.append(MFE)
                 ED = round(ED, 2) # this caclulates ED based on last calculated partition funciton
@@ -1543,7 +1549,7 @@ if __name__ == "__main__":
                 seqlist.append(frag) # adds the native fragment to list
                 scrambled_sequences = scramble(frag, 100, type)
                 seqlist.extend(scrambled_sequences)
-                energy_list = energies(seqlist, temperature)
+                energy_list = energies(seqlist, temperature, algo)
                 try:
                     zscore = round(zscore_function(energy_list, 100), 2)
                 except:
