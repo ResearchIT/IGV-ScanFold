@@ -101,7 +101,7 @@ def main(args):
     BPTRACK = mktemp(args.WORKDIR, '.IGV.bp')
     FASTATRACK = mktemp(args.WORKDIR, '.input.fa')
     #DBNFILEPATH = mktemp(args.WORKDIR, '.-2filter.dbn')
-    DBNFILEPATH = mktemp(args.WORKDIR, '.-2filter.scanfoldvarna')
+    DBNFILEPATH = mktemp(args.WORKDIR, '.-2filter.dbn')
     DBNFILEPATH1 = mktemp(args.WORKDIR, '.dbnfile1.dbn')
     DBNFILEPATH2 = mktemp(args.WORKDIR, '.dbnfile2.dbn')
     DBNFILEPATH3 = mktemp(args.WORKDIR, '.dbnfile3.dbn')
@@ -151,8 +151,14 @@ def main(args):
         MFEWIGFILEPATH,
         EDWIGFILEPATH,
         STRUCTUREEXTRACTFILE,
-        DBNFILEPATH,
     ]
+
+    if (not file_is_empty(ZSCOREWIGFILEPATH) and (not file_is_empty(DBNFILEPATH))):
+        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldvarna')
+        with open(VARNA_FILE, "w") as output_file:
+            output_file.write(DBNFILEPATH + "\n")
+            output_file.write(ZSCOREWIGFILEPATH + "\n")
+        files_to_maybe_load.append(VARNA_FILE)
 
     files_to_load = [maybe_file for maybe_file in files_to_maybe_load if not file_is_empty(maybe_file)]
 

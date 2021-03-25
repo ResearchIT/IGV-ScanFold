@@ -1,5 +1,5 @@
 diff --git a/src/main/java/org/broad/igv/track/TrackLoader.java b/src/main/java/org/broad/igv/track/TrackLoader.java
-index f3c20f2cd..958e74e70 100644
+index 1ee316457..64447ac86 100644
 --- a/src/main/java/org/broad/igv/track/TrackLoader.java
 +++ b/src/main/java/org/broad/igv/track/TrackLoader.java
 @@ -76,6 +76,7 @@ import org.broad.igv.renderer.MutationRenderer;
@@ -15,12 +15,12 @@ index f3c20f2cd..958e74e70 100644
              } else if (typeString.endsWith(".maf")) {
                  loadMultipleAlignmentTrack(locator, newTracks, genome);
 +            } else if (typeString.endsWith(".scanfoldvarna")) {
-+                VarnaLoader.loadDotBracket(locator.getPath());
++                VarnaLoader.loadFofn(locator, genome);
              } else if (AttributeManager.isSampleInfoFile(locator)) {
                  // This might be a sample information file.
                  AttributeManager.getInstance().loadSampleInfo(locator);
 diff --git a/src/main/java/org/broad/igv/ui/IGVMenuBar.java b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-index 4032a4354..2302e1acd 100644
+index af0e3127d..67da43ca4 100644
 --- a/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 +++ b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 @@ -59,6 +59,8 @@ import org.broad.igv.util.HttpUtils;
@@ -40,7 +40,7 @@ index 4032a4354..2302e1acd 100644
  
          refreshToolsMenu();
          menus.add(toolsMenu);
-@@ -1185,4 +1188,22 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+@@ -1183,4 +1186,22 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
      public void disableReloadSession() {
          this.reloadSessionItem.setEnabled(false);
      }
@@ -64,7 +64,7 @@ index 4032a4354..2302e1acd 100644
 +    }
  }
 diff --git a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
-index f833da1b0..13234f088 100644
+index 9181ea2b0..94fda698d 100644
 --- a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
 +++ b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
 @@ -35,6 +35,7 @@ import org.broad.igv.util.blat.BlatClient;

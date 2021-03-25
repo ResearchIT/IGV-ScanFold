@@ -12,7 +12,7 @@ import fr.orsay.lri.varna.VARNAPanel;
 import fr.orsay.lri.varna.exceptions.ExceptionNonEqualLength;
 
 public class VarnaPopup extends JDialog {
-	public VarnaPopup(String windowTitle, String sequence, String structure) {
+	public VarnaPopup(String windowTitle, String sequence, String structure, Double[] colors) {
 		setTitle(windowTitle);
 		setBounds(100, 100, 450, 300);
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -23,7 +23,8 @@ public class VarnaPopup extends JDialog {
 		getContentPane().setLayout(gridBagLayout);
 		{
 			try {
-				JPanel panel = new fr.orsay.lri.varna.VARNAPanel(sequence, structure, RNA.DRAW_MODE_NAVIEW);
+				fr.orsay.lri.varna.VARNAPanel panel = new fr.orsay.lri.varna.VARNAPanel(sequence, structure, RNA.DRAW_MODE_NAVIEW);
+				panel.setColorMapValues(colors);
 				GridBagConstraints gbc_panel = new GridBagConstraints();
 				gbc_panel.insets = new Insets(0, 0, 5, 0);
 				gbc_panel.fill = GridBagConstraints.BOTH;

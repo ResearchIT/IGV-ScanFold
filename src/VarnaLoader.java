@@ -5,14 +5,40 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.stream.IntStream;
 
 import javax.swing.JDialog;
+
+import org.broad.igv.data.WiggleDataset;
+import org.broad.igv.data.WiggleParser;
+import org.broad.igv.feature.genome.Genome;
+import org.broad.igv.util.ResourceLocator;
 
 
 public class VarnaLoader {
 	
+	public static void loadFofn(ResourceLocator inFile, Genome genome) throws
+	FileNotFoundException, IOException {
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(inFile.getPath()));
+			String dotBracketFile = br.readLine().trim();
+			String colorFile = br.readLine().trim();
+			Double[] colors = loadColorFile(colorFile, genome);
+			loadDotBracket(dotBracketFile, colors);
+		} finally {
+			if (br != null) br.close();
+		}
+	}
+	
+	public static Double[] loadColorFile(String inFile, Genome genome) {
+		WiggleDataset ds = (new WiggleParser(new ResourceLocator(inFile), genome)).parse();
+		float[] theData = ds.getData("",ds.getChromosomes()[0]);
+		Double[] colors = IntStream.range(0, theData.length).mapToDouble(i -> theData[i]).boxed().toArray(Double[]::new);
+		return colors;
+	}
 	// based on org.broad.igv.feature.BasePairFileUtils::loadDotBracket
-	public static void loadDotBracket(String inFile) throws
+	public static void loadDotBracket(String inFile, Double[] colors) throws
 	FileNotFoundException, IOException {
 		// TODO: add error messages for misformatted file
 
@@ -36,7 +62,7 @@ public class VarnaLoader {
 				// skip leading header lines if present
 				if (nextLine.startsWith(">")) {
 					if (sequence.length() > 0 && struct.length() > 0) {
-						makeVarnaPopup(title, sequence, struct);
+						makeVarnaPopup(title, sequence, struct, colors);
 					}
 					title = nextLine;
 					sequence = "";
@@ -55,7 +81,7 @@ public class VarnaLoader {
 			}
 			
 			if (sequence.length() > 0 && struct.length() > 0) {
-				makeVarnaPopup(title, sequence, struct);
+				makeVarnaPopup(title, sequence, struct, colors);
 			}
 			
 		} finally {
@@ -65,9 +91,9 @@ public class VarnaLoader {
 	}
 
     
-	public static void makeVarnaPopup(String windowTitle, String sequence, String structure) {
+	public static void makeVarnaPopup(String windowTitle, String sequence, String structure, Double[] colors) {
 		try {
-			VarnaPopup dialog = new VarnaPopup(windowTitle, sequence, structure);
+			VarnaPopup dialog = new VarnaPopup(windowTitle, sequence, structure, colors);
 			//dialog.setModalityType(ModalityType.APPLICATION_MODAL);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
