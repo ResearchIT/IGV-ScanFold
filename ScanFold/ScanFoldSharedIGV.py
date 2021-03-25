@@ -264,9 +264,9 @@ def rna_refold_rnastructure(frag, temperature, constraint_file):
 
 def rna_refold(frag, temperature, constraint_file, algo):
     if algo == "rnastructure":
-        return rna_refold_rnastructure(frag, temperature)
+        return rna_refold_rnastructure(frag, temperature, constraint_file)
     elif algo == "rnafold":
-        return rna_refold_rnafold(frag, temperature)
+        return rna_refold_rnafold(frag, temperature, constraint_file)
     else:
         raise ValueError("Bad algorithm:", algo)
 
