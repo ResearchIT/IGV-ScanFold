@@ -93,6 +93,6 @@ popd
 
 # main
 pushd ${BUNDLE_PREFIX}
-cp ${TOPLEVEL}/windows/runme.bat .
+cp ${TOPLEVEL}/windows/IGV-ScanFold.bat .
 zip -r ${TOPLEVEL}/IGV-ScanFold-windows.zip *
 popd
