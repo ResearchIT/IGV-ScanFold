@@ -156,6 +156,7 @@ def main(args):
     if (not file_is_empty(ZSCOREWIGFILEPATH) and (not file_is_empty(DBNFILEPATH))):
         VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldvarna')
         with open(VARNA_FILE, "w") as output_file:
+            output_file.write(args.STRAND + "\n")
             output_file.write(DBNFILEPATH + "\n")
             output_file.write(ZSCOREWIGFILEPATH + "\n")
         files_to_maybe_load.append(VARNA_FILE)

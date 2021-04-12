@@ -22,19 +22,27 @@ public class VarnaLoader {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(inFile.getPath()));
+			String strand = br.readLine().trim();
 			String dotBracketFile = br.readLine().trim();
 			String colorFile = br.readLine().trim();
-			Double[] colors = loadColorFile(colorFile, genome);
+			Double[] colors = loadColorFile(colorFile, genome, strand);
 			loadDotBracket(dotBracketFile, colors);
 		} finally {
 			if (br != null) br.close();
 		}
 	}
 	
-	public static Double[] loadColorFile(String inFile, Genome genome) {
+	public static Double[] loadColorFile(String inFile, Genome genome, String strand) {
 		WiggleDataset ds = (new WiggleParser(new ResourceLocator(inFile), genome)).parse();
 		float[] theData = ds.getData("",ds.getChromosomes()[0]);
 		Double[] colors = IntStream.range(0, theData.length).mapToDouble(i -> theData[i]).boxed().toArray(Double[]::new);
+		if (strand.equals("reverse")) {
+			for(int i = 0; i < colors.length / 2; i++) {
+			    Double tmp = colors[i];
+			    colors[i] = colors[colors.length - i - 1];
+			    colors[colors.length - i - 1] = tmp;
+			}
+		}
 		return colors;
 	}
 	// based on org.broad.igv.feature.BasePairFileUtils::loadDotBracket
