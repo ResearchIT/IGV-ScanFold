@@ -20,7 +20,7 @@ index 1ee316457..64447ac86 100644
                  // This might be a sample information file.
                  AttributeManager.getInstance().loadSampleInfo(locator);
 diff --git a/src/main/java/org/broad/igv/ui/IGVMenuBar.java b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-index af0e3127d..67da43ca4 100644
+index fc49c66ae..b8097c609 100644
 --- a/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 +++ b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 @@ -59,6 +59,8 @@ import org.broad.igv.util.HttpUtils;
@@ -40,7 +40,7 @@ index af0e3127d..67da43ca4 100644
  
          refreshToolsMenu();
          menus.add(toolsMenu);
-@@ -1183,4 +1186,22 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+@@ -1207,4 +1210,22 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
      public void disableReloadSession() {
          this.reloadSessionItem.setEnabled(false);
      }
