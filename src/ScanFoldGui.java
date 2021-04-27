@@ -67,6 +67,10 @@ import java.awt.Cursor;
 import javax.swing.JTextArea;
 import java.awt.Rectangle;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextPane;
+import java.awt.GridLayout;
+import java.awt.SystemColor;
+import java.awt.Canvas;
 
 public class ScanFoldGui extends JDialog {
 	
@@ -102,6 +106,8 @@ public class ScanFoldGui extends JDialog {
     private JLabel lblOutputDirectory;
     private JTextField outputDirectory;
     private JButton outputDirectoryBrowse;
+    private JPanel descriptionPanel;
+    private JTextPane windowDescriptionPane;
 
 	/**
 	 * Launch the application.
@@ -121,19 +127,35 @@ public class ScanFoldGui extends JDialog {
 	 */
 	public ScanFoldGui() {
 		setTitle("scanfoldgui");
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 600, 885);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{450, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 35, 0};
+		gridBagLayout.columnWidths = new int[] {600, 0};
+		gridBagLayout.rowHeights = new int[]{50, 400, 400, 35};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
+		
+		{
+			descriptionPanel = new JPanel();
+			GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
+			gbc_descriptionPanel.insets = new Insets(0, 0, 5, 0);
+			gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
+			gbc_descriptionPanel.gridx = 0;
+			gbc_descriptionPanel.gridy = 0;
+			getContentPane().add(descriptionPanel, gbc_descriptionPanel);
+			descriptionPanel.setLayout(new GridLayout(0, 1, 0, 0));
+			{
+				windowDescriptionPane = new JTextPane();
+				windowDescriptionPane.setText("Placeholder");
+				descriptionPanel.add(windowDescriptionPane);
+			}
+		}
 		contentPanel.setBorder(new TitledBorder(null, "Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagConstraints gbc_contentPanel = new GridBagConstraints();
 		gbc_contentPanel.fill = GridBagConstraints.BOTH;
 		gbc_contentPanel.insets = new Insets(0, 0, 5, 0);
 		gbc_contentPanel.gridx = 0;
-		gbc_contentPanel.gridy = 0;
+		gbc_contentPanel.gridy = 1;
 		getContentPane().add(contentPanel, gbc_contentPanel);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
 		gbl_contentPanel.columnWidths = new int[]{119, 0, 0, 0};
@@ -362,7 +384,6 @@ public class ScanFoldGui extends JDialog {
 			contentPanel.add(globalRefold, gbc_globalRefold);
 		}
 
-
 		{
 			JPanel outputPanel = new JPanel();
 			outputPanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Log Output", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
@@ -388,7 +409,7 @@ public class ScanFoldGui extends JDialog {
 			}
 			{
 				outputText = new JTextArea();
-				outputText.setColumns(100);
+				outputText.setColumns(70);
 				GridBagConstraints gbc_outputText = new GridBagConstraints();
 				gbc_outputText.insets = new Insets(0, 0, 5, 0);
 				gbc_outputText.fill = GridBagConstraints.BOTH;
@@ -396,7 +417,7 @@ public class ScanFoldGui extends JDialog {
 				gbc_outputText.gridy = 1;
 				outputText.setEditable(false);
                 outputText.setText("");
-                outputText.setRows(10);
+                outputText.setRows(30);
                 outputScroll.setViewportView(outputText);
 			}
 		}
@@ -431,12 +452,19 @@ public class ScanFoldGui extends JDialog {
         redirectSystemStreams();
 	}
 
-    public static void launch(boolean modal, String chr, int start, String sequence, boolean resultsInNewWindow) {
+    public static void launch(boolean modal, String chr, int start, String sequence, boolean resultsInNewWindow, String launchPoint) {
         ScanFoldGui mainWindow = new ScanFoldGui();
         mainWindow.sequenceName = chr;
         mainWindow.sequence = sequence;
         mainWindow.sequenceStart = start;
         mainWindow.resultsInNewWindow = resultsInNewWindow;
+
+        if (launchPoint.equals("roi")) {
+        	mainWindow.windowDescriptionPane.setText("Running scanfold on the selected Region of Interest.\r\nTo run ScanFold on the entire visible region, close this window, then click 'ScanFold' in the main IGV menu bar.");
+        } else {
+        	mainWindow.windowDescriptionPane.setText("Running scanfold on the visible region.\r\nTo run ScanFold on an IGV 'Region of Interest', close this window, then right click the red 'Region of Interest' bar.");
+        }
+        
         mainWindow.pack();
         mainWindow.setModal(modal);
         mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
