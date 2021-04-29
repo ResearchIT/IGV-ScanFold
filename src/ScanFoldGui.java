@@ -71,6 +71,7 @@ import javax.swing.JTextPane;
 import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.Canvas;
+import javax.swing.ScrollPaneConstants;
 
 public class ScanFoldGui extends JDialog {
 	
@@ -129,10 +130,10 @@ public class ScanFoldGui extends JDialog {
 		setTitle("scanfoldgui");
 		setBounds(100, 100, 600, 885);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {600, 0};
-		gridBagLayout.rowHeights = new int[]{50, 400, 400, 35};
+		gridBagLayout.columnWidths = new int[]{450, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 35, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		
 		{
@@ -143,11 +144,20 @@ public class ScanFoldGui extends JDialog {
 			gbc_descriptionPanel.gridx = 0;
 			gbc_descriptionPanel.gridy = 0;
 			getContentPane().add(descriptionPanel, gbc_descriptionPanel);
-			descriptionPanel.setLayout(new GridLayout(0, 1, 0, 0));
+			GridBagLayout gbl_descriptionPanel = new GridBagLayout();
+			gbl_descriptionPanel.columnWidths = new int[] {600, 0};
+			gbl_descriptionPanel.rowHeights = new int[]{21, 0};
+			gbl_descriptionPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+			gbl_descriptionPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			descriptionPanel.setLayout(gbl_descriptionPanel);
 			{
 				windowDescriptionPane = new JTextPane();
 				windowDescriptionPane.setText("Placeholder");
-				descriptionPanel.add(windowDescriptionPane);
+				GridBagConstraints gbc_windowDescriptionPane = new GridBagConstraints();
+				gbc_windowDescriptionPane.fill = GridBagConstraints.BOTH;
+				gbc_windowDescriptionPane.gridx = 0;
+				gbc_windowDescriptionPane.gridy = 0;
+				descriptionPanel.add(windowDescriptionPane, gbc_windowDescriptionPane);
 			}
 		}
 		contentPanel.setBorder(new TitledBorder(null, "Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -388,20 +398,21 @@ public class ScanFoldGui extends JDialog {
 			JPanel outputPanel = new JPanel();
 			outputPanel.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Log Output", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
 			GridBagConstraints gbc_outputPanel = new GridBagConstraints();
-			gbc_outputPanel.insets = new Insets(0, 0, 5, 0);
 			gbc_outputPanel.fill = GridBagConstraints.BOTH;
+			gbc_outputPanel.insets = new Insets(0, 0, 5, 0);
 			gbc_outputPanel.gridx = 0;
 			gbc_outputPanel.gridy = 2;
 			getContentPane().add(outputPanel, gbc_outputPanel);
 			GridBagLayout gbl_outputPanel = new GridBagLayout();
-			gbl_outputPanel.columnWidths = new int[]{3, 0};
-			gbl_outputPanel.rowHeights = new int[]{3, 0};
-			gbl_outputPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-			gbl_outputPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			gbl_outputPanel.columnWidths = new int[] {600, 0};
+			gbl_outputPanel.rowHeights = new int[] {300, 0};
+			gbl_outputPanel.columnWeights = new double[]{0.0};
+			gbl_outputPanel.rowWeights = new double[]{0.0};
 			outputPanel.setLayout(gbl_outputPanel);
 			{
 				outputScroll = new JScrollPane();
 				GridBagConstraints gbc_outputScroll = new GridBagConstraints();
+				gbc_outputScroll.fill = GridBagConstraints.BOTH;
 				gbc_outputScroll.anchor = GridBagConstraints.NORTHWEST;
 				gbc_outputScroll.gridx = 0;
 				gbc_outputScroll.gridy = 0;
@@ -409,7 +420,7 @@ public class ScanFoldGui extends JDialog {
 			}
 			{
 				outputText = new JTextArea();
-				outputText.setColumns(70);
+				outputText.setColumns(50);
 				GridBagConstraints gbc_outputText = new GridBagConstraints();
 				gbc_outputText.insets = new Insets(0, 0, 5, 0);
 				gbc_outputText.fill = GridBagConstraints.BOTH;
@@ -417,7 +428,7 @@ public class ScanFoldGui extends JDialog {
 				gbc_outputText.gridy = 1;
 				outputText.setEditable(false);
                 outputText.setText("");
-                outputText.setRows(30);
+                outputText.setRows(10);
                 outputScroll.setViewportView(outputText);
 			}
 		}
