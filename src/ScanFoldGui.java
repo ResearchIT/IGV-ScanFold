@@ -73,13 +73,8 @@ import java.awt.SystemColor;
 import java.awt.Canvas;
 import javax.swing.ScrollPaneConstants;
 
-public class ScanFoldGui extends JDialog {
-	
-	private String sequence;
-	private String sequenceName;
-	private int sequenceStart;
-	private boolean resultsInNewWindow;
-	
+public class ScanFoldGui extends BaseScanFoldDialog {
+		
 	private final JPanel contentPanel = new JPanel();
 	private JTextField windowSize;
 	private JLabel lblWindowSize;
@@ -97,8 +92,6 @@ public class ScanFoldGui extends JDialog {
 	private JButton closeButton;
 	private JTextArea outputText;
 	private JScrollPane outputScroll;
-    PrintStream systemOutStream;
-    PrintStream systemErrStream;
     private JCheckBox globalRefold;
     private JLabel lblStrand;
     private JComboBox strand;
@@ -460,7 +453,7 @@ public class ScanFoldGui extends JDialog {
             }
         });
         
-        redirectSystemStreams();
+        redirectSystemStreams(outputText);
 	}
 
     public static void launch(boolean modal, String chr, int start, String sequence, boolean resultsInNewWindow, String launchPoint) {
@@ -492,191 +485,9 @@ public class ScanFoldGui extends JDialog {
         mainWindow.setVisible(true);
     }
     
-    public static String extractSequence(Genome genome, String chr, int start, int end, Strand strand) {
-    	
-    	String retSequence = "";
-        try {
-            //IGV.getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            byte[] seqBytes = genome.getSequence(chr, start, end);
-
-            if (seqBytes == null) {
-                MessageUtils.showMessage("Sequence not available");
-            } else {
-                String sequence = new String(seqBytes);
-
-//                SequenceTrack sequenceTrack = IGV.getInstance().getSequenceTrack();
-//                if (strand == Strand.NEGATIVE || (sequenceTrack != null && sequenceTrack.getStrand() == Strand.NEGATIVE)) {
-//                    sequence = SequenceTrack.getReverseComplement(sequence);
-//                }
-                if (strand == Strand.NEGATIVE) {
-                  sequence = SequenceTrack.getReverseComplement(sequence);
-                }
-                retSequence = sequence;
-            }
-
-        } finally {
-        	
-            //IGV.getMainFrame().setCursor(Cursor.getDefaultCursor());
-        }
-        
-        return retSequence;
-        
-    }
-    
-    public static String getTempOuputDirectory() {
-    	String outputDirectory;
-    	try {
-    		outputDirectory = Files.createTempDirectory("scanfold-results").toFile().getAbsolutePath();
-    	}catch (IOException e) {
-    		outputDirectory = (new File(System.getProperty("java.io.tmpdir"))).getAbsolutePath();
-		}
-    	return outputDirectory;
-    }
-    
-	private String writeSequenceToTempFile(String outputDirectory, String strand) {
-		String sequence = this.sequence;
-		if (strand.equals("reverse")) {
-			sequence = SequenceTrack.getReverseComplement(sequence);
-		}
-		String tempFilePath = "";
-		try {
-			File tempDir = new File(outputDirectory);
-			File tempFile = File.createTempFile("scanfoldinput", ".fa", tempDir);
-			FileWriter fileWriter = new FileWriter(tempFile, true);
-			BufferedWriter bw = new BufferedWriter(fileWriter);
-
-			bw.write(sequence);
-			bw.close();
-			tempFilePath = tempFile.getAbsolutePath();
-		} catch (IOException e) {
-			showMessage(e.getMessage());
-		}
-		return tempFilePath;
-	}
-    
-    
-    private abstract class IgvToolsSwingWorker extends SwingWorker{
-
-        @Override
-        protected void done() {
-            runButton.setEnabled(true);
-            setCursor(Cursor.getDefaultCursor());
-            updateTextArea("Done");
-        }
-    }
-
-    private void updateTextArea(final String text) {
-    	updateTextArea(text, false);
-    }
-    
-    private void updateTextArea(final String text, boolean addNewline) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                outputText.append(text);
-                if (addNewline) {
-                	outputText.append("\n");
-                }
-            }
-        });
-    }
-   
-    private void redirectSystemStreams() {
-        OutputStream out = new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                updateTextArea(String.valueOf((char) b));
-            }
-
-            @Override
-            public void write(byte[] b, int off, int len) throws IOException {
-                updateTextArea(new String(b, off, len));
-            }
-
-            @Override
-            public void write(byte[] b) throws IOException {
-                write(b, 0, b.length);
-            }
-        };
-
-        systemOutStream = System.out;
-        systemErrStream = System.err;
-
-        System.setOut(new PrintStream(out, true));
-        System.setErr(new PrintStream(out, true));
-    }
-    
-    private void close() {
-        System.setErr(systemErrStream);
-        System.setOut(systemOutStream);
-        dispose();
-    }
-    
-    private void showMessage(String tool) {
-        JOptionPane.showMessageDialog(this, tool);
-    }
-    
-    private String executeShellCommand(String cmd[], String[] envp, File dir, boolean waitFor) throws IOException {
-        Process pr = RuntimeUtils.startExternalProcess(cmd, envp, dir);
-
-        if(waitFor){
-            try {
-                pr.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        InputStream inputStream = null;
-        String line = "";
-
-        try {
-            inputStream = pr.getInputStream();
-            BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream));
-            StringWriter writer = new StringWriter();
-            PrintWriter pw = new PrintWriter(writer);
-            while ((line = buf.readLine()) != null) {
-            	updateTextArea(line, true);
-                pw.println(line);
-            }
-            pw.close();
-            return writer.toString();
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            OutputStream os = pr.getOutputStream();
-            if(os != null){
-                os.close();
-            }
-        }
-    }
-
-    private void runBatchFile(String batchFile) {
-		CommandExecutor cmdExe = new CommandExecutor(IGV.getInstance());
-		BufferedReader reader = null;
-		String inLine;
-		try {
-			reader = ParsingUtils.openBufferedReader(batchFile);
-			while ((inLine = reader.readLine()) != null) {
-				if (!(inLine.startsWith("#") || inLine.startsWith("//"))) {
-					cmdExe.execute(inLine);
-				}
-			}
-		} catch (IOException ioe) {
-			throw new DataLoadException(ioe.getMessage(), batchFile);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					showMessage(e.getMessage());
-				}
-			}
-		}
-    }
     
     private void run() {
-		SwingWorker swingWorker = new IgvToolsSwingWorker() {
+		SwingWorker swingWorker = new IgvToolsSwingWorker(outputText, runButton) {
 
 			@Override
 			protected Object doInBackground() {
@@ -713,7 +524,7 @@ public class ScanFoldGui extends JDialog {
 					}
 					
 					
-					String result = executeShellCommand(cmd.toArray(new String[cmd.size()]), null, new File(env.get("SCANFOLDRUNDIR")), false);
+					String result = executeShellCommand(outputText, cmd.toArray(new String[cmd.size()]), null, new File(env.get("SCANFOLDRUNDIR")), false);
 					
 					if (!resultsInNewWindow) {
 						String startSentinel = "BATCHFILEFIRSTSENTINEL";
