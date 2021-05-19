@@ -1,77 +1,37 @@
 package org.broad.igv.scanfold;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JCheckBox;
-import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
 import javax.swing.border.TitledBorder;
 
-import org.broad.igv.Globals;
-import org.broad.igv.batch.BatchRunner;
-import org.broad.igv.batch.CommandExecutor;
-import org.broad.igv.exceptions.DataLoadException;
-import org.broad.igv.feature.Strand;
-import org.broad.igv.feature.genome.Genome;
-import org.broad.igv.feature.genome.GenomeManager;
-import org.broad.igv.track.SequenceTrack;
-import org.broad.igv.ui.IGV;
-import org.broad.igv.ui.WaitCursorManager;
 import org.broad.igv.ui.util.FileDialogUtils;
-import org.broad.igv.ui.util.MessageUtils;
-import org.broad.igv.util.LongRunningTask;
-import org.broad.igv.util.ParsingUtils;
-import org.broad.igv.util.RuntimeUtils;
-import org.broad.igv.util.StringUtils;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
-import java.awt.Cursor;
-
 import javax.swing.JTextArea;
-import java.awt.Rectangle;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextPane;
-import java.awt.GridLayout;
-import java.awt.SystemColor;
-import java.awt.Canvas;
-import javax.swing.ScrollPaneConstants;
 
 public class RNAFoldGui extends BaseScanFoldDialog {
 		
@@ -94,7 +54,7 @@ public class RNAFoldGui extends BaseScanFoldDialog {
 	public static void main(String[] args) {
 		try {
 			RNAFoldGui dialog = new RNAFoldGui();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -272,7 +232,8 @@ public class RNAFoldGui extends BaseScanFoldDialog {
 		}
 		
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent) {
+            @Override
+			public void windowClosing(WindowEvent windowEvent) {
                 close();
             }
         });
@@ -295,7 +256,7 @@ public class RNAFoldGui extends BaseScanFoldDialog {
         
         mainWindow.pack();
         mainWindow.setModal(modal);
-        mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        mainWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         mainWindow.setResizable(true);
 
 //        if (genomeId != null) {
