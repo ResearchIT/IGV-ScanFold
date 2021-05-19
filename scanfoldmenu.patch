@@ -20,19 +20,20 @@ index 1ee316457..64447ac86 100644
                  // This might be a sample information file.
                  AttributeManager.getInstance().loadSampleInfo(locator);
 diff --git a/src/main/java/org/broad/igv/ui/IGVMenuBar.java b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-index fc49c66ae..0814f4d09 100644
+index fc49c66ae..42ba666b8 100644
 --- a/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 +++ b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-@@ -59,6 +59,8 @@ import org.broad.igv.util.HttpUtils;
+@@ -59,6 +59,9 @@ import org.broad.igv.util.HttpUtils;
  import org.broad.igv.util.LongRunningTask;
  import org.broad.igv.util.blat.BlatClient;
  import org.broad.igv.util.encode.EncodeFileBrowser;
 +import org.broad.igv.feature.Strand;
++import org.broad.igv.scanfold.RNAFoldGui;
 +import org.broad.igv.scanfold.ScanFoldGui;
  
  import javax.swing.*;
  import javax.swing.event.MenuEvent;
-@@ -172,6 +174,7 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+@@ -172,6 +175,7 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
          menus.add(createViewMenu());
          menus.add(createTracksMenu());
          menus.add(createRegionsMenu());
@@ -40,7 +41,7 @@ index fc49c66ae..0814f4d09 100644
  
          refreshToolsMenu();
          menus.add(toolsMenu);
-@@ -1207,4 +1210,22 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+@@ -1207,4 +1211,35 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
      public void disableReloadSession() {
          this.reloadSessionItem.setEnabled(false);
      }
@@ -48,7 +49,7 @@ index fc49c66ae..0814f4d09 100644
 +    private JMenu createScanfoldMenu() {
 +        List<JComponent> menuItems = new ArrayList<JComponent>();
 +        MenuAction extrasMenuAction = new MenuAction("ScanFold");
-+        MenuAction menuAction = new MenuAction("Run ScanFold on visible region...", null, 0) {
++        MenuAction scanfoldMenuAction = new MenuAction("Run ScanFold on visible region...", null, 0) {
 +            @Override
 +            public void actionPerformed(ActionEvent e) {
 +            	final ReferenceFrame defaultFrame = FrameManager.getDefaultFrame();
@@ -59,23 +60,37 @@ index fc49c66ae..0814f4d09 100644
 +                ScanFoldGui.launch(false, chr, start, sequence, false, "main");
 +            }
 +        };
-+        menuItems.add(MenuAndToolbarUtils.createMenuItem(menuAction));
++        menuItems.add(MenuAndToolbarUtils.createMenuItem(scanfoldMenuAction));
++        MenuAction rnafoldMenuAction = new MenuAction("Run RNAFold on visible region...", null, 0) {
++            @Override
++            public void actionPerformed(ActionEvent e) {
++            	final ReferenceFrame defaultFrame = FrameManager.getDefaultFrame();
++                String chr = defaultFrame.getChrName();
++                int start = (int) defaultFrame.getOrigin();
++                int end = (int) defaultFrame.getEnd();
++                String sequence = RNAFoldGui.extractSequence(igv.getGenomeManager().getCurrentGenome(), chr, start, end, Strand.NONE);
++                RNAFoldGui.launch(false, chr, start, sequence, false, "main");
++            }
++        };
++        menuItems.add(MenuAndToolbarUtils.createMenuItem(rnafoldMenuAction));
++
 +        return MenuAndToolbarUtils.createMenu(menuItems, extrasMenuAction);
 +    }
  }
 diff --git a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
-index 9181ea2b0..1b6eeb0fd 100644
+index 9181ea2b0..58b535c0b 100644
 --- a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
 +++ b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
-@@ -35,6 +35,7 @@ import org.broad.igv.util.blat.BlatClient;
+@@ -35,6 +35,8 @@ import org.broad.igv.util.blat.BlatClient;
  import org.broad.igv.feature.RegionOfInterest;
  import org.broad.igv.feature.genome.Genome;
  import org.broad.igv.feature.genome.GenomeManager;
++import org.broad.igv.scanfold.RNAFoldGui;
 +import org.broad.igv.scanfold.ScanFoldGui;
  import org.broad.igv.ui.IGV;
  import org.broad.igv.util.LongRunningTask;
  import org.broad.igv.util.NamedRunnable;
-@@ -199,7 +200,17 @@ public class RegionOfInterestPanel extends JPanel {
+@@ -199,7 +201,28 @@ public class RegionOfInterestPanel extends JPanel {
          item.addActionListener(e -> BlatClient.doBlatQuery(roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE));
          popupMenu.add(item);
  
@@ -86,6 +101,17 @@ index 9181ea2b0..1b6eeb0fd 100644
 +            	Genome genome = GenomeManager.getInstance().getCurrentGenome();
 +            	String sequence = ScanFoldGui.extractSequence(genome, roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE);
 +            	ScanFoldGui.launch(false, roi.getChr(), roi.getStart(), sequence, false, "roi");
++            }
++        });
++        popupMenu.add(item);
++        
++        item = new JMenuItem("Run RNAFold on selected region...");
++        item.addActionListener(new ActionListener() {
++
++            public void actionPerformed(ActionEvent e) {
++            	Genome genome = GenomeManager.getInstance().getCurrentGenome();
++            	String sequence = RNAFoldGui.extractSequence(genome, roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE);
++            	RNAFoldGui.launch(false, roi.getChr(), roi.getStart(), sequence, false, "roi");
 +            }
 +        });
 +        popupMenu.add(item);
