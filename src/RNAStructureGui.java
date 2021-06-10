@@ -90,6 +90,7 @@ public class RNAStructureGui extends BaseScanFoldDialog {
 			descriptionPanel.setLayout(gbl_descriptionPanel);
 			{
 				windowDescriptionPane = new JTextPane();
+				windowDescriptionPane.setEditable(false);
 				windowDescriptionPane.setText("Placeholder");
 				GridBagConstraints gbc_windowDescriptionPane = new GridBagConstraints();
 				gbc_windowDescriptionPane.fill = GridBagConstraints.BOTH;
