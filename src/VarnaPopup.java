@@ -7,12 +7,15 @@ import java.awt.Insets;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.broad.igv.ui.IGV;
+
 import fr.orsay.lri.varna.models.rna.RNA;
 import fr.orsay.lri.varna.VARNAPanel;
 import fr.orsay.lri.varna.exceptions.ExceptionNonEqualLength;
 
 public class VarnaPopup extends JDialog {
 	public VarnaPopup(String windowTitle, String sequence, String structure, Double[] colors) {
+		//super(IGV.getMainFrame(), true);
 		setTitle(windowTitle);
 		setBounds(100, 100, 450, 300);
 		GridBagLayout gridBagLayout = new GridBagLayout();

@@ -27,6 +27,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.JOptionPane;
 import java.awt.Cursor;
+import java.awt.Frame;
 
 import javax.swing.JTextArea;
 
@@ -46,6 +47,10 @@ public abstract class BaseScanFoldDialog extends JDialog {
 	public BaseScanFoldDialog() {
 		
         
+	}
+	
+	public BaseScanFoldDialog(Frame window, boolean modal) {
+		super(window, modal);
 	}
 	
 

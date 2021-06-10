@@ -30,6 +30,7 @@ import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 
 import javax.swing.JTextArea;
 import javax.swing.DefaultComboBoxModel;
@@ -67,11 +68,11 @@ public class RNAStructureGui extends BaseScanFoldDialog {
 	 * Create the dialog.
 	 */
 	public RNAStructureGui() {
+		//super(IGV.getMainFrame(), true);
 		setTitle("rnastructuregui");
-		setBounds(100, 100, 600, 885);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{450, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 35, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
@@ -242,9 +243,11 @@ public class RNAStructureGui extends BaseScanFoldDialog {
         });
         
         redirectSystemStreams(outputText);
+        setMinimumSize(new Dimension(600,850));
+        setResizable(false);
 	}
 
-    public static void launch(boolean modal, String chr, int start, String sequence, boolean resultsInNewWindow, String launchPoint) {
+    public static void launch(String chr, int start, String sequence, boolean resultsInNewWindow, String launchPoint) {
         RNAStructureGui mainWindow = new RNAStructureGui();
         mainWindow.sequenceName = chr;
         mainWindow.sequence = sequence;
@@ -257,19 +260,7 @@ public class RNAStructureGui extends BaseScanFoldDialog {
         	mainWindow.windowDescriptionPane.setText("Running RNAStructure on the visible region.\r\nTo run RNAStructure on an IGV 'Region of Interest', close this window, then right click the red 'Region of Interest' bar.");
         }
         
-        mainWindow.pack();
-        mainWindow.setModal(modal);
         mainWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        mainWindow.setResizable(true);
-
-//        if (genomeId != null) {
-//            mainWindow.genomeField.setText(genomeId);
-//            mainWindow.genomeField.setEnabled(false);
-//            mainWindow.genomeField.setToolTipText("<html>To change the genome id close this window and <br>use the pulldown on the IGV batch screen.");
-//            mainWindow.genomeButton.setEnabled(false);
-//            mainWindow.genomeSelectionDisabled = true;
-//        }
-
         mainWindow.setVisible(true);
     }
     

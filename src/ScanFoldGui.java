@@ -1,6 +1,7 @@
 package org.broad.igv.scanfold;
 
 import java.awt.FlowLayout;
+import java.awt.Frame;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 import javax.swing.border.TitledBorder;
 
+import org.broad.igv.ui.IGV;
 import org.broad.igv.ui.util.FileDialogUtils;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -31,6 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 
 import javax.swing.JTextArea;
 import javax.swing.DefaultComboBoxModel;
@@ -79,15 +82,16 @@ public class ScanFoldGui extends BaseScanFoldDialog {
 		}
 	}
 
+	
 	/**
 	 * Create the dialog.
 	 */
 	public ScanFoldGui() {
+		//super(IGV.getMainFrame(), true);
 		setTitle("scanfoldgui");
-		setBounds(100, 100, 600, 885);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{450, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 35, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
@@ -369,8 +373,8 @@ public class ScanFoldGui extends BaseScanFoldDialog {
 			{
 				outputScroll = new JScrollPane();
 				GridBagConstraints gbc_outputScroll = new GridBagConstraints();
-				gbc_outputScroll.fill = GridBagConstraints.BOTH;
 				gbc_outputScroll.anchor = GridBagConstraints.NORTHWEST;
+				gbc_outputScroll.fill = GridBagConstraints.BOTH;
 				gbc_outputScroll.gridx = 0;
 				gbc_outputScroll.gridy = 0;
 				outputPanel.add(outputScroll, gbc_outputScroll);
@@ -391,7 +395,8 @@ public class ScanFoldGui extends BaseScanFoldDialog {
 		}
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			FlowLayout fl_buttonPane = new FlowLayout(FlowLayout.RIGHT);
+			buttonPane.setLayout(fl_buttonPane);
 			GridBagConstraints gbc_buttonPane = new GridBagConstraints();
 			gbc_buttonPane.anchor = GridBagConstraints.NORTH;
 			gbc_buttonPane.fill = GridBagConstraints.HORIZONTAL;
@@ -419,9 +424,12 @@ public class ScanFoldGui extends BaseScanFoldDialog {
         });
         
         redirectSystemStreams(outputText);
+        
+        setMinimumSize(new Dimension(600,850));
+        setResizable(false);
 	}
-
-    public static void launch(boolean modal, String chr, int start, String sequence, boolean resultsInNewWindow, String launchPoint) {
+	
+    public static void launch(String chr, int start, String sequence, boolean resultsInNewWindow, String launchPoint) {
         ScanFoldGui mainWindow = new ScanFoldGui();
         mainWindow.sequenceName = chr;
         mainWindow.sequence = sequence;
@@ -434,19 +442,7 @@ public class ScanFoldGui extends BaseScanFoldDialog {
         	mainWindow.windowDescriptionPane.setText("Running scanfold on the visible region.\r\nTo run ScanFold on an IGV 'Region of Interest', close this window, then right click the red 'Region of Interest' bar.");
         }
         
-        mainWindow.pack();
-        mainWindow.setModal(modal);
         mainWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        mainWindow.setResizable(true);
-
-//        if (genomeId != null) {
-//            mainWindow.genomeField.setText(genomeId);
-//            mainWindow.genomeField.setEnabled(false);
-//            mainWindow.genomeField.setToolTipText("<html>To change the genome id close this window and <br>use the pulldown on the IGV batch screen.");
-//            mainWindow.genomeButton.setEnabled(false);
-//            mainWindow.genomeSelectionDisabled = true;
-//        }
-
         mainWindow.setVisible(true);
     }
     
