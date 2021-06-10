@@ -20,7 +20,7 @@ index 1ee316457..64447ac86 100644
                  // This might be a sample information file.
                  AttributeManager.getInstance().loadSampleInfo(locator);
 diff --git a/src/main/java/org/broad/igv/ui/IGVMenuBar.java b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-index fc49c66ae..20ea9c6b3 100644
+index fc49c66ae..ed084b624 100644
 --- a/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 +++ b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 @@ -59,6 +59,10 @@ import org.broad.igv.util.HttpUtils;
@@ -58,7 +58,7 @@ index fc49c66ae..20ea9c6b3 100644
 +                int start = (int) defaultFrame.getOrigin();
 +                int end = (int) defaultFrame.getEnd();
 +                String sequence = ScanFoldGui.extractSequence(igv.getGenomeManager().getCurrentGenome(), chr, start, end, Strand.NONE);
-+                ScanFoldGui.launch(false, chr, start, sequence, false, "main");
++                ScanFoldGui.launch(chr, start, sequence, false, "main");
 +            }
 +        };
 +        menuItems.add(MenuAndToolbarUtils.createMenuItem(scanfoldMenuAction));
@@ -70,7 +70,7 @@ index fc49c66ae..20ea9c6b3 100644
 +                int start = (int) defaultFrame.getOrigin();
 +                int end = (int) defaultFrame.getEnd();
 +                String sequence = RNAFoldGui.extractSequence(igv.getGenomeManager().getCurrentGenome(), chr, start, end, Strand.NONE);
-+                RNAFoldGui.launch(false, chr, start, sequence, false, "main");
++                RNAFoldGui.launch(chr, start, sequence, false, "main");
 +            }
 +        };
 +        menuItems.add(MenuAndToolbarUtils.createMenuItem(rnafoldMenuAction));
@@ -82,7 +82,7 @@ index fc49c66ae..20ea9c6b3 100644
 +                int start = (int) defaultFrame.getOrigin();
 +                int end = (int) defaultFrame.getEnd();
 +                String sequence = RNAStructureGui.extractSequence(igv.getGenomeManager().getCurrentGenome(), chr, start, end, Strand.NONE);
-+                RNAStructureGui.launch(false, chr, start, sequence, false, "main");
++                RNAStructureGui.launch(chr, start, sequence, false, "main");
 +            }
 +        };
 +        menuItems.add(MenuAndToolbarUtils.createMenuItem(rnastructureMenuAction));
@@ -90,7 +90,7 @@ index fc49c66ae..20ea9c6b3 100644
 +    }
  }
 diff --git a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
-index 9181ea2b0..c2ef8d7b3 100644
+index 9181ea2b0..6fc986f12 100644
 --- a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
 +++ b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
 @@ -35,6 +35,9 @@ import org.broad.igv.util.blat.BlatClient;
@@ -113,7 +113,7 @@ index 9181ea2b0..c2ef8d7b3 100644
 +            public void actionPerformed(ActionEvent e) {
 +            	Genome genome = GenomeManager.getInstance().getCurrentGenome();
 +            	String sequence = ScanFoldGui.extractSequence(genome, roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE);
-+            	ScanFoldGui.launch(false, roi.getChr(), roi.getStart(), sequence, false, "roi");
++            	ScanFoldGui.launch(roi.getChr(), roi.getStart(), sequence, false, "roi");
 +            }
 +        });
 +        popupMenu.add(item);
@@ -124,7 +124,7 @@ index 9181ea2b0..c2ef8d7b3 100644
 +            public void actionPerformed(ActionEvent e) {
 +            	Genome genome = GenomeManager.getInstance().getCurrentGenome();
 +            	String sequence = RNAFoldGui.extractSequence(genome, roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE);
-+            	RNAFoldGui.launch(false, roi.getChr(), roi.getStart(), sequence, false, "roi");
++            	RNAFoldGui.launch(roi.getChr(), roi.getStart(), sequence, false, "roi");
 +            }
 +        });
 +        popupMenu.add(item);
@@ -135,7 +135,7 @@ index 9181ea2b0..c2ef8d7b3 100644
 +            public void actionPerformed(ActionEvent e) {
 +            	Genome genome = GenomeManager.getInstance().getCurrentGenome();
 +            	String sequence = RNAStructureGui.extractSequence(genome, roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE);
-+            	RNAStructureGui.launch(false, roi.getChr(), roi.getStart(), sequence, false, "roi");
++            	RNAStructureGui.launch(roi.getChr(), roi.getStart(), sequence, false, "roi");
 +            }
 +        });
 +        popupMenu.add(item);
