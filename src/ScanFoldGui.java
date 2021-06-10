@@ -30,6 +30,8 @@ import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import java.awt.Cursor;
+
 import javax.swing.JTextArea;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextPane;
@@ -450,6 +452,8 @@ public class ScanFoldGui extends BaseScanFoldDialog {
     
     
     private void run() {
+		runButton.setEnabled(false);
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		SwingWorker swingWorker = new IgvToolsSwingWorker(outputText, runButton) {
 
 			@Override
