@@ -69,7 +69,7 @@ def mktemp(directory, extension, name="output"):
     os.close(file_handle)
     return file_path
 
-def main(args):
+def main_scanfold(args):
 
     SCANOUTPATH = mktemp(args.WORKDIR, '.scan-out.tsv')
     FASTAFILEPATH = mktemp(args.WORKDIR, '.fasta', name='input')
@@ -172,25 +172,28 @@ def main(args):
 
     print("BATCHFILEFIRSTSENTINEL{}BATCHFILESECONDSENTINEL".format(batch_file_path))
 
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-
-    parser.add_argument('-a', '--ALGORITHM', type=str)
-    parser.add_argument('-c', '--COMPETITION', type=str)
-    parser.add_argument('-g', '--GLOBALREFOLD', action='store_true')
     parser.add_argument('-i', '--INPUTFILE', type=str)
-    parser.add_argument('-n', '--SEQUENCENAME', type=str)
-    parser.add_argument('-r', '--RANDOMIZATIONS', type=str)
-    parser.add_argument('-s', '--STEPSIZE', type=str)
-    parser.add_argument('-t', '--TEMPERATURE', type=str)
-    parser.add_argument('-w', '--WINDOWSIZE', type=str)
-    parser.add_argument('-y', '--RANDOMIZATIONTYPE', type=str)
-    parser.add_argument('-z', '--STARTPOS', type=str)
-    parser.add_argument('-d', '--STRAND', type=str)
     parser.add_argument('-o', '--WORKDIR', type=str)
+    parser.add_argument('-n', '--SEQUENCENAME', type=str)
+    parser.add_argument('-d', '--STRAND', type=str)
+    parser.add_argument('-z', '--STARTPOS', type=str)
+    
+
+    subparsers = parser.add_subparsers(help='sub-command help')
+    scanfold = subparsers.add_parser('scanfold', help='scanfold')
+    scanfold.add_argument('-a', '--ALGORITHM', type=str)
+    scanfold.add_argument('-c', '--COMPETITION', type=str)
+    scanfold.add_argument('-g', '--GLOBALREFOLD', action='store_true')
+    scanfold.add_argument('-r', '--RANDOMIZATIONS', type=str)
+    scanfold.add_argument('-s', '--STEPSIZE', type=str)
+    scanfold.add_argument('-t', '--TEMPERATURE', type=str)
+    scanfold.add_argument('-w', '--WINDOWSIZE', type=str)
+    scanfold.add_argument('-y', '--RANDOMIZATIONTYPE', type=str)
+    scanfold.set_defaults(func=main_scanfold)
+    
 
     args = parser.parse_args()
-
-    main(args)
+    args.func(args)
