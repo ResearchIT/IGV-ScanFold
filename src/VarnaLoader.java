@@ -24,8 +24,14 @@ public class VarnaLoader {
 			br = new BufferedReader(new FileReader(inFile.getPath()));
 			String strand = br.readLine().trim();
 			String dotBracketFile = br.readLine().trim();
-			String colorFile = br.readLine().trim();
-			Double[] colors = loadColorFile(colorFile, genome, strand);
+			String colorFile = br.readLine();
+			Double[] colors;
+			if (colorFile != null) {
+				colorFile = colorFile.trim();
+				colors = loadColorFile(colorFile, genome, strand);
+			} else {
+				colors = null;
+			}
 			loadDotBracket(dotBracketFile, colors);
 		} finally {
 			if (br != null) br.close();

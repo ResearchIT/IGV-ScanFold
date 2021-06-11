@@ -172,6 +172,47 @@ def main_scanfold(args):
             output_file.write(ZSCOREWIGFILEPATH + "\n")
         files_to_maybe_load.append(VARNA_FILE)
 
+    load_files(files_to_maybe_load)
+
+def main_rnastructure(args):
+    proc_env = make_env()
+    DBNFILEPATH = mktemp(args.WORKDIR, '.dbn')
+    temp_kelvin = int(args.TEMPERATURE)+273.15
+    command = ["Fold", "-k", "-mfe", "-T", str(temp_kelvin), args.INPUTFILE, DBNFILEPATH]
+    run_me(proc_env, command, args.WORKDIR)
+
+    files_to_maybe_load = []
+
+    if (not file_is_empty(DBNFILEPATH)):
+        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldvarna')
+        with open(VARNA_FILE, "w") as output_file:
+            output_file.write(args.STRAND + "\n")
+            output_file.write(DBNFILEPATH + "\n")
+        files_to_maybe_load.append(VARNA_FILE)
+
+    load_files(files_to_maybe_load)
+
+def main_rnafold(args):
+    proc_env = make_env()
+    LOG = mktemp(args.WORKDIR, '.log')
+    command = ["RNAfold", "-T", str(args.TEMPERATURE), '-i', args.INPUTFILE, '-o', LOG]
+    run_me(proc_env, command, args.WORKDIR)
+
+    DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold')
+
+    files_to_maybe_load = []
+
+    if (not file_is_empty(DBNFILEPATH)):
+        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldvarna')
+        with open(VARNA_FILE, "w") as output_file:
+            output_file.write(args.STRAND + "\n")
+            output_file.write(DBNFILEPATH + "\n")
+        files_to_maybe_load.append(VARNA_FILE)
+
+    load_files(files_to_maybe_load)
+
+
+def load_files(files_to_maybe_load):
     files_to_load = [maybe_file for maybe_file in files_to_maybe_load if not file_is_empty(maybe_file)]
 
     batch_file_path = os.path.join(args.WORKDIR, 'batchfile.txt')
@@ -182,19 +223,6 @@ def main_scanfold(args):
             batch_file.write(template.format(file_to_load))
 
     print("BATCHFILEFIRSTSENTINEL{}BATCHFILESECONDSENTINEL".format(batch_file_path))
-
-def main_rnastructure(args):
-    proc_env = make_env()
-    OUT = mktemp(args.WORKDIR, '.nofilter.ct')
-    temp_kelvin = int(args.TEMPERATURE)+273.15
-    command = ["Fold", "-k", "-mfe", "-T", str(temp_kelvin), args.INPUTFILE, OUT]
-    run_me(proc_env, command, args.WORKDIR)
-
-def main_rnafold(args):
-    proc_env = make_env()
-    OUT = mktemp(args.WORKDIR, '.nofilter.ct')
-    command = ["RNAfold", "-p", "-T", str(args.TEMPERATURE), '-i', args.INPUTFILE, '-o', OUT]
-    run_me(proc_env, command, args.WORKDIR)
 
 if __name__ == "__main__":
 
