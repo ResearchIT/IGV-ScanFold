@@ -190,6 +190,12 @@ def main_rnastructure(args):
     command = ["Fold", "-k", "-mfe", "-T", str(temp_kelvin), args.INPUTFILE, OUT]
     run_me(proc_env, command, args.WORKDIR)
 
+def main_rnafold(args):
+    proc_env = make_env()
+    OUT = mktemp(args.WORKDIR, '.nofilter.ct')
+    command = ["RNAfold", "-p", "-T", str(37), '-i', args.INPUTFILE, '-o', OUT]
+    run_me(proc_env, command, args.WORKDIR)
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -214,6 +220,9 @@ if __name__ == "__main__":
     
     rnastructure = subparsers.add_parser('rnastructure', help='rnastructure')
     rnastructure.set_defaults(func=main_rnastructure)
+
+    rnafold = subparsers.add_parser('rnafold', help='rnafold')
+    rnafold.set_defaults(func=main_rnafold)
 
     args = parser.parse_args()
     args.func(args)
