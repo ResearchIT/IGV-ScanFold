@@ -286,6 +286,7 @@ public class RNAStructureGui extends BaseScanFoldDialog {
 							"-n", sequenceName,
 							"-d", (String) strand.getSelectedItem(),
 							"-z", String.valueOf(sequenceStart),
+							"rnastructure",
 					}));
 					
 					if (resultsInNewWindow) {
@@ -296,12 +297,12 @@ public class RNAStructureGui extends BaseScanFoldDialog {
 					
 					String result = executeShellCommand(outputText, cmd.toArray(new String[cmd.size()]), null, new File(env.get("SCANFOLDRUNDIR")), false);
 					
-					if (!resultsInNewWindow) {
-						String startSentinel = "BATCHFILEFIRSTSENTINEL";
-						String endSentinel = "BATCHFILESECONDSENTINEL";
-						String batchFile = result.substring(result.indexOf(startSentinel) + startSentinel.length(), result.indexOf(endSentinel));
-						runBatchFile(batchFile);
-					}
+//					if (!resultsInNewWindow) {
+//						String startSentinel = "BATCHFILEFIRSTSENTINEL";
+//						String endSentinel = "BATCHFILESECONDSENTINEL";
+//						String batchFile = result.substring(result.indexOf(startSentinel) + startSentinel.length(), result.indexOf(endSentinel));
+//						runBatchFile(batchFile);
+//					}
 					
 				} catch (IOException e) {
 					showMessage(e.getMessage());

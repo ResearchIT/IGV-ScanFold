@@ -183,6 +183,13 @@ def main_scanfold(args):
 
     print("BATCHFILEFIRSTSENTINEL{}BATCHFILESECONDSENTINEL".format(batch_file_path))
 
+def main_rnastructure(args):
+    proc_env = make_env()
+    OUT = mktemp(args.WORKDIR, '.nofilter.ct')
+    temp_kelvin = 37+273.15
+    command = ["Fold", "-k", "-mfe", "-T", str(temp_kelvin), args.INPUTFILE, OUT]
+    run_me(proc_env, command, args.WORKDIR)
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -192,8 +199,8 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--STRAND', type=str)
     parser.add_argument('-z', '--STARTPOS', type=str)
     
-
     subparsers = parser.add_subparsers(help='sub-command help')
+
     scanfold = subparsers.add_parser('scanfold', help='scanfold')
     scanfold.add_argument('-a', '--ALGORITHM', type=str)
     scanfold.add_argument('-c', '--COMPETITION', type=str)
@@ -205,6 +212,8 @@ if __name__ == "__main__":
     scanfold.add_argument('-y', '--RANDOMIZATIONTYPE', type=str)
     scanfold.set_defaults(func=main_scanfold)
     
+    rnastructure = subparsers.add_parser('rnastructure', help='rnastructure')
+    rnastructure.set_defaults(func=main_rnastructure)
 
     args = parser.parse_args()
     args.func(args)
