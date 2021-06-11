@@ -186,14 +186,14 @@ def main_scanfold(args):
 def main_rnastructure(args):
     proc_env = make_env()
     OUT = mktemp(args.WORKDIR, '.nofilter.ct')
-    temp_kelvin = 37+273.15
+    temp_kelvin = int(args.TEMPERATURE)+273.15
     command = ["Fold", "-k", "-mfe", "-T", str(temp_kelvin), args.INPUTFILE, OUT]
     run_me(proc_env, command, args.WORKDIR)
 
 def main_rnafold(args):
     proc_env = make_env()
     OUT = mktemp(args.WORKDIR, '.nofilter.ct')
-    command = ["RNAfold", "-p", "-T", str(37), '-i', args.INPUTFILE, '-o', OUT]
+    command = ["RNAfold", "-p", "-T", str(args.TEMPERATURE), '-i', args.INPUTFILE, '-o', OUT]
     run_me(proc_env, command, args.WORKDIR)
 
 if __name__ == "__main__":
@@ -204,7 +204,8 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--SEQUENCENAME', type=str)
     parser.add_argument('-d', '--STRAND', type=str)
     parser.add_argument('-z', '--STARTPOS', type=str)
-    
+    parser.add_argument('-t', '--TEMPERATURE', type=str)
+
     subparsers = parser.add_subparsers(help='sub-command help')
 
     scanfold = subparsers.add_parser('scanfold', help='scanfold')
@@ -213,7 +214,6 @@ if __name__ == "__main__":
     scanfold.add_argument('-g', '--GLOBALREFOLD', action='store_true')
     scanfold.add_argument('-r', '--RANDOMIZATIONS', type=str)
     scanfold.add_argument('-s', '--STEPSIZE', type=str)
-    scanfold.add_argument('-t', '--TEMPERATURE', type=str)
     scanfold.add_argument('-w', '--WINDOWSIZE', type=str)
     scanfold.add_argument('-y', '--RANDOMIZATIONTYPE', type=str)
     scanfold.set_defaults(func=main_scanfold)

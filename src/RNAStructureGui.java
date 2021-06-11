@@ -45,6 +45,8 @@ public class RNAStructureGui extends BaseScanFoldDialog {
 	private JScrollPane outputScroll;
     private JLabel lblStrand;
     private JComboBox strand;
+    private JLabel lblTemperature;
+    private JTextField temperature;
     private JLabel lblOutputDirectory;
     private JTextField outputDirectory;
     private JButton outputDirectoryBrowse;
@@ -115,6 +117,27 @@ public class RNAStructureGui extends BaseScanFoldDialog {
 		gbl_contentPanel.columnWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
+		{
+			lblTemperature = new JLabel("Temperature");
+			GridBagConstraints gbc_lblTemperature = new GridBagConstraints();
+			gbc_lblTemperature.insets = new Insets(0, 0, 5, 5);
+			gbc_lblTemperature.anchor = GridBagConstraints.EAST;
+			gbc_lblTemperature.gridx = 0;
+			gbc_lblTemperature.gridy = 4;
+			contentPanel.add(lblTemperature, gbc_lblTemperature);
+		}
+		{
+			temperature = new JTextField();
+			lblTemperature.setLabelFor(temperature);
+			temperature.setToolTipText("");
+			temperature.setText("37");
+			GridBagConstraints gbc_temperature = new GridBagConstraints();
+			gbc_temperature.insets = new Insets(0, 0, 5, 5);
+			gbc_temperature.fill = GridBagConstraints.HORIZONTAL;
+			gbc_temperature.gridx = 1;
+			gbc_temperature.gridy = 4;
+			contentPanel.add(temperature, gbc_temperature);
+		}
 		{
 			lblStrand = new JLabel("Strand");
 			GridBagConstraints gbc_lblStrand = new GridBagConstraints();
@@ -286,6 +309,7 @@ public class RNAStructureGui extends BaseScanFoldDialog {
 							"-n", sequenceName,
 							"-d", (String) strand.getSelectedItem(),
 							"-z", String.valueOf(sequenceStart),
+							"-t", temperature.getText(),
 							"rnastructure",
 					}));
 					

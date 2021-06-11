@@ -468,13 +468,13 @@ public class ScanFoldGui extends BaseScanFoldDialog {
 							"-n", sequenceName,
 							"-d", (String) strand.getSelectedItem(),
 							"-z", String.valueOf(sequenceStart),
+							"-t", temperature.getText(),
 							"scanfold",
 							"-c", competition.getText(),
 							"-s", stepSize.getText(),
 							"-w", windowSize.getText(),
 							"-r", randomizations.getText(),
 							"-y", shuffleType.getText(),
-							"-t", temperature.getText(),
 							"-a", (String) algorithm.getSelectedItem(),
 							
 					}));
