@@ -10,49 +10,12 @@ import platform
 def file_is_empty(file_path):
     return os.path.exists(file_path) and os.stat(file_path).st_size == 0
 
-def run_me(script, workdir, args):
+def mktemp(directory, extension, name="output"):
+    file_handle, file_path = tempfile.mkstemp(prefix=name, suffix=extension, dir=directory)
+    os.close(file_handle)
+    return file_path
 
-    proc_env = os.environ.copy()
-    cwd = os.getcwd()
-
-    if platform.system() == 'Windows':
-        script = os.path.join(cwd, 'scanfold', script + ".py")
-        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
-        new_path = [
-            os.path.join(cwd, 'ViennaRNA'),
-            os.path.join(cwd, 'RNAstructure'),
-            proc_env['PATH']
-        ]
-        proc_env['PATH'] = ';'.join(new_path)
-        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
-        command = [python_interpreter, '-u', script]
-    elif platform.system() == 'Darwin' and 'SCANFOLDISBUNDLED' in os.environ:
-        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
-        new_path = [
-            os.path.join(cwd, 'ViennaRNA'),
-            os.path.join(cwd, 'RNAstructure'),
-            proc_env['PATH']
-        ]
-        proc_env['PATH'] = ':'.join(new_path)
-        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
-        if script == "ScanFold-Scan_IGV":
-            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Scan_IGV.dist', 'ScanFold-Scan_IGV')]
-        else:
-            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Fold_IGV.dist', 'ScanFold-Fold_IGV')]
-    else:
-        script = os.path.join(cwd, 'ScanFold', script + ".py")
-        proc_env['DATAPATH'] = os.path.join(cwd, 'env', 'data_tables')
-        proc_env['VIRTUAL_ENV'] = os.path.join(cwd, 'env')
-        new_path = [
-            os.path.join(cwd, 'env', 'bin'),
-            proc_env['PATH']
-        ]
-        proc_env['PATH'] = ':'.join(new_path)
-        python_interpreter = 'python'
-        command = [python_interpreter, '-u', script]
-
-    command.extend(args)
-
+def run_me(proc_env, command, workdir):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=open(os.devnull,'w'), env=proc_env, cwd=workdir, bufsize=0)
     for c in iter(lambda: process.stdout.read(1), b''):
         if hasattr(sys.stdout, 'buffer'):
@@ -64,12 +27,60 @@ def run_me(script, workdir, args):
             sys.stdout.write(c)
             sys.stdout.flush()
 
-def mktemp(directory, extension, name="output"):
-    file_handle, file_path = tempfile.mkstemp(prefix=name, suffix=extension, dir=directory)
-    os.close(file_handle)
-    return file_path
+def make_env():
+    proc_env = os.environ.copy()
+    cwd = os.getcwd()
+
+    if platform.system() == 'Windows':
+        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
+        new_path = [
+            os.path.join(cwd, 'ViennaRNA'),
+            os.path.join(cwd, 'RNAstructure'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ';'.join(new_path)
+    elif platform.system() == 'Darwin' and 'SCANFOLDISBUNDLED' in os.environ:
+        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
+        new_path = [
+            os.path.join(cwd, 'ViennaRNA'),
+            os.path.join(cwd, 'RNAstructure'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ':'.join(new_path)
+    else:
+        proc_env['DATAPATH'] = os.path.join(cwd, 'env', 'data_tables')
+        proc_env['VIRTUAL_ENV'] = os.path.join(cwd, 'env')
+        new_path = [
+            os.path.join(cwd, 'env', 'bin'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ':'.join(new_path)
+
+    return proc_env
+
+def make_scanfold_command(script, args):
+    cwd = os.getcwd()
+
+    if platform.system() == 'Windows':
+        script = os.path.join(cwd, 'scanfold', script + ".py")
+        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
+        command = [python_interpreter, '-u', script]
+    elif platform.system() == 'Darwin' and 'SCANFOLDISBUNDLED' in os.environ:
+        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
+        if script == "ScanFold-Scan_IGV":
+            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Scan_IGV.dist', 'ScanFold-Scan_IGV')]
+        else:
+            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Fold_IGV.dist', 'ScanFold-Fold_IGV')]
+    else:
+        script = os.path.join(cwd, 'ScanFold', script + ".py")
+        python_interpreter = 'python'
+        command = [python_interpreter, '-u', script]
+    command.extend(args)
+    return command
 
 def main_scanfold(args):
+    
+    proc_env = make_env()
 
     SCANOUTPATH = mktemp(args.WORKDIR, '.scan-out.tsv')
     FASTAFILEPATH = mktemp(args.WORKDIR, '.fasta', name='input')
@@ -91,7 +102,7 @@ def main_scanfold(args):
         '--algo', args.ALGORITHM
     ]
 
-    run_me('ScanFold-Scan_IGV', args.WORKDIR, scan_params)
+    run_me(proc_env, make_scanfold_command('ScanFold-Scan_IGV', scan_params), args.WORKDIR)
 
     OUT1 = mktemp(args.WORKDIR, '.nofilter.ct')
     OUT2 = mktemp(args.WORKDIR, '.-1filter.ct')
@@ -143,7 +154,7 @@ def main_scanfold(args):
     if args.GLOBALREFOLD:
         fold_params.append('--global_refold')
 
-    run_me('ScanFold-Fold_IGV', args.WORKDIR, fold_params)
+    run_me(proc_env, make_scanfold_command('ScanFold-Fold_IGV', fold_params), args.WORKDIR)
 
     files_to_maybe_load = [
         BPTRACK,
