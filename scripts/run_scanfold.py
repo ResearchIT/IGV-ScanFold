@@ -1,6 +1,6 @@
 import sys
 import os
-sys.stderr = open(os.devnull,'w')
+#sys.stderr = open(os.devnull,'w')
 
 import argparse
 import subprocess
@@ -200,9 +200,9 @@ def main_rnafold(args):
     proc_env = make_env()
     LOG = mktemp(args.WORKDIR, '.log')
     if platform.system() == 'Windows':
-        command_path = os.path.join(os.getcwd(), "ViennaRNA", "RNAFold")
+        command_path = os.path.join(os.getcwd(), "ViennaRNA", "RNAfold")
     else:
-        command_path = "RNAFold"
+        command_path = "RNAfold"
     command = [command_path, "-T", str(args.TEMPERATURE), '-i', args.INPUTFILE, '-o', LOG]
     run_me(proc_env, command, args.WORKDIR)
 
