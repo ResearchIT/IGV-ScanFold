@@ -10,49 +10,12 @@ import platform
 def file_is_empty(file_path):
     return os.path.exists(file_path) and os.stat(file_path).st_size == 0
 
-def run_me(script, workdir, args):
+def mktemp(directory, extension, name="output"):
+    file_handle, file_path = tempfile.mkstemp(prefix=name, suffix=extension, dir=directory)
+    os.close(file_handle)
+    return file_path
 
-    proc_env = os.environ.copy()
-    cwd = os.getcwd()
-
-    if platform.system() == 'Windows':
-        script = os.path.join(cwd, 'scanfold', script + ".py")
-        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
-        new_path = [
-            os.path.join(cwd, 'ViennaRNA'),
-            os.path.join(cwd, 'RNAstructure'),
-            proc_env['PATH']
-        ]
-        proc_env['PATH'] = ';'.join(new_path)
-        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
-        command = [python_interpreter, '-u', script]
-    elif platform.system() == 'Darwin' and 'SCANFOLDISBUNDLED' in os.environ:
-        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
-        new_path = [
-            os.path.join(cwd, 'ViennaRNA'),
-            os.path.join(cwd, 'RNAstructure'),
-            proc_env['PATH']
-        ]
-        proc_env['PATH'] = ':'.join(new_path)
-        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
-        if script == "ScanFold-Scan_IGV":
-            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Scan_IGV.dist', 'ScanFold-Scan_IGV')]
-        else:
-            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Fold_IGV.dist', 'ScanFold-Fold_IGV')]
-    else:
-        script = os.path.join(cwd, 'ScanFold', script + ".py")
-        proc_env['DATAPATH'] = os.path.join(cwd, 'env', 'data_tables')
-        proc_env['VIRTUAL_ENV'] = os.path.join(cwd, 'env')
-        new_path = [
-            os.path.join(cwd, 'env', 'bin'),
-            proc_env['PATH']
-        ]
-        proc_env['PATH'] = ':'.join(new_path)
-        python_interpreter = 'python'
-        command = [python_interpreter, '-u', script]
-
-    command.extend(args)
-
+def run_me(proc_env, command, workdir):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=open(os.devnull,'w'), env=proc_env, cwd=workdir, bufsize=0)
     for c in iter(lambda: process.stdout.read(1), b''):
         if hasattr(sys.stdout, 'buffer'):
@@ -64,12 +27,60 @@ def run_me(script, workdir, args):
             sys.stdout.write(c)
             sys.stdout.flush()
 
-def mktemp(directory, extension, name="output"):
-    file_handle, file_path = tempfile.mkstemp(prefix=name, suffix=extension, dir=directory)
-    os.close(file_handle)
-    return file_path
+def make_env():
+    proc_env = os.environ.copy()
+    cwd = os.getcwd()
 
-def main(args):
+    if platform.system() == 'Windows':
+        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
+        new_path = [
+            os.path.join(cwd, 'ViennaRNA'),
+            os.path.join(cwd, 'RNAstructure'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ';'.join(new_path)
+    elif platform.system() == 'Darwin' and 'SCANFOLDISBUNDLED' in os.environ:
+        proc_env['DATAPATH'] = os.path.join(cwd, 'RNAstructure', 'data_tables')
+        new_path = [
+            os.path.join(cwd, 'ViennaRNA'),
+            os.path.join(cwd, 'RNAstructure'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ':'.join(new_path)
+    else:
+        proc_env['DATAPATH'] = os.path.join(cwd, 'env', 'data_tables')
+        proc_env['VIRTUAL_ENV'] = os.path.join(cwd, 'env')
+        new_path = [
+            os.path.join(cwd, 'env', 'bin'),
+            proc_env['PATH']
+        ]
+        proc_env['PATH'] = ':'.join(new_path)
+
+    return proc_env
+
+def make_scanfold_command(script, args):
+    cwd = os.getcwd()
+
+    if platform.system() == 'Windows':
+        script = os.path.join(cwd, 'scanfold', script + ".py")
+        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
+        command = [python_interpreter, '-u', script]
+    elif platform.system() == 'Darwin' and 'SCANFOLDISBUNDLED' in os.environ:
+        python_interpreter = os.environ['SCANFOLDPYTHONINTERPRETER']
+        if script == "ScanFold-Scan_IGV":
+            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Scan_IGV.dist', 'ScanFold-Scan_IGV')]
+        else:
+            command = [os.path.join(cwd, 'scanfold', 'ScanFold-Fold_IGV.dist', 'ScanFold-Fold_IGV')]
+    else:
+        script = os.path.join(cwd, 'ScanFold', script + ".py")
+        python_interpreter = 'python'
+        command = [python_interpreter, '-u', script]
+    command.extend(args)
+    return command
+
+def main_scanfold(args):
+    
+    proc_env = make_env()
 
     SCANOUTPATH = mktemp(args.WORKDIR, '.scan-out.tsv')
     FASTAFILEPATH = mktemp(args.WORKDIR, '.fasta', name='input')
@@ -91,7 +102,7 @@ def main(args):
         '--algo', args.ALGORITHM
     ]
 
-    run_me('ScanFold-Scan_IGV', args.WORKDIR, scan_params)
+    run_me(proc_env, make_scanfold_command('ScanFold-Scan_IGV', scan_params), args.WORKDIR)
 
     OUT1 = mktemp(args.WORKDIR, '.nofilter.ct')
     OUT2 = mktemp(args.WORKDIR, '.-1filter.ct')
@@ -143,7 +154,7 @@ def main(args):
     if args.GLOBALREFOLD:
         fold_params.append('--global_refold')
 
-    run_me('ScanFold-Fold_IGV', args.WORKDIR, fold_params)
+    run_me(proc_env, make_scanfold_command('ScanFold-Fold_IGV', fold_params), args.WORKDIR)
 
     files_to_maybe_load = [
         BPTRACK,
@@ -161,6 +172,55 @@ def main(args):
             output_file.write(ZSCOREWIGFILEPATH + "\n")
         files_to_maybe_load.append(VARNA_FILE)
 
+    load_files(files_to_maybe_load)
+
+def main_rnastructure(args):
+    proc_env = make_env()
+    DBNFILEPATH = mktemp(args.WORKDIR, '.dbn')
+    temp_kelvin = int(args.TEMPERATURE)+273.15
+    if platform.system() == 'Windows':
+        command_path = os.path.join(os.getcwd(), "RNAstructure", "Fold")
+    else:
+        command_path = "Fold"
+    command = [command_path, "-k", "-mfe", "-T", str(temp_kelvin), args.INPUTFILE, DBNFILEPATH]
+    run_me(proc_env, command, args.WORKDIR)
+
+    files_to_maybe_load = []
+
+    if (not file_is_empty(DBNFILEPATH)):
+        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldvarna')
+        with open(VARNA_FILE, "w") as output_file:
+            output_file.write(args.STRAND + "\n")
+            output_file.write(DBNFILEPATH + "\n")
+        files_to_maybe_load.append(VARNA_FILE)
+
+    load_files(files_to_maybe_load)
+
+def main_rnafold(args):
+    proc_env = make_env()
+    LOG = mktemp(args.WORKDIR, '.log')
+    if platform.system() == 'Windows':
+        command_path = os.path.join(os.getcwd(), "ViennaRNA", "RNAfold")
+    else:
+        command_path = "RNAfold"
+    command = [command_path, "-T", str(args.TEMPERATURE), '-i', args.INPUTFILE, '-o', LOG]
+    run_me(proc_env, command, args.WORKDIR)
+
+    DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold')
+
+    files_to_maybe_load = []
+
+    if (not file_is_empty(DBNFILEPATH)):
+        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldvarna')
+        with open(VARNA_FILE, "w") as output_file:
+            output_file.write(args.STRAND + "\n")
+            output_file.write(DBNFILEPATH + "\n")
+        files_to_maybe_load.append(VARNA_FILE)
+
+    load_files(files_to_maybe_load)
+
+
+def load_files(files_to_maybe_load):
     files_to_load = [maybe_file for maybe_file in files_to_maybe_load if not file_is_empty(maybe_file)]
 
     batch_file_path = os.path.join(args.WORKDIR, 'batchfile.txt')
@@ -172,25 +232,33 @@ def main(args):
 
     print("BATCHFILEFIRSTSENTINEL{}BATCHFILESECONDSENTINEL".format(batch_file_path))
 
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-
-    parser.add_argument('-a', '--ALGORITHM', type=str)
-    parser.add_argument('-c', '--COMPETITION', type=str)
-    parser.add_argument('-g', '--GLOBALREFOLD', action='store_true')
     parser.add_argument('-i', '--INPUTFILE', type=str)
-    parser.add_argument('-n', '--SEQUENCENAME', type=str)
-    parser.add_argument('-r', '--RANDOMIZATIONS', type=str)
-    parser.add_argument('-s', '--STEPSIZE', type=str)
-    parser.add_argument('-t', '--TEMPERATURE', type=str)
-    parser.add_argument('-w', '--WINDOWSIZE', type=str)
-    parser.add_argument('-y', '--RANDOMIZATIONTYPE', type=str)
-    parser.add_argument('-z', '--STARTPOS', type=str)
-    parser.add_argument('-d', '--STRAND', type=str)
     parser.add_argument('-o', '--WORKDIR', type=str)
+    parser.add_argument('-n', '--SEQUENCENAME', type=str)
+    parser.add_argument('-d', '--STRAND', type=str)
+    parser.add_argument('-z', '--STARTPOS', type=str)
+    parser.add_argument('-t', '--TEMPERATURE', type=str)
+
+    subparsers = parser.add_subparsers(help='sub-command help')
+
+    scanfold = subparsers.add_parser('scanfold', help='scanfold')
+    scanfold.add_argument('-a', '--ALGORITHM', type=str)
+    scanfold.add_argument('-c', '--COMPETITION', type=str)
+    scanfold.add_argument('-g', '--GLOBALREFOLD', action='store_true')
+    scanfold.add_argument('-r', '--RANDOMIZATIONS', type=str)
+    scanfold.add_argument('-s', '--STEPSIZE', type=str)
+    scanfold.add_argument('-w', '--WINDOWSIZE', type=str)
+    scanfold.add_argument('-y', '--RANDOMIZATIONTYPE', type=str)
+    scanfold.set_defaults(func=main_scanfold)
+    
+    rnastructure = subparsers.add_parser('rnastructure', help='rnastructure')
+    rnastructure.set_defaults(func=main_rnastructure)
+
+    rnafold = subparsers.add_parser('rnafold', help='rnafold')
+    rnafold.set_defaults(func=main_rnafold)
 
     args = parser.parse_args()
-
-    main(args)
+    args.func(args)

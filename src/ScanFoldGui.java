@@ -466,15 +466,17 @@ public class ScanFoldGui extends BaseScanFoldDialog {
 							"-i", inputFile,
 							"-o", outputDirectory.getText(),
 							"-n", sequenceName,
+							"-d", (String) strand.getSelectedItem(),
+							"-z", String.valueOf(sequenceStart),
+							"-t", temperature.getText(),
+							"scanfold",
 							"-c", competition.getText(),
 							"-s", stepSize.getText(),
 							"-w", windowSize.getText(),
 							"-r", randomizations.getText(),
 							"-y", shuffleType.getText(),
-							"-t", temperature.getText(),
-							"-d", (String) strand.getSelectedItem(),
 							"-a", (String) algorithm.getSelectedItem(),
-							"-z", String.valueOf(sequenceStart),
+							
 					}));
 					
 					if (globalRefold.isSelected()) {
