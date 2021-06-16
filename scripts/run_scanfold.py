@@ -178,7 +178,11 @@ def main_rnastructure(args):
     proc_env = make_env()
     DBNFILEPATH = mktemp(args.WORKDIR, '.dbn')
     temp_kelvin = int(args.TEMPERATURE)+273.15
-    command = ["Fold", "-k", "-mfe", "-T", str(temp_kelvin), args.INPUTFILE, DBNFILEPATH]
+    if platform.system() == 'Windows':
+        command_path = os.path.join(os.getcwd(), "RNAstructure", "Fold")
+    else:
+        command_path = "Fold"
+    command = [command_path, "-k", "-mfe", "-T", str(temp_kelvin), args.INPUTFILE, DBNFILEPATH]
     run_me(proc_env, command, args.WORKDIR)
 
     files_to_maybe_load = []
@@ -195,7 +199,11 @@ def main_rnastructure(args):
 def main_rnafold(args):
     proc_env = make_env()
     LOG = mktemp(args.WORKDIR, '.log')
-    command = ["RNAfold", "-T", str(args.TEMPERATURE), '-i', args.INPUTFILE, '-o', LOG]
+    if platform.system() == 'Windows':
+        command_path = os.path.join(os.getcwd(), "ViennaRNA", "RNAFold")
+    else:
+        command_path = "RNAFold"
+    command = [command_path, "-T", str(args.TEMPERATURE), '-i', args.INPUTFILE, '-o', LOG]
     run_me(proc_env, command, args.WORKDIR)
 
     DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold')
