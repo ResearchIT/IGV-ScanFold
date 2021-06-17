@@ -35,7 +35,7 @@ jobs:
       if: ${{ success() && github.event_name == 'workflow_dispatch' }}
       with:
         name: IGV-ScanFold-windows
-        path: ./IGV-ScanFold-windows.zip
+        path: ./build
 
     - name: Upload Release Asset (automatically on release)
       id: upload-release-asset 
