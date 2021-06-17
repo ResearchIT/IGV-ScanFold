@@ -31,7 +31,7 @@ jobs:
       if: ${{ success() && github.event_name == 'workflow_dispatch' }}
       with:
         name: IGV-ScanFold-macos
-        path: ./build/IGV-ScanFold.app
+        path: ./build
 
     - name: Upload Release Asset (automatically on release)
       id: upload-release-asset 
