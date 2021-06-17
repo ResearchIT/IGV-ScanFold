@@ -1,19 +1,22 @@
 diff --git a/src/main/java/org/broad/igv/track/TrackLoader.java b/src/main/java/org/broad/igv/track/TrackLoader.java
-index 1ee316457..64447ac86 100644
+index 1ee316457..d25b77b67 100644
 --- a/src/main/java/org/broad/igv/track/TrackLoader.java
 +++ b/src/main/java/org/broad/igv/track/TrackLoader.java
-@@ -76,6 +76,7 @@ import org.broad.igv.renderer.MutationRenderer;
+@@ -76,6 +76,8 @@ import org.broad.igv.renderer.MutationRenderer;
  import org.broad.igv.renderer.PointsRenderer;
  import org.broad.igv.sam.*;
  import org.broad.igv.sam.reader.IndexNotFoundException;
++import org.broad.igv.scanfold.ScanfoldlessDBNLoader;
 +import org.broad.igv.scanfold.VarnaLoader;
  import org.broad.igv.tdf.TDFDataSource;
  import org.broad.igv.tdf.TDFReader;
  import org.broad.igv.ui.IGV;
-@@ -210,6 +211,8 @@ public class TrackLoader {
+@@ -210,6 +212,10 @@ public class TrackLoader {
                  loadMutFile(locator, newTracks, genome); // Must be tried before ".maf" test below
              } else if (typeString.endsWith(".maf")) {
                  loadMultipleAlignmentTrack(locator, newTracks, genome);
++            } else if (typeString.endsWith(".scanfoldlessdbn")) {
++                ScanfoldlessDBNLoader.loadFofnTwo(locator, newTracks, genome);
 +            } else if (typeString.endsWith(".scanfoldvarna")) {
 +                VarnaLoader.loadFofn(locator, genome);
              } else if (AttributeManager.isSampleInfoFile(locator)) {

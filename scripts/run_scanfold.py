@@ -79,7 +79,7 @@ def make_scanfold_command(script, args):
     return command
 
 def main_scanfold(args):
-    
+
     proc_env = make_env()
 
     SCANOUTPATH = mktemp(args.WORKDIR, '.scan-out.tsv')
@@ -188,9 +188,11 @@ def main_rnastructure(args):
     files_to_maybe_load = []
 
     if (not file_is_empty(DBNFILEPATH)):
-        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldvarna')
+        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldlessdbn')
         with open(VARNA_FILE, "w") as output_file:
+            output_file.write(args.SEQUENCENAME + "\n")
             output_file.write(args.STRAND + "\n")
+            output_file.write(str(args.STARTPOS) + "\n")
             output_file.write(DBNFILEPATH + "\n")
         files_to_maybe_load.append(VARNA_FILE)
 
@@ -211,9 +213,11 @@ def main_rnafold(args):
     files_to_maybe_load = []
 
     if (not file_is_empty(DBNFILEPATH)):
-        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldvarna')
+        VARNA_FILE = mktemp(args.WORKDIR, '.scanfoldlessdbn')
         with open(VARNA_FILE, "w") as output_file:
+            output_file.write(args.SEQUENCENAME + "\n")
             output_file.write(args.STRAND + "\n")
+            output_file.write(str(args.STARTPOS) + "\n")
             output_file.write(DBNFILEPATH + "\n")
         files_to_maybe_load.append(VARNA_FILE)
 
@@ -253,7 +257,7 @@ if __name__ == "__main__":
     scanfold.add_argument('-w', '--WINDOWSIZE', type=str)
     scanfold.add_argument('-y', '--RANDOMIZATIONTYPE', type=str)
     scanfold.set_defaults(func=main_scanfold)
-    
+
     rnastructure = subparsers.add_parser('rnastructure', help='rnastructure')
     rnastructure.set_defaults(func=main_rnastructure)
 
