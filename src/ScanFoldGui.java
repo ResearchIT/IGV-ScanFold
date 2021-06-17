@@ -130,7 +130,7 @@ public class ScanFoldGui extends BaseScanFoldDialog {
 		getContentPane().add(contentPanel, gbc_contentPanel);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
 		gbl_contentPanel.columnWidths = new int[]{119, 0, 0, 0};
-		gbl_contentPanel.rowHeights = new int[]{38, 35, 47, 41, 34, 0, 23, 0, 0, 0};
+		gbl_contentPanel.rowHeights = new int[]{35, 35, 35, 35, 35, 35, 35, 0, 0, 0};
 		gbl_contentPanel.columnWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
@@ -366,7 +366,7 @@ public class ScanFoldGui extends BaseScanFoldDialog {
 			getContentPane().add(outputPanel, gbc_outputPanel);
 			GridBagLayout gbl_outputPanel = new GridBagLayout();
 			gbl_outputPanel.columnWidths = new int[] {600, 0};
-			gbl_outputPanel.rowHeights = new int[] {300, 0};
+			gbl_outputPanel.rowHeights = new int[] {150, 0};
 			gbl_outputPanel.columnWeights = new double[]{0.0};
 			gbl_outputPanel.rowWeights = new double[]{0.0};
 			outputPanel.setLayout(gbl_outputPanel);
@@ -425,7 +425,7 @@ public class ScanFoldGui extends BaseScanFoldDialog {
         
         redirectSystemStreams(outputText);
         
-        setMinimumSize(new Dimension(600,850));
+        setMinimumSize(new Dimension(600,700));
         setResizable(false);
 	}
 	
