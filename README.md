@@ -1,3 +1,5 @@
+![CI](https://github.com/ResearchIT/IGV-ScanFold/actions/workflows/gradle.yml/badge.svg) ![Windows Package](https://github.com/ResearchIT/IGV-ScanFold/actions/workflows/windows.yml/badge.svg) ![MacOS Package](https://github.com/ResearchIT/IGV-ScanFold/actions/workflows/macos.yml/badge.svg)
+
 # IGV-ScanFold
 
 Patched version of IGV that integrates ScanFold functionality.
