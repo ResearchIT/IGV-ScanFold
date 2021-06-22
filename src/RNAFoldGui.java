@@ -47,6 +47,8 @@ public class RNAFoldGui extends BaseScanFoldDialog {
     private JComboBox strand;
     private JLabel lblTemperature;
     private JTextField temperature;
+    private JLabel lblMaxBPspan;
+    private JTextField maxBPspan;
     private JLabel lblOutputDirectory;
     private JTextField outputDirectory;
     private JButton outputDirectoryBrowse;
@@ -117,6 +119,27 @@ public class RNAFoldGui extends BaseScanFoldDialog {
 		gbl_contentPanel.columnWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPanel.setLayout(gbl_contentPanel);
+		{
+			lblMaxBPspan = new JLabel("Max BP Span");
+			GridBagConstraints gbc_lblMaxBPspan = new GridBagConstraints();
+			gbc_lblMaxBPspan.insets = new Insets(0, 0, 5, 5);
+			gbc_lblMaxBPspan.anchor = GridBagConstraints.EAST;
+			gbc_lblMaxBPspan.gridx = 0;
+			gbc_lblMaxBPspan.gridy = 2;
+			contentPanel.add(lblMaxBPspan, gbc_lblMaxBPspan);
+		}
+		{
+			maxBPspan = new JTextField();
+			lblMaxBPspan.setLabelFor(maxBPspan);
+			maxBPspan.setToolTipText("");
+			maxBPspan.setText("-1");
+			GridBagConstraints gbc_maxBPspan = new GridBagConstraints();
+			gbc_maxBPspan.insets = new Insets(0, 0, 5, 5);
+			gbc_maxBPspan.fill = GridBagConstraints.HORIZONTAL;
+			gbc_maxBPspan.gridx = 1;
+			gbc_maxBPspan.gridy = 2;
+			contentPanel.add(maxBPspan, gbc_maxBPspan);
+		}
 		{
 			lblTemperature = new JLabel("Temperature");
 			GridBagConstraints gbc_lblTemperature = new GridBagConstraints();
@@ -311,6 +334,7 @@ public class RNAFoldGui extends BaseScanFoldDialog {
 							"-z", String.valueOf(sequenceStart),
 							"-t", temperature.getText(),
 							"rnafold",
+							"-b", maxBPspan.getText(),
 					}));
 					
 					if (resultsInNewWindow) {

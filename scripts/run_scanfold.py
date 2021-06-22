@@ -1,6 +1,6 @@
 import sys
 import os
-sys.stderr = open(os.devnull,'w')
+#sys.stderr = open(os.devnull,'w')
 
 import argparse
 import subprocess
@@ -205,7 +205,12 @@ def main_rnafold(args):
         command_path = os.path.join(os.getcwd(), "ViennaRNA", "RNAfold")
     else:
         command_path = "RNAfold"
-    command = [command_path, "-T", str(args.TEMPERATURE), '-i', args.INPUTFILE, '-o', LOG]
+    command = [
+        command_path,
+        "-T", str(args.TEMPERATURE),
+        '-i', args.INPUTFILE,
+        '--maxBPspan', args.MAXBPSPAN,
+        '-o', LOG]
     run_me(proc_env, command, args.WORKDIR)
 
     DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold')
@@ -262,6 +267,7 @@ if __name__ == "__main__":
     rnastructure.set_defaults(func=main_rnastructure)
 
     rnafold = subparsers.add_parser('rnafold', help='rnafold')
+    rnafold.add_argument('-b', '--MAXBPSPAN', type=str)
     rnafold.set_defaults(func=main_rnafold)
 
     args = parser.parse_args()
