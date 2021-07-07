@@ -1,6 +1,6 @@
 import sys
 import os
-#sys.stderr = open(os.devnull,'w')
+sys.stderr = open(os.devnull,'w')
 
 import argparse
 import subprocess
