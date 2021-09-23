@@ -39,9 +39,9 @@ popd
 
 # viennarna
 pushd lib
-curl -L -O https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.4.16/ViennaRNA-2.4.16.tar.gz
-tar -xzf ViennaRNA-2.4.16.tar.gz
-pushd ViennaRNA-2.4.16
+curl -L -O https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.4.18/ViennaRNA-2.4.18.tar.gz
+tar -xzf ViennaRNA-2.4.18.tar.gz
+pushd ViennaRNA-2.4.18
 mkdir target
 #export ac_cv_func_realloc_0_nonnull=yes
 #export ac_cv_func_malloc_0_nonnull=yes
