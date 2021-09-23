@@ -7,12 +7,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import org.broad.igv.batch.CommandExecutor;
 import org.broad.igv.exceptions.DataLoadException;
@@ -22,7 +19,6 @@ import org.broad.igv.track.SequenceTrack;
 import org.broad.igv.ui.IGV;
 import org.broad.igv.ui.util.MessageUtils;
 import org.broad.igv.util.ParsingUtils;
-import org.broad.igv.util.RuntimeUtils;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.JOptionPane;
@@ -185,40 +181,35 @@ public abstract class BaseScanFoldDialog extends JDialog {
         JOptionPane.showMessageDialog(this, tool);
     }
     
-    protected String executeShellCommand(JTextArea outputText, String cmd[], String[] envp, File dir, boolean waitFor) throws IOException {
-        Process pr = RuntimeUtils.startExternalProcess(cmd, envp, dir);
+    protected String executeShellCommand(JTextArea outputText, String cmd[], String[] envp, File dir, boolean waitFor) throws IOException, InterruptedException {
+        Process process = Runtime.getRuntime().exec(cmd, envp, dir);
 
-        if(waitFor){
-            try {
-                pr.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        StringBuilder results = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+        	updateTextArea(outputText, line, true);
+            results.append(line);
+            results.append('\n');
         }
+        reader.close();
 
-        InputStream inputStream = null;
-        String line = "";
-
-        try {
-            inputStream = pr.getInputStream();
-            BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream));
-            StringWriter writer = new StringWriter();
-            PrintWriter pw = new PrintWriter(writer);
-            while ((line = buf.readLine()) != null) {
-            	updateTextArea(outputText, line, true);
-                pw.println(line);
-            }
-            pw.close();
-            return writer.toString();
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            OutputStream os = pr.getOutputStream();
-            if(os != null){
-                os.close();
-            }
+        StringBuilder errors = new StringBuilder();
+        BufferedReader errorReader = new BufferedReader(
+                new InputStreamReader(process.getErrorStream()));
+        while ((line = errorReader.readLine()) != null) {
+            errors.append(line);
+            errors.append('\n');
         }
+        errorReader.close();
+
+        int exitValue = process.waitFor();
+        if (exitValue != 0) {
+            throw new RuntimeException(errorReader.toString());
+        }
+        process.destroy();
+
+        return results.toString();
     }
 
     protected void runBatchFile(String batchFile) {

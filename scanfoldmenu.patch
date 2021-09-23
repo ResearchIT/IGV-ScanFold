@@ -1,8 +1,8 @@
 diff --git a/src/main/java/org/broad/igv/track/TrackLoader.java b/src/main/java/org/broad/igv/track/TrackLoader.java
-index 1ee316457..d25b77b67 100644
+index ff9de8abc..ed1924f90 100644
 --- a/src/main/java/org/broad/igv/track/TrackLoader.java
 +++ b/src/main/java/org/broad/igv/track/TrackLoader.java
-@@ -76,6 +76,8 @@ import org.broad.igv.renderer.MutationRenderer;
+@@ -75,6 +75,8 @@ import org.broad.igv.renderer.MutationRenderer;
  import org.broad.igv.renderer.PointsRenderer;
  import org.broad.igv.sam.*;
  import org.broad.igv.sam.reader.IndexNotFoundException;
@@ -13,20 +13,20 @@ index 1ee316457..d25b77b67 100644
  import org.broad.igv.ui.IGV;
 @@ -210,6 +212,10 @@ public class TrackLoader {
                  loadMutFile(locator, newTracks, genome); // Must be tried before ".maf" test below
-             } else if (typeString.endsWith(".maf")) {
+             } else if (format.equals("maf")) {
                  loadMultipleAlignmentTrack(locator, newTracks, genome);
-+            } else if (typeString.endsWith(".scanfoldlessdbn")) {
++            } else if (format.equals("scanfoldlessdbn")) {
 +                ScanfoldlessDBNLoader.loadFofnTwo(locator, newTracks, genome);
-+            } else if (typeString.endsWith(".scanfoldvarna")) {
++            } else if (format.equals("scanfoldvarna")) {
 +                VarnaLoader.loadFofn(locator, genome);
-             } else if (AttributeManager.isSampleInfoFile(locator)) {
-                 // This might be a sample information file.
-                 AttributeManager.getInstance().loadSampleInfo(locator);
+             } else {
+                 //if a url, try htsget
+                 boolean isHtsget = tryHtsget(locator, newTracks, genome);
 diff --git a/src/main/java/org/broad/igv/ui/IGVMenuBar.java b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-index fc49c66ae..ed084b624 100644
+index 3b6dd0880..594f2208e 100644
 --- a/src/main/java/org/broad/igv/ui/IGVMenuBar.java
 +++ b/src/main/java/org/broad/igv/ui/IGVMenuBar.java
-@@ -59,6 +59,10 @@ import org.broad.igv.util.HttpUtils;
+@@ -60,6 +60,10 @@ import org.broad.igv.util.HttpUtils;
  import org.broad.igv.util.LongRunningTask;
  import org.broad.igv.util.blat.BlatClient;
  import org.broad.igv.util.encode.EncodeFileBrowser;
@@ -37,7 +37,7 @@ index fc49c66ae..ed084b624 100644
  
  import javax.swing.*;
  import javax.swing.event.MenuEvent;
-@@ -172,6 +176,7 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+@@ -171,6 +175,7 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
          menus.add(createViewMenu());
          menus.add(createTracksMenu());
          menus.add(createRegionsMenu());
@@ -45,9 +45,9 @@ index fc49c66ae..ed084b624 100644
  
          refreshToolsMenu();
          menus.add(toolsMenu);
-@@ -1207,4 +1212,46 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
-     public void disableReloadSession() {
-         this.reloadSessionItem.setEnabled(false);
+@@ -1224,4 +1229,46 @@ public class IGVMenuBar extends JMenuBar implements IGVEventObserver {
+ 
+         return menuItem;
      }
 +
 +    private JMenu createScanfoldMenu() {
@@ -93,7 +93,7 @@ index fc49c66ae..ed084b624 100644
 +    }
  }
 diff --git a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
-index 9181ea2b0..6fc986f12 100644
+index c329652b7..f85131be2 100644
 --- a/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
 +++ b/src/main/java/org/broad/igv/ui/panel/RegionOfInterestPanel.java
 @@ -35,6 +35,9 @@ import org.broad.igv.util.blat.BlatClient;
@@ -106,8 +106,8 @@ index 9181ea2b0..6fc986f12 100644
  import org.broad.igv.ui.IGV;
  import org.broad.igv.util.LongRunningTask;
  import org.broad.igv.util.NamedRunnable;
-@@ -199,7 +202,39 @@ public class RegionOfInterestPanel extends JPanel {
-         item.addActionListener(e -> BlatClient.doBlatQuery(roi.getChr(), roi.getStart(), roi.getEnd(), Strand.NONE));
+@@ -204,7 +207,39 @@ public class RegionOfInterestPanel extends JPanel {
+         }
          popupMenu.add(item);
  
 +        item = new JMenuItem("Run ScanFold on selected region...");

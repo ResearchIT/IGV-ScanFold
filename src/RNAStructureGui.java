@@ -294,7 +294,7 @@ public class RNAStructureGui extends BaseScanFoldDialog {
 		SwingWorker swingWorker = new IgvToolsSwingWorker(outputText, runButton) {
 
 			@Override
-			protected Object doInBackground() {
+			protected Object doInBackground() throws InterruptedException {
 				try {
 					
 					String inputFile = writeSequenceToTempFile(outputDirectory.getText(), (String) strand.getSelectedItem());
