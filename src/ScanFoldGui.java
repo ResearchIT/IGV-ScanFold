@@ -345,7 +345,7 @@ public class ScanFoldGui extends BaseScanFoldDialog {
 		}
 		{
 			globalRefold = new JCheckBox("Global Refold");
-			globalRefold.setSelected(true);
+			globalRefold.setSelected(false);
 			globalRefold.setToolTipText("When checked, this option will refold your entire sequence while constraining the most significant base pairs (with Zavg values < -1 and < -2).\n");
 			GridBagConstraints gbc_globalRefold = new GridBagConstraints();
 			gbc_globalRefold.insets = new Insets(0, 0, 0, 5);
