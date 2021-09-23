@@ -5,14 +5,14 @@ mkdir -p ${BUNDLE_PREFIX}
 
 # build IGV and bundle with JRE
 pushd lib
-curl -L -O https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jre_x64_windows_hotspot_11.0.9.1_1.zip
-unzip OpenJDK11U-jre_x64_windows_hotspot_11.0.9.1_1.zip
-rm  OpenJDK11U-jre_x64_windows_hotspot_11.0.9.1_1.zip
+curl -L -O https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jre_x64_windows_hotspot_11.0.12_7.zip
+unzip OpenJDK11U-jre_x64_windows_hotspot_11.0.12_7.zip
+rm  OpenJDK11U-jre_x64_windows_hotspot_11.0.12_7.zip
 popd
 
 pushd igv
 ./gradlew clean
-./gradlew createWinWithJavaDist -PjdkBundleWindows=${TOPLEVEL}/lib/jdk-11.0.9.1+1-jre
+./gradlew createWinWithJavaDist -PjdkBundleWindows=${TOPLEVEL}/lib/jdk-11.0.12+7-jre
 mv build/IGV-WinExe-WithJava-dist/IGV_user ${BUNDLE_PREFIX}/IGV
 popd
 
@@ -21,12 +21,12 @@ popd
 mkdir -p ${BUNDLE_PREFIX}/scanfold/
 
 pushd lib
-curl -L -O https://www.python.org/ftp/python/3.8.6/python-3.8.6-embed-amd64.zip
-unzip -d ${BUNDLE_PREFIX}/scanfold/python-3.8.6-embed-amd64 python-3.8.6-embed-amd64.zip
-rm python-3.8.6-embed-amd64.zip
+curl -L -O https://www.python.org/ftp/python/3.9.7/python-3.9.7-embed-amd64.zip
+unzip -d ${BUNDLE_PREFIX}/scanfold/python-3.9.7-embed-amd64 python-3.9.7-embed-amd64.zip
+rm python-3.9.7-embed-amd64.zip
 popd
 
-pushd ${BUNDLE_PREFIX}/scanfold/python-3.8.6-embed-amd64
+pushd ${BUNDLE_PREFIX}/scanfold/python-3.9.7-embed-amd64
 echo '
 ..
 site-packages
@@ -34,14 +34,14 @@ site-packages
 mkdir -p site-packages
 
 # biopython
-curl -L -O https://files.pythonhosted.org/packages/4a/93/abbc0693692afe90e9f06dfc7b581b069326f7496c31bd0b211cb9cad79e/biopython-1.78-cp38-cp38-win_amd64.whl
-unzip -d site-packages biopython-1.78-cp38-cp38-win_amd64.whl
-rm biopython-1.78-cp38-cp38-win_amd64.whl
+curl -L -O https://files.pythonhosted.org/packages/60/da/c67fef644a92c2e44743ad8c3f0321b140e226f2b55112f066a9415c9d91/biopython-1.79-cp39-cp39-win_amd64.whl
+unzip -d site-packages biopython-1.79-cp39-cp39-win_amd64.whl
+rm biopython-1.79-cp39-cp39-win_amd64.whl
 
 # numpy
-curl -L -O https://files.pythonhosted.org/packages/a4/23/13d2991c156cfd22bfd4a9ae6dcb1a9372004a0e16508b680d17f3280eb4/numpy-1.19.3-cp38-cp38-win_amd64.whl
-unzip -d site-packages numpy-1.19.3-cp38-cp38-win_amd64.whl
-rm numpy-1.19.3-cp38-cp38-win_amd64.whl
+curl -L -O https://files.pythonhosted.org/packages/01/d9/6e5f6cbd9d1fc90c6c8d96e70754700ed6f93f90f321f887a3f26bf65715/numpy-1.21.2-cp39-cp39-win_amd64.whl
+unzip -d site-packages numpy-1.21.2-cp39-cp39-win_amd64.whl
+rm numpy-1.21.2-cp39-cp39-win_amd64.whl
 popd
 
 # scanfold
@@ -52,9 +52,9 @@ popd
 
 # viennarna
 pushd lib
-curl -L -O https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.4.16/ViennaRNA-2.4.16.tar.gz
-tar -xzvf ViennaRNA-2.4.16.tar.gz
-pushd ViennaRNA-2.4.16
+curl -L -O https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.4.18/ViennaRNA-2.4.18.tar.gz
+tar -xzvf ViennaRNA-2.4.18.tar.gz
+pushd ViennaRNA-2.4.18
 mkdir target
 export ac_cv_func_realloc_0_nonnull=yes
 export ac_cv_func_malloc_0_nonnull=yes
