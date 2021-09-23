@@ -1,9 +1,9 @@
 . env/bin/activate
 VIENNA_PREFIX=${PWD}/env
 pushd lib
-curl -O https://www.tbi.univie.ac.at/RNA/download/sourcecode/2_4_x/ViennaRNA-2.4.14.tar.gz
-tar -xzvf ViennaRNA-2.4.14.tar.gz
-pushd ViennaRNA-2.4.14
+curl -L -O https://github.com/ViennaRNA/ViennaRNA/releases/download/v2.4.18/ViennaRNA-2.4.18.tar.gz
+tar -xzvf ViennaRNA-2.4.18.tar.gz
+pushd ViennaRNA-2.4.18
 ./configure --prefix=${VIENNA_PREFIX} --without-perl --without-python
 make install
 popd
