@@ -295,8 +295,7 @@ def write_ct(base_pair_dictionary, filename, filter, strand):
     #Function to write connectivity table files from a list of best i-j pairs
     w = open(filename, 'w')
     w.write((str(len(base_pair_dictionary))+"\t"+name+"_Filter="+str(filter)+"\n"))
-    strand = 1
-    if strand == 1:
+    if strand == "forward":
         for k, v in base_pair_dictionary.items():
             #print(start_coordinate)
             #print(v.icoordinate)
@@ -336,7 +335,7 @@ def write_ct(base_pair_dictionary, filename, filter, strand):
                     raise ValueError("WriteCT function did not find a nucleotide to match coordinate (i or j coordinate does not match dictionary key_coordinateey_coordinateey)")
                 continue
 
-    if strand == -1:
+    if strand == "reverse":
         for k, v in sorted(base_pair_dictionary.items(), key=lambda x:x[0], reverse = True):
             # print(start_coordinate)
             # print(end_coordinate)
@@ -643,7 +642,7 @@ if __name__ == "__main__":
                     help='Select RNA folding algorithm')
 
     args = parser.parse_args()
-    
+
     algo = args.algo
 
     temperature = args.temp
@@ -1218,43 +1217,54 @@ if __name__ == "__main__":
                     if (int(k) != bp.icoordinate) and (int(k) != int(bp.jcoordinate)):
                         # print("1 = "+str(v.icoordinate)+"_"+str(v.jcoordinate)+" AND "+str(bp.icoordinate)+"_"+str(bp.jcoordinate))
                         #if there was a competing i-j pair print it to log file instead:
-                        log_win.write("nt-"+str(k)+"*:\t"+str(v.icoordinate)+"\t"+v.jcoordinate+"\t"
-                            +str(round(v.mfe, 2))
-                            +"\t"+str(round(v.zscore, 2))
-                            +"\t"+str(round(v.ed, 2))+"\n")
-                        final_partners[k] = NucPair(v.inucleotide, v.icoordinate,
-                                                    v.inucleotide, v.icoordinate,
-                                                    best_bps[bp.icoordinate].zscore,
-                                                    bp.mfe,
-                                                    bp.ed)
-                    #
-                    # elif ((int(v.icoordinate) == int(v.jcoordinate)) and (int(bp.icoordinate) != int(bp.jcoordinate))):
-                    #     #Check for instance where competing base pair
-                    #     print("!!!!!!!2 = "+str(v.icoordinate)+"_"+str(v.jcoordinate)+" AND "+str(bp.icoordinate)+"_"+str(bp.jcoordinate))
-                    #     log_win.write("nt-"+str(k)+"*:\t"+str(bp.icoordinate)+"\t"+bp.jcoordinate+"\t"
-                    #           +str(round(bp.mfe, 2))
-                    #           +"\t"+str(round(bp.zscore, 2))
-                    #           +"\t"+str(round(bp.ed, 2))+"\n")
-                    #
-                    #     final_partners[k] = NucPair(bp.inucleotide, bp.icoordinate,
-                    #                                 bp.jnucleotide, bp.jcoordinate,
-                    #                                 best_bps[bp.icoordinate].zscore,
-                    #                                 best_bps[bp.icoordinate].mfe,
-                    #                                 best_bps[bp.icoordinate].ed)
-                    #
-                    #
-                    else:
-                        #print("3 = "+str(v.icoordinate)+"_"+str(v.jcoordinate)+" AND "+str(bp.icoordinate)+"_"+str(bp.jcoordinate))
-                        log_win.write("nt-"+str(k)+":\t"+str(bp.icoordinate)+"\t"+str(bp.jcoordinate)+"\t"
-                            + str(round(best_bps[k].mfe, 2))+"\t"
-                            + str(round(best_bps[k].zscore, 2))
-                            + "\t"+str(round(best_bps[k].ed, 2))+"\n")
-                        final_partners[k] = NucPair(bp.inucleotide, bp.icoordinate,
-                                                    bp.jnucleotide, bp.jcoordinate,
-                                                    best_bps[bp.icoordinate].zscore,
-                                                    best_bps[bp.icoordinate].mfe,
-                                                    best_bps[bp.icoordinate].ed)
+                        if strand == "forward":
+                            log_win.write("nt-"+str(k)+"*:\t"+str(v.icoordinate)+"\t"+v.jcoordinate+"\t"
+                                +str(round(v.mfe, 2))
+                                +"\t"+str(round(v.zscore, 2))
+                                +"\t"+str(round(v.ed, 2))+"\n")
+                            final_partners[k] = NucPair(v.inucleotide, v.icoordinate,
+                                                        v.inucleotide, v.icoordinate,
+                                                        best_bps[bp.icoordinate].zscore,
+                                                        bp.mfe,
+                                                        bp.ed)
+                        if strand == "reverse":
+                            corrected_i = end_coordinate - v.icoordinate + 1
+                            corrected_j = end_coordinate - v.jcoordinate + 1
+                            log_win.write("nt-"+str(k)+"*:\t"+str(corrected_i)+"\t"+corrected_j+"\t"
+                                +str(round(v.mfe, 2))
+                                +"\t"+str(round(v.zscore, 2))
+                                +"\t"+str(round(v.ed, 2))+"\n")
+                            final_partners[k] = NucPair(v.inucleotide, corrected_i,
+                                                        v.inucleotide, corrected_i,
+                                                        best_bps[bp.icoordinate].zscore,
+                                                        bp.mfe,
+                                                        bp.ed)
 
+
+                    else:
+                        if strand == "forward":
+                            log_win.write("nt-"+str(k)+":\t"+str(bp.icoordinate)+"\t"+str(bp.jcoordinate)+"\t"
+                                + str(round(best_bps[k].mfe, 2))+"\t"
+                                + str(round(best_bps[k].zscore, 2))
+                                + "\t"+str(round(best_bps[k].ed, 2))+"\n")
+                            final_partners[k] = NucPair(bp.inucleotide, bp.icoordinate,
+                                                        bp.jnucleotide, bp.jcoordinate,
+                                                        best_bps[bp.icoordinate].zscore,
+                                                        best_bps[bp.icoordinate].mfe,
+                                                        best_bps[bp.icoordinate].ed)
+
+                        if strand == "reverse":
+                            corrected_i = end_coordinate - bp.icoordinate + 1
+                            corrected_j = end_coordinate - bp.icoordinate + 1
+                            log_win.write("nt-"+str(k)+":\t"+str(corrected_i)+"\t"+str(corrected_j)+"\t"
+                                + str(round(best_bps[k].mfe, 2))+"\t"
+                                + str(round(best_bps[k].zscore, 2))
+                                + "\t"+str(round(best_bps[k].ed, 2))+"\n")
+                            final_partners[k] = NucPair(bp.inucleotide, corrected_i,
+                                                        bp.jnucleotide, corrected_j,
+                                                        best_bps[bp.icoordinate].zscore,
+                                                        best_bps[bp.icoordinate].mfe,
+                                                        best_bps[bp.icoordinate].ed)
                 else:
                     continue
             else:
@@ -1559,9 +1569,18 @@ if __name__ == "__main__":
                 #pscore = round(pscore_function(energy_list, 100), 2)
                 #print(pscore)
                 #pscore_total.append(pscore)
-                gff_attributes = f'motif_{motif_num};sequence={frag};structure={structure};refoldedMFE={str(MFE_structure)};MFE(kcal/mol)={str(MFE)};z-score={str(zscore)};ED={str(ED)}'
-                print(f'{gff_attributes}\n')
-                se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(int((es.i)+int(start_coordinate))), str(int((es.j)+int(start_coordinate))), str("."), str("."), str("."), gff_attributes))
+                if strand == "forward":
+                    gff_attributes = f'motif_{motif_num};sequence={frag};structure={structure};refoldedMFE={str(MFE_structure)};MFE(kcal/mol)={str(MFE)};z-score={str(zscore)};ED={str(ED)}'
+                    print(f'{gff_attributes}\n')
+                    se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(int((es.i)+int(start_coordinate))), str(int((es.j)+int(start_coordinate))), str("."), str("."), str("."), gff_attributes))
+
+                if strand == "reverse":
+                    i_coordinate = end_coordinate - int((es.i)+int(start_coordinate)) + 1
+                    j_coordinate = end_coordinate - int((es.j)+int(start_coordinate)) + 1
+                    gff_attributes = f'motif_{motif_num};sequence={frag};structure={structure};refoldedMFE={str(MFE_structure)};MFE(kcal/mol)={str(MFE)};z-score={str(zscore)};ED={str(ED)}'
+                    print(f'{gff_attributes}\n')
+                    se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(j_coordinate), str(i_coordinate), str("."), str("."), str("."), gff_attributes))
+
 
                 motif_num += 1
 
