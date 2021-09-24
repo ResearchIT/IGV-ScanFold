@@ -6,6 +6,10 @@ name: Windows package
 on:
   release:
     types: [published]
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
   workflow_dispatch:
 
 jobs:
