@@ -57,9 +57,9 @@ jobs:
     - name: Bundle macos version
       run: ./macos/bundle_macos.sh
 
-    - name: Upload a Build Artifact (manual trigger)
+    - name: Upload a Build Artifact (non-release)
       uses: actions/upload-artifact@v2
-      if: ${{ success() && github.event_name == 'workflow_dispatch' }}
+      if: ${{ success() && github.event_name != 'release' }}
       with:
         name: IGV-ScanFold-macos
         path: ./build
