@@ -16,6 +16,31 @@ jobs:
       MACOSX_DEPLOYMENT_TARGET: 10.12
 
     steps:
+    - name: Install (macOS)
+      if: runner.os == 'macOS'
+      run: |
+          brew update
+          brew install ccache
+          ccache --set-config=cache_dir=$HOME/.ccache
+
+    # Caches for different branches are isolated, so we don't need to put the branch name into the key.
+    # The total size for all caches in a repository is 5Gb.
+
+    - name: Prepare ccache timestamp
+      id: ccache_cache_timestamp
+      run: |
+        stamp=$(date '+%s')
+        echo "${stamp}"
+        echo "::set-output name=timestamp::${stamp}"
+
+    - name: ccache cache files
+      uses: actions/cache@v1.1.0
+      with:
+         path: ~/.ccache
+         key: macos-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+         restore-keys: |
+           macos-ccache-
+
     - uses: actions/checkout@v2
       with:
         submodules: true
