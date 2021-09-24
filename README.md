@@ -9,7 +9,7 @@ Patched version of IGV that integrates ScanFold functionality.
 ### Windows
 A pre-built version is available on [releases](https://github.com/ResearchIT/IGV-ScanFold/releases).
 
-### Mac (10.15+)
+### Mac (10.15+, x86_64)
 A pre-built version is available on [releases](https://github.com/ResearchIT/IGV-ScanFold/releases).
 
 ### Linux
