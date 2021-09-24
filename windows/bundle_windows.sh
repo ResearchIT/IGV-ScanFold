@@ -74,6 +74,7 @@ make install
 mkdir -p ${BUNDLE_PREFIX}/ViennaRNA
 cp /usr/lib/gcc/x86_64-w64-mingw32/*-win32/libssp-0.dll ${BUNDLE_PREFIX}/ViennaRNA/
 cp /usr/lib/gcc/x86_64-w64-mingw32/*-win32/libgcc_s_seh-1.dll ${BUNDLE_PREFIX}/ViennaRNA/
+cp /usr/lib/gcc/x86_64-w64-mingw32/*-win32/libstdc++-6.dll ${BUNDLE_PREFIX}/ViennaRNA/
 cp /usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll ${BUNDLE_PREFIX}/ViennaRNA/
 cp /usr/lib/gcc/x86_64-w64-mingw32/*-win32/libgomp-1.dll ${BUNDLE_PREFIX}/ViennaRNA/
 mv target/bin/RNAfold.exe ${BUNDLE_PREFIX}/ViennaRNA/
