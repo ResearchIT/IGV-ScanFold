@@ -81,6 +81,7 @@ pushd ${BUNDLE_PREFIX}
 # prepend our environment parameters to IGV's run script
 echo '' >> ${TOPLEVEL}/macos/run_me.command
 cat ${TOPLEVEL}/igv/scripts/mac.app/Contents/MacOS/IGV.sh >> ${TOPLEVEL}/macos/run_me.command
+chmod +x run_me.command
 mv ${TOPLEVEL}/macos/run_me.command IGV-ScanFold.app/Contents/MacOS/IGV
 
 # bundle everything in the app
