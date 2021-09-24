@@ -28,9 +28,11 @@ popd
 
 pushd ${BUNDLE_PREFIX}/scanfold/python-3.9.7-embed-amd64
 echo '
+python39.zip
+.
 ..
 site-packages
-' >> python38._pth
+' >> python39._pth
 mkdir -p site-packages
 
 # biopython
