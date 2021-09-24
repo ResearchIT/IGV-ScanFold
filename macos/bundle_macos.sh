@@ -88,5 +88,9 @@ mv scanfold IGV-ScanFold.app/Contents/
 mv ViennaRNA IGV-ScanFold.app/Contents/
 mv RNAstructure IGV-ScanFold.app/Contents/
 
+ls -la scanfold
+ls -la ViennaRNA
+ls -la RNAstructure
+
 zip -r ${TOPLEVEL}/IGV-ScanFold-macos.zip *
 popd
