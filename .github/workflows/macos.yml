@@ -58,9 +58,11 @@ jobs:
     - name: Upload a Build Artifact (non-release)
       uses: actions/upload-artifact@v2
       if: ${{ success() && github.event_name != 'release' }}
+      # tar file is important
+      # https://github.com/actions/upload-artifact#maintaining-file-permissions-and-case-sensitive-files
       with:
         name: IGV-ScanFold-macos
-        path: ./build
+        path: ./IGV-Scanfold-macos.tar
 
     - name: Upload Release Asset (automatically on release)
       id: upload-release-asset 
