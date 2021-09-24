@@ -92,5 +92,7 @@ ls -la scanfold
 ls -la ViennaRNA
 ls -la RNAstructure
 
+tar -cvf ${TOPLEVEL}/IGV-Scanfold-macos.tar .
 zip -r ${TOPLEVEL}/IGV-ScanFold-macos.zip *
+
 popd
