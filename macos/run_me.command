@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export SCANFOLDRUNDIR=$(cd `dirname $(readlink $0 || echo $0)` && cd .. && pwd)
 export SCANFOLDPYTHONINTERPRETER=$(which python)
