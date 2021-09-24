@@ -1573,8 +1573,8 @@ if __name__ == "__main__":
                     se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(int((es.i)+int(start_coordinate))), str(int((es.j)+int(start_coordinate))), str("."), str("."), str("."), gff_attributes))
 
                 if strand == "reverse":
-                    i_coordinate = (int(end_coordinate) - int((es.i)) + 1) + int(start_coordinate)
-                    j_coordinate = (int(end_coordinate) - int((es.j)) + 1) + int(start_coordinate)
+                    i_coordinate = (int(end_coordinate) - int((es.i)) + 1) 
+                    j_coordinate = (int(end_coordinate) - int((es.j)) + 1) 
                     #print(start_coordinate, end_coordinate, es.i, es.j, i_coordinate, j_coordinate)
 
                     gff_attributes = f'motif_{motif_num};sequence={frag};structure={structure};refoldedMFE={str(MFE_structure)};MFE(kcal/mol)={str(MFE)};z-score={str(zscore)};ED={str(ED)}'
