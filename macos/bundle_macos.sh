@@ -45,11 +45,22 @@ pushd ViennaRNA-2.4.18
 mkdir target
 #export ac_cv_func_realloc_0_nonnull=yes
 #export ac_cv_func_malloc_0_nonnull=yes
-CONFIGURE_OPTIONS=" --without-swig \
-                    --without-doc \
+CONFIGURE_OPTIONS=" --without-doc \
+                    --without-python \
+                    --without-python3 \
+                    --without-check \
+                    --without-cluster \
                     --without-forester \
-                    --with-cluster \
-                    --with-kinwalker \
+                    --without-json \
+                    --without-svm \
+                    --disable-unittests \
+                    --without-kinwalker \
+                    --without-tutorial \
+                    --without-tutorial-pdf  \
+                    --without-rnalocmin \
+                    --without-gsl \
+                    --without-swig \
+                    --without-perl \
                     --disable-mpfr \
                     --disable-pthreads \
                     --disable-tty-colors \
