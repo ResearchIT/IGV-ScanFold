@@ -300,11 +300,9 @@ def write_ct(base_pair_dictionary, filename, filter, strand):
             #print(start_coordinate)
             #print(v.icoordinate)
             icoordinate = str(int(v.icoordinate)-int(int(start_coordinate)-1))
-            #print(icoordinate)
             jcoordinate = str(int(v.jcoordinate)-int(int(start_coordinate)-1))
-            #print(jcoordinate)
             key_coordinate = str(int(k)-int(start_coordinate)+1)
-            #print(key_coordinate)
+            #print(key_coordinate, icoordinate, jcoordinate, v.zscore)
             if float(v.zscore) < filter:
                 if ((int(icoordinate) < int(jcoordinate)) and (int(icoordinate) == int(key_coordinate))): #test to see if reverse bp.
                     w.write("%d %s %d %d %d %d\n" % (int(key_coordinate), v.inucleotide, int(key_coordinate)-1, int(key_coordinate)+1, int(jcoordinate), int(key_coordinate)))
@@ -1228,14 +1226,14 @@ if __name__ == "__main__":
                                                         bp.mfe,
                                                         bp.ed)
                         if strand == "reverse":
-                            corrected_i = end_coordinate - v.icoordinate + 1
-                            corrected_j = end_coordinate - v.jcoordinate + 1
-                            log_win.write("nt-"+str(k)+"*:\t"+str(corrected_i)+"\t"+corrected_j+"\t"
+                            corrected_i = int(end_coordinate) - int(v.icoordinate) + 1
+                            corrected_j = int(end_coordinate) - int(v.jcoordinate) + 1
+                            log_win.write("nt-"+str(k)+"*:\t"+str(corrected_i)+"\t"+str(corrected_j)+"\t"
                                 +str(round(v.mfe, 2))
                                 +"\t"+str(round(v.zscore, 2))
                                 +"\t"+str(round(v.ed, 2))+"\n")
-                            final_partners[k] = NucPair(v.inucleotide, corrected_i,
-                                                        v.inucleotide, corrected_i,
+                            final_partners[k] = NucPair(v.inucleotide, v.icoordinate,
+                                                        v.inucleotide, v.icoordinate,
                                                         best_bps[bp.icoordinate].zscore,
                                                         bp.mfe,
                                                         bp.ed)
@@ -1254,14 +1252,14 @@ if __name__ == "__main__":
                                                         best_bps[bp.icoordinate].ed)
 
                         if strand == "reverse":
-                            corrected_i = end_coordinate - bp.icoordinate + 1
-                            corrected_j = end_coordinate - bp.icoordinate + 1
+                            corrected_i = int(end_coordinate) - int(bp.icoordinate) + 1
+                            corrected_j = int(end_coordinate) - int(bp.icoordinate) + 1
                             log_win.write("nt-"+str(k)+":\t"+str(corrected_i)+"\t"+str(corrected_j)+"\t"
                                 + str(round(best_bps[k].mfe, 2))+"\t"
                                 + str(round(best_bps[k].zscore, 2))
                                 + "\t"+str(round(best_bps[k].ed, 2))+"\n")
-                            final_partners[k] = NucPair(bp.inucleotide, corrected_i,
-                                                        bp.jnucleotide, corrected_j,
+                            final_partners[k] = NucPair(bp.inucleotide, bp.icoordinate,
+                                                        bp.jnucleotide, bp.jcoordinate,
                                                         best_bps[bp.icoordinate].zscore,
                                                         best_bps[bp.icoordinate].mfe,
                                                         best_bps[bp.icoordinate].ed)
@@ -1575,8 +1573,8 @@ if __name__ == "__main__":
                     se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(int((es.i)+int(start_coordinate))), str(int((es.j)+int(start_coordinate))), str("."), str("."), str("."), gff_attributes))
 
                 if strand == "reverse":
-                    i_coordinate = end_coordinate - int((es.i)+int(start_coordinate)) + 1
-                    j_coordinate = end_coordinate - int((es.j)+int(start_coordinate)) + 1
+                    i_coordinate = int(end_coordinate) - int((es.i)+int(start_coordinate)) + 1
+                    j_coordinate = int(end_coordinate) - int((es.j)+int(start_coordinate)) + 1
                     gff_attributes = f'motif_{motif_num};sequence={frag};structure={structure};refoldedMFE={str(MFE_structure)};MFE(kcal/mol)={str(MFE)};z-score={str(zscore)};ED={str(ED)}'
                     print(f'{gff_attributes}\n')
                     se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(j_coordinate), str(i_coordinate), str("."), str("."), str("."), gff_attributes))
