@@ -1582,7 +1582,7 @@ if __name__ == "__main__":
 
                     gff_attributes = f'motif_{motif_num};sequence={frag};structure={structure};refoldedMFE={str(MFE_structure)};MFE(kcal/mol)={str(MFE)};z-score={str(zscore)};ED={str(ED)}'
                     print(f'{gff_attributes}\n')
-                    se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(j_coordinate), str(i_coordinate), str("."), str("."), str("."), gff_attributes))
+                    se.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (str(name), str("."), str("RNA_sequence_secondary_structure"), str(i_coordinate), str(j_coordinate), str("."), str("."), str("."), gff_attributes))
 
 
                 motif_num += 1
