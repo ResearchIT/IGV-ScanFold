@@ -210,10 +210,19 @@ def main_rnafold(args):
         "-T", str(args.TEMPERATURE),
         '-i', args.INPUTFILE,
         '--maxBPspan', args.MAXBPSPAN,
-        '-o', LOG]
+        '-o', LOG,
+        '--noPS --noDP',]
     run_me(proc_env, command, args.WORKDIR)
 
+    INITIAL_DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold_energy')
     DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold')
+
+    ### Open file to remove the "kcal/mol" at the end of dbn then write to path
+    with open(INITIAL_DBNFILEPATH, "w") as DBNFILEPATH:
+        string_list = INITIAL_DBNFILEPATH.readlines()
+        rnafold_seq = stringlist[0]
+        rnafold_structure = stringlist[1].split()[0]
+        DBNFILEPATH.write(rnafold_seq+"\n"+rnafold_structure)
 
     files_to_maybe_load = []
 
