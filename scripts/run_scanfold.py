@@ -220,8 +220,8 @@ def main_rnafold(args):
     ### Open file to remove the "kcal/mol" at the end of dbn then write to path
     with open(INITIAL_DBNFILEPATH, "w") as DBNFILEPATH:
         string_list = INITIAL_DBNFILEPATH.readlines()
-        rnafold_seq = stringlist[0]
-        rnafold_structure = stringlist[1].split()[0]
+        rnafold_seq = string_list[0]
+        rnafold_structure = string_list[1].split()[0]
         DBNFILEPATH.write(rnafold_seq+"\n"+rnafold_structure)
 
     files_to_maybe_load = []
