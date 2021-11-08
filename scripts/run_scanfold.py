@@ -1,6 +1,6 @@
 import sys
 import os
-sys.stderr = open(os.devnull,'w')
+#sys.stderr = open(os.devnull,'w')
 
 import argparse
 import subprocess
@@ -16,6 +16,7 @@ def mktemp(directory, extension, name="output"):
     return file_path
 
 def run_me(proc_env, command, workdir):
+    print(command)
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=open(os.devnull,'w'), env=proc_env, cwd=workdir, bufsize=0)
     for c in iter(lambda: process.stdout.read(1), b''):
         if hasattr(sys.stdout, 'buffer'):
@@ -211,20 +212,25 @@ def main_rnafold(args):
         '-i', args.INPUTFILE,
         '--maxBPspan', args.MAXBPSPAN,
         '-o', LOG,
-        '--noPS',
-        '--noDP',
+        # '-p',
+        # '--noPS',
+        # '--noDP',
     ]
     run_me(proc_env, command, args.WORKDIR)
 
     INITIAL_DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold_energy')
     DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold')
 
-    ### Open file to remove the "kcal/mol" at the end of dbn then write to path
-    with open(INITIAL_DBNFILEPATH, "w") as DBNFILEPATH:
-        string_list = INITIAL_DBNFILEPATH.readlines()
+    ## Open file to remove the "kcal/mol" at the end of dbn then write to path
+    with open(DBNFILEPATH, "r") as DBNFILE:
+        string_list = DBNFILE.readlines()
+        with open(INITIAL_DBNFILEPATH, "w") as INITIALDBNFILE:
+            INITIALDBNFILE.writelines(string_list)
+
+    with open(DBNFILEPATH, "w") as DBNFILE:
         rnafold_seq = string_list[0]
         rnafold_structure = string_list[1].split()[0]
-        DBNFILEPATH.write(rnafold_seq+"\n"+rnafold_structure)
+        DBNFILE.write(rnafold_seq+"\n"+rnafold_structure)
 
     files_to_maybe_load = []
 
