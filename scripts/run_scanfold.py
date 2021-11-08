@@ -211,7 +211,9 @@ def main_rnafold(args):
         '-i', args.INPUTFILE,
         '--maxBPspan', args.MAXBPSPAN,
         '-o', LOG,
-        '--noPS --noDP',]
+        '--noPS',
+        '--noDP',
+    ]
     run_me(proc_env, command, args.WORKDIR)
 
     INITIAL_DBNFILEPATH = os.path.join(args.WORKDIR, 'RNAfold_output.fold_energy')
