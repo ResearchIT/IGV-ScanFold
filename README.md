@@ -50,3 +50,8 @@ sudo dnf install git zip patch java-11-openjdk.x86_64 gcc g++ python3-devel zlib
 1. `./scripts/build_viennarna.sh`  
     this may fail at src/Kinfold, but that's fine
 1. `./scripts/build_rnastructure.sh`
+
+### Links to IGV-ScanFold User Walkthroughs
+
+1.  https://structurome.bb.iastate.edu/igv-scanfold-supplemental-data
+2.  https://www.youtube.com/playlist?list=PL-FLz2olO5ubN8hKbeccZ6rfwBjfmTSyv
