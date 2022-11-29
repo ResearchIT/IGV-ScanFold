@@ -5,14 +5,14 @@ mkdir -p ${BUNDLE_PREFIX}
 
 # build IGV and bundle with JRE
 pushd lib
-curl -L -O https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jre_x64_mac_hotspot_11.0.12_7.tar.gz
-tar -xzf OpenJDK11U-jre_x64_mac_hotspot_11.0.12_7.tar.gz
-rm  OpenJDK11U-jre_x64_mac_hotspot_11.0.12_7.tar.gz
+curl -L -O https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jre_x64_mac_hotspot_11.0.17_8.tar.gz
+tar -xzf OpenJDK11U-jre_x64_mac_hotspot_11.0.17_8.tar.gz
+rm  OpenJDK11U-jre_x64_mac_hotspot_11.0.17_8.tar.gz
 popd
 
 pushd igv
 ./gradlew clean
-./gradlew createMacAppWithJavaDistZip -PjdkBundleMac=${TOPLEVEL}/lib/jdk-11.0.12+7-jre/Contents/Home
+./gradlew createMacAppWithJavaDistZip -PjdkBundleMac=${TOPLEVEL}/lib/jdk-11.0.17+8-jre/Contents/Home
 unzip build/distributions/IGV_MacApp_user_WithJava.zip
 mv IGV_User.app ${BUNDLE_PREFIX}/IGV-ScanFold.app
 popd
