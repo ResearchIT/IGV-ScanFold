@@ -5,14 +5,14 @@ mkdir -p ${BUNDLE_PREFIX}
 
 # build IGV and bundle with JRE
 pushd lib
-curl -L -O https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jre_x64_windows_hotspot_11.0.12_7.zip
-unzip OpenJDK11U-jre_x64_windows_hotspot_11.0.12_7.zip
-rm  OpenJDK11U-jre_x64_windows_hotspot_11.0.12_7.zip
+curl -L -O https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jre_x64_windows_hotspot_11.0.17_8.zip
+unzip OpenJDK11U-jre_x64_windows_hotspot_11.0.17_8.zip
+rm  OpenJDK11U-jre_x64_windows_hotspot_11.0.17_8.zip
 popd
 
 pushd igv
 ./gradlew clean
-./gradlew createWinWithJavaDist -PjdkBundleWindows=${TOPLEVEL}/lib/jdk-11.0.12+7-jre
+./gradlew createWinWithJavaDist -PjdkBundleWindows=${TOPLEVEL}/lib/jdk-11.0.17+8-jre
 mv build/IGV-WinExe-WithJava-dist/IGV_user ${BUNDLE_PREFIX}/IGV
 popd
 
@@ -21,29 +21,29 @@ popd
 mkdir -p ${BUNDLE_PREFIX}/scanfold/
 
 pushd lib
-curl -L -O https://www.python.org/ftp/python/3.9.7/python-3.9.7-embed-amd64.zip
-unzip -d ${BUNDLE_PREFIX}/scanfold/python-3.9.7-embed-amd64 python-3.9.7-embed-amd64.zip
-rm python-3.9.7-embed-amd64.zip
+curl -L -O https://www.python.org/ftp/python/3.10.8/python-3.10.8-embed-amd64.zip
+unzip -d ${BUNDLE_PREFIX}/scanfold/python-3.10.8-embed-amd64 python-3.10.8-embed-amd64.zip
+rm python-3.10.8-embed-amd64.zip
 popd
 
-pushd ${BUNDLE_PREFIX}/scanfold/python-3.9.7-embed-amd64
+pushd ${BUNDLE_PREFIX}/scanfold/python-3.10.8-embed-amd64
 echo '
-python39.zip
+python310.zip
 .
 ..
 site-packages
-' >> python39._pth
+' >> python310._pth
 mkdir -p site-packages
 
 # biopython
-curl -L -O https://files.pythonhosted.org/packages/60/da/c67fef644a92c2e44743ad8c3f0321b140e226f2b55112f066a9415c9d91/biopython-1.79-cp39-cp39-win_amd64.whl
-unzip -d site-packages biopython-1.79-cp39-cp39-win_amd64.whl
-rm biopython-1.79-cp39-cp39-win_amd64.whl
+curl -L -O https://files.pythonhosted.org/packages/06/ed/6fbab8be0b4868f5105d76f3ab8b202c1bffd23d43cd422ba485af374b71/biopython-1.80-cp310-cp310-win_amd64.whl
+unzip -d site-packages biopython-1.80-cp310-cp310-win_amd64.whl
+rm biopython-1.80-cp310-cp310-win_amd64.whl
 
 # numpy
-curl -L -O https://files.pythonhosted.org/packages/01/d9/6e5f6cbd9d1fc90c6c8d96e70754700ed6f93f90f321f887a3f26bf65715/numpy-1.21.2-cp39-cp39-win_amd64.whl
-unzip -d site-packages numpy-1.21.2-cp39-cp39-win_amd64.whl
-rm numpy-1.21.2-cp39-cp39-win_amd64.whl
+curl -L -O https://files.pythonhosted.org/packages/6a/03/ae6c3c307f9c5c7516de3df3e764ebb1de33e54e197f0370992138433ef4/numpy-1.23.5-cp310-cp310-win_amd64.whl
+unzip -d site-packages numpy-1.23.5-cp310-cp310-win_amd64.whl
+rm numpy-1.23.5-cp310-cp310-win_amd64.whl
 popd
 
 # scanfold
