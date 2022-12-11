@@ -12,6 +12,15 @@ A pre-built version is available on [releases](https://github.com/ResearchIT/IGV
 ### Mac (10.15+, x86_64)
 A pre-built version is available on [releases](https://github.com/ResearchIT/IGV-ScanFold/releases).
 
+Please open the Terminal app and run the following to download and run it.
+
+```
+cd ~/Downloads/
+curl -L -O https://github.com/ResearchIT/IGV-ScanFold/releases/download/v0.2.3/IGV-ScanFold-macos-v0.2.3.zip
+unzip IGV-ScanFold-macos-v0.2.3.zip
+open -a IGV-ScanFold.app
+```
+
 ### Linux
 
 Follow instructions to compile. Then
