@@ -6,6 +6,8 @@ Patched version of IGV that integrates ScanFold functionality.
 
 ## Run
 
+IGV-ScanFold requires [Python 3](https://www.python.org/downloads/macos/).
+
 ### Windows
 A pre-built version is available on [releases](https://github.com/ResearchIT/IGV-ScanFold/releases).
 
