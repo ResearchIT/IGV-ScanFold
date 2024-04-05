@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export SCANFOLDRUNDIR=$(cd `dirname $(readlink $0 || echo $0)` && cd .. && pwd)
-export SCANFOLDPYTHONINTERPRETER=$(which python)
+export SCANFOLDPYTHONINTERPRETER=$(which python3)
 export SCANFOLDRUNSCRIPT=${SCANFOLDRUNDIR}/scanfold/run_scanfold.py
 export SCANFOLDISBUNDLED=TRUE
 #switch to this if fork doesn't work
